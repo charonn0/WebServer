@@ -1,9 +1,19 @@
 #tag Class
 Protected Class HTTPSession
+Inherits TCPSocket
+	#tag Event
+		Sub Error()
+		  Me.LastActive = New Date(1999, 12, 31, 23, 59, 59)
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPResponse)
 		  // Part of the StoredItem interface.
-		  If Me.Cacheable Then Me.PageCache.Value(Page.Path) = Page
+		  If Me.Cacheable Then 
+		    Me.PageCache.Value(Page.Path) = Page
+		  End If
 		  
 		End Sub
 	#tag EndMethod
@@ -38,6 +48,12 @@ Protected Class HTTPSession
 		  AddHandler Me.CacheTimer.Action, AddressOf Me.CacheCleaner
 		  Me.CacheTimer.Mode = Timer.ModeMultiple
 		  LastActive = New Date
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Break
 		End Sub
 	#tag EndMethod
 
@@ -184,6 +200,7 @@ Protected Class HTTPSession
 		#tag Setter
 			Set
 			  mSessionID = value
+			  NewSession = True
 			End Set
 		#tag EndSetter
 		SessionID As String

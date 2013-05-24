@@ -3,8 +3,9 @@ Protected Class WebServer
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
-		  Dim sock As New TCPSocket
+		  Dim sock As New HTTPSession
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
+		  Sessions.Value(sock.SessionID) = sock
 		  If Me.SessionTimer = Nil Then
 		    Me.SessionTimer = New Timer
 		    Me.SessionTimer = New Timer
@@ -24,19 +25,16 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DataAvailable(Sender As TCPSocket)
+		Private Sub DataAvailable(Sender As HTTPSession)
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTPRequest
 		  Dim doc As HTTPResponse
 		  Try
 		    clientrequest = New HTTPRequest(data, AuthenticationRealm, DigestAuthenticationOnly)
-		    AddHandler clientrequest.GetSession, AddressOf Me.GetSessionHandler
-		    If clientrequest.Session = Nil Then
-		      Dim session As New HTTPSession
-		      session.NewSession = true
-		      clientrequest.Session = session
-		      Me.Sessions.Value(Session.SessionID) = clientrequest.Session
-		      AddHandler Session.CheckRedirect, AddressOf Me.GetRedirectHandler
+		    If Not Sessions.HasKey(Sender.SessionID) Then
+		      Sender.NewSession = true
+		      Me.Sessions.Value(Sender.SessionID) = Sender
+		      AddHandler Sender.CheckRedirect, AddressOf Me.GetRedirectHandler
 		    End If
 		    
 		    
@@ -73,8 +71,8 @@ Inherits ServerSocket
 		  End If
 		  
 		  Send:
-		  Dim cache As HTTPResponse = clientrequest.Session.GetCacheItem(ClientRequest.Path)
-		  Dim redir As HTTPResponse = clientrequest.Session.GetRedirect(clientrequest.Path)
+		  Dim cache As HTTPResponse = Sender.GetCacheItem(ClientRequest.Path)
+		  Dim redir As HTTPResponse = Sender.GetRedirect(clientrequest.Path)
 		  If redir <> Nil Then
 		    doc = redir
 		    Me.Log("Using redirect.", -2)
@@ -87,7 +85,7 @@ Inherits ServerSocket
 		    Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		  ElseIf doc = Nil Then
 		    doc = HandleRequest(clientrequest)
-		    clientrequest.Session.AddCacheItem(doc)
+		    Sender.AddCacheItem(doc)
 		  End If
 		  If doc = Nil Then
 		    doc = HandleRequest(clientrequest)
@@ -117,8 +115,6 @@ Inherits ServerSocket
 		      End If
 		    End Select
 		  End If
-		  
-		  doc.Session = clientrequest.Session
 		  
 		  If EnforceContentType Then
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -165,15 +161,6 @@ Inherits ServerSocket
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function GetSessionHandler(Sender As HTTPRequest, SessionID As String) As HTTPSession
-		  #pragma Unused Sender
-		  If Me.Sessions.HasKey(SessionID) Then
-		    Return Me.Sessions.Value(SessionID)
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Log(Message As String, Severity As Integer)
 		  RaiseEvent Log(Message.Trim + EndofLine, Severity)
@@ -189,7 +176,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPResponse)
+		Private Sub SendResponse(Socket As HTTPSession, ResponseDocument As HTTPResponse)
 		  Dim tmp As HTTPResponse = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", -2)
@@ -235,7 +222,14 @@ Inherits ServerSocket
 		    ResponseDocument.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE")
 		  End If
 		  
-		  If ResponseDocument.Session <> Nil Then ResponseDocument.Session.ExtendSession
+		  Socket.ExtendSession
+		  If Socket.NewSession Then
+		    Dim c As New HTTPCookie("SessionID=" + Socket.SessionID)
+		    ResponseDocument.SetCookie(c)
+		    Socket.NewSession = False
+		  Else
+		    ResponseDocument.RemoveCookie("SessionID")
+		  End If
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
@@ -261,6 +255,7 @@ Inherits ServerSocket
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTPSession = Me.Sessions.Value(Id)
 		    If session.LastActivity.TotalSeconds + Me.SessionTimeout < d.TotalSeconds Then
+		      session.Close
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next

@@ -108,11 +108,6 @@ Protected Class HTTPRequest
 	#tag EndMethod
 
 
-	#tag Hook, Flags = &h0
-		Event GetSession(SessionID As String) As HTTPSession
-	#tag EndHook
-
-
 	#tag Property, Flags = &h0
 		Arguments() As String
 	#tag EndProperty
@@ -194,10 +189,6 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSession As HTTPSession
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty
 
@@ -212,27 +203,6 @@ Protected Class HTTPRequest
 	#tag Property, Flags = &h0
 		ProtocolVersion As Single
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mSession = Nil Then
-			    Dim ID As String
-			    If Me.Headers.GetCookie("SessionID") <> Nil Then
-			      ID = Me.Headers.GetCookie("SessionID").Value
-			    End If
-			    mSession = GetSession(ID)
-			  End If
-			  return mSession
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mSession = value
-			End Set
-		#tag EndSetter
-		Session As HTTPSession
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

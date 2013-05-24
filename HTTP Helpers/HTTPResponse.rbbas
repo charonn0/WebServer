@@ -300,15 +300,7 @@ Protected Class HTTPResponse
 		      data = GZipPage(data)
 		    End If
 		  #endif
-		  If Me.Session <> Nil Then
-		    If Me.Session.NewSession Then 
-		      Dim c As New HTTPCookie("SessionID=" + Me.Session.SessionID)
-		      Me.SetCookie(c)
-		      Me.Session.NewSession = False
-		    Else
-		      Me.RemoveCookie("SessionID")
-		    End If
-		  End If
+		  
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + Me.MessageBody
 		  
 		End Function
@@ -444,10 +436,6 @@ Protected Class HTTPResponse
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSession As HTTPSession
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty
 
@@ -458,26 +446,6 @@ Protected Class HTTPResponse
 	#tag Property, Flags = &h0
 		ProtocolVersion As Single
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mSession = Nil Then
-			    Dim ID As String
-			    If Me.Headers.GetCookie("SessionID") <> Nil Then
-			      ID = Me.Headers.GetCookie("SessionID").Value
-			    End If
-			  End If
-			  return mSession
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mSession = value
-			End Set
-		#tag EndSetter
-		Session As HTTPSession
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		StatusCode As Integer
