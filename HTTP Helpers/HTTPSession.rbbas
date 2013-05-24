@@ -47,8 +47,6 @@ Protected Class HTTPSession
 		  Dim doc As HTTPResponse
 		  If Me.PageCache.HasKey(Path) Then
 		    doc = Me.PageCache.Value(Path)
-		  Else
-		    doc = CheckCache(Path)
 		  End If
 		  
 		  Return doc
@@ -117,10 +115,6 @@ Protected Class HTTPSession
 		End Function
 	#tag EndMethod
 
-
-	#tag Hook, Flags = &h0
-		Event CheckCache(Path As String) As HTTPResponse
-	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event CheckRedirect(Path As String) As HTTPResponse
