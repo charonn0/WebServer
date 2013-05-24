@@ -110,16 +110,11 @@ Inherits InternetHeaders
 		Function Source(SetCookies As Boolean = False) As String
 		  Dim data As String = Super.Source
 		  
-		  For i As Integer = 0 To UBound(Me.Cookies)
-		    Dim c As HTTPCookie = Me.Cookies(i)
+		  For Each c As HTTPCookie In Me.Cookies
 		    If SetCookies Then
 		      data = data + CRLF + "Set-Cookie: " + c.ToString
 		    Else
-		      If i > 0 Then
-		        data = data + "; " + c.Name + "=" + c.Value
-		      Else
-		        data = data + CRLF + "Cookie: " + c.Name + "=" + c.Value
-		      End If
+		      data = data + CRLF + "Cookie: " + c.Name + "=" + c.Value
 		    End If
 		  Next
 		  

@@ -123,7 +123,7 @@ Inherits ServerSocket
 		    End Select
 		  End If
 		  
-		  If EnforceContentType And clientrequest.Headers.HasHeader("Accept") Then
+		  If EnforceContentType Then
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
 		        SendResponse(Sender, doc)
@@ -435,12 +435,6 @@ Inherits ServerSocket
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SessionTimeout"
-			Group="Behavior"
-			InitialValue="600"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -452,12 +446,6 @@ Inherits ServerSocket
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseSessions"
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

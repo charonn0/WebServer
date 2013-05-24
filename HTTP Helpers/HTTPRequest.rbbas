@@ -98,7 +98,7 @@ Protected Class HTTPRequest
 		    Me.Headers.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		  End If
 		  If Headers.Count > 0 Then
-		    data = data + Headers.Source(False) + CRLF
+		    data = data + Headers.Source + CRLF
 		  End If
 		  data = data + CRLF + MessageBody.Trim
 		  
