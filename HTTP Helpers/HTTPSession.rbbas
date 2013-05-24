@@ -134,6 +134,10 @@ Inherits TCPSocket
 		Private CacheTimer As Timer
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		KeepAlive As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected LastActive As Date
 	#tag EndProperty

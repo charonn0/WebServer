@@ -33,7 +33,9 @@ Inherits ServerSocket
 		  Dim doc As HTTPResponse
 		  Try
 		    clientrequest = New HTTPRequest(data, AuthenticationRealm, DigestAuthenticationOnly)
-		    
+		    If clientrequest.Headers.HasHeader("Connection") Then
+		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
+		    End If
 		    If UseSessions Then
 		      If Not Sessions.HasKey(Sender.SessionID) Then
 		        Sender.NewSession = true
@@ -205,7 +207,7 @@ Inherits ServerSocket
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "No compression.")
 		    #endif
 		  End If
-		  If Me.KeepAlive And ResponseDocument.Headers.GetHeader("Connection") = "keep-alive" Then
+		  If Me.KeepAlive Then
 		    ResponseDocument.Headers.SetHeader("Connection", "keep-alive")
 		  Else
 		    ResponseDocument.Headers.SetHeader("Connection", "close")
