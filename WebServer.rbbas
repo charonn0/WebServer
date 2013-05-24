@@ -5,13 +5,15 @@ Inherits ServerSocket
 		Function AddSocket() As TCPSocket
 		  Dim sock As New HTTPSession
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
-		  Sessions.Value(sock.SessionID) = sock
-		  If Me.SessionTimer = Nil Then
-		    Me.SessionTimer = New Timer
-		    Me.SessionTimer = New Timer
-		    Me.SessionTimer.Period = Me.SessionTimeout
-		    AddHandler Me.SessionTimer.Action, AddressOf TimeOutHandler
-		    Me.SessionTimer.Mode = Timer.ModeMultiple
+		  If UseSessions Then
+		    Sessions.Value(sock.SessionID) = sock
+		    If Me.SessionTimer = Nil Then
+		      Me.SessionTimer = New Timer
+		      Me.SessionTimer = New Timer
+		      Me.SessionTimer.Period = Me.SessionTimeout
+		      AddHandler Me.SessionTimer.Action, AddressOf TimeOutHandler
+		      Me.SessionTimer.Mode = Timer.ModeMultiple
+		    End If
 		  End If
 		  Return sock
 		End Function
@@ -31,10 +33,13 @@ Inherits ServerSocket
 		  Dim doc As HTTPResponse
 		  Try
 		    clientrequest = New HTTPRequest(data, AuthenticationRealm, DigestAuthenticationOnly)
-		    If Not Sessions.HasKey(Sender.SessionID) Then
-		      Sender.NewSession = true
-		      Me.Sessions.Value(Sender.SessionID) = Sender
-		      AddHandler Sender.CheckRedirect, AddressOf Me.GetRedirectHandler
+		    
+		    If UseSessions Then
+		      If Not Sessions.HasKey(Sender.SessionID) Then
+		        Sender.NewSession = true
+		        Me.Sessions.Value(Sender.SessionID) = Sender
+		        AddHandler Sender.CheckRedirect, AddressOf Me.GetRedirectHandler
+		      End If
 		    End If
 		    
 		    
@@ -85,7 +90,7 @@ Inherits ServerSocket
 		    Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		  ElseIf doc = Nil Then
 		    doc = HandleRequest(clientrequest)
-		    Sender.AddCacheItem(doc)
+		    If UseSessions Then Sender.AddCacheItem(doc)
 		  End If
 		  If doc = Nil Then
 		    doc = HandleRequest(clientrequest)
@@ -182,13 +187,7 @@ Inherits ServerSocket
 		    Me.Log("Outbound tamper.", -2)
 		    ResponseDocument = tmp
 		  End If
-		  'If UseCache Then
-		  'If Session <> Nil Then
-		  'If Me.Sessions.Value(Session.ID) = Nil Then
-		  'e.Sessions.Value(Session.ID)).AddCacheItem(ResponseDocument)
-		  'End If
-		  'End If
-		  'End If
+		  
 		  If Not ResponseDocument.FromCache Then
 		    #If GZIPAvailable Then
 		      Me.Log("Running gzip", -2)
@@ -205,12 +204,11 @@ Inherits ServerSocket
 		    #else
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "No compression.")
 		    #endif
-		    If Me.KeepAlive And ResponseDocument.Headers.GetHeader("Connection") = "keep-alive" Then
-		      ResponseDocument.Headers.SetHeader("Connection", "keep-alive")
-		    Else
-		      ResponseDocument.Headers.SetHeader("Connection", "close")
-		    End If
-		    
+		  End If
+		  If Me.KeepAlive And ResponseDocument.Headers.GetHeader("Connection") = "keep-alive" Then
+		    ResponseDocument.Headers.SetHeader("Connection", "keep-alive")
+		  Else
+		    ResponseDocument.Headers.SetHeader("Connection", "close")
 		  End If
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
@@ -222,13 +220,15 @@ Inherits ServerSocket
 		    ResponseDocument.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE")
 		  End If
 		  
-		  Socket.ExtendSession
-		  If Socket.NewSession Then
-		    Dim c As New HTTPCookie("SessionID=" + Socket.SessionID)
-		    ResponseDocument.SetCookie(c)
-		    Socket.NewSession = False
-		  Else
-		    ResponseDocument.RemoveCookie("SessionID")
+		  If UseSessions Then
+		    Socket.ExtendSession
+		    If Socket.NewSession Then
+		      Dim c As New HTTPCookie("SessionID=" + Socket.SessionID)
+		      ResponseDocument.SetCookie(c)
+		      Socket.NewSession = False
+		    Else
+		      ResponseDocument.RemoveCookie("SessionID")
+		    End If
 		  End If
 		  
 		  Socket.Write(ResponseDocument.ToString)
@@ -348,6 +348,10 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h21
 		Private SessionTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		UseSessions As Boolean = True
 	#tag EndProperty
 
 
