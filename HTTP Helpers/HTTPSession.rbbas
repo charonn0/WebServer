@@ -1,6 +1,6 @@
 #tag Class
 Protected Class HTTPSession
-Implements  SessionInterface, StoredItem
+Implements SessionInterface,StoredItem
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPResponse) Implements StoredItem.AddItem
 		  // Part of the StoredItem interface.
@@ -52,6 +52,18 @@ Implements  SessionInterface, StoredItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewSession() As Boolean
+		  Return mNewSession
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NewSession(Assigns b As Boolean)
+		  mNewSession = b
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveCacheItem(HTTPpath As String) Implements StoredItem.RemoveItem
 		  // Part of the StoredItem interface.
 		  If PageCache.HasKey(HTTPpath) Then
@@ -90,6 +102,10 @@ Implements  SessionInterface, StoredItem
 
 	#tag Property, Flags = &h1
 		Protected LocalHost As StoredItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNewSession As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -150,7 +166,7 @@ Implements  SessionInterface, StoredItem
 		#tag Getter
 			Get
 			  Dim d As New Date
-			  Return d.TotalSeconds < Me.TimeOut.TotalSeconds
+			  Return d.TotalSeconds > Me.TimeOut.TotalSeconds
 			End Get
 		#tag EndGetter
 		TimedOut As Boolean
@@ -183,16 +199,15 @@ Implements  SessionInterface, StoredItem
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SessionID"
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TimedOut"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

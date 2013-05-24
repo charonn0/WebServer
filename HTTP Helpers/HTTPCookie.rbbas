@@ -43,15 +43,6 @@ Inherits Pair
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1000
-		Sub Constructor(left As Variant, right As Variant)
-		  // Calling the overridden superclass constructor.
-		  Super.Constructor(left, right)
-		  Me.Expiry = New Date
-		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 3600 '1 hr
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Expires() As Date
 		  Return Me.Expiry
@@ -91,9 +82,11 @@ Inherits Pair
 		Function ToString() As String
 		  Dim data As String = Me.Name + "=" + Me.Value
 		  
-		  Dim now As New Date
-		  If Me.Expires.TotalSeconds > now.TotalSeconds Then
-		    data = data + "; expires=" + HTTPDate(Me.Expires)
+		  If Me.Expiry <> Nil Then
+		    Dim now As New Date
+		    If Me.Expires.TotalSeconds > now.TotalSeconds Then
+		      data = data + "; expires=" + HTTPDate(Me.Expires)
+		    End If
 		  End If
 		  
 		  If Me.Path <> "" Then

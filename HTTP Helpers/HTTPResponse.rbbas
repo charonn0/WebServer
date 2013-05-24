@@ -9,7 +9,7 @@ Protected Class HTTPResponse
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
 		    bs.Close
-		    Me.Headers.SetHeader("Content-Type", MIMEstring(page.Name))
+		    Me.MIMEType = New ContentType(page)
 		  End If
 		  Me.StatusCode = 200
 		  Me.Modified = Page.ModificationDate
@@ -53,7 +53,7 @@ Protected Class HTTPResponse
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.SetHeader("Content-Type", MIMEstring("foo.html"))
+		  Me.MIMEType = New ContentType(MIMEstring("foo.html"))
 		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		End Sub
 	#tag EndMethod
@@ -294,6 +294,10 @@ Protected Class HTTPResponse
 		      data = GZipPage(data)
 		    End If
 		  #endif
+		  If Me.Session <> Nil Then
+		    Dim c As New HTTPCookie("SessionID=" + Me.Session.ID)
+		    Me.SetCookie(c)
+		  End If
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + Me.MessageBody
 		  
 		End Function
@@ -401,12 +405,35 @@ Protected Class HTTPResponse
 		Private mHeaders As HTTPHeaders
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mMIMEType = Nil Then mMIMEType = New ContentType("text/html")
+			  return mMIMEType
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mMIMEType = value
+			End Set
+		#tag EndSetter
+		MIMEType As ContentType
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mMethod As RequestMethod
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mMIMEType As ContentType
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		Modified As Date
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSession As SessionInterface
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -421,9 +448,25 @@ Protected Class HTTPResponse
 		ProtocolVersion As Single
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mSession = Nil Then
+			    Dim ID As String
+			    If Me.Headers.GetCookie("SessionID") <> Nil Then
+			      ID = Me.Headers.GetCookie("SessionID").Value
+			    End If
+			  End If
+			  return mSession
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSession = value
+			End Set
+		#tag EndSetter
 		Session As SessionInterface
-	#tag EndProperty
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		StatusCode As Integer

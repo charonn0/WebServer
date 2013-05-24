@@ -1,7 +1,7 @@
 #tag Class
 Protected Class WebServer
 Inherits ServerSocket
-Implements  StoredItem
+Implements StoredItem
 	#tag Event
 		Function AddSocket() As TCPSocket
 		  Dim sock As New TCPSocket
@@ -44,13 +44,15 @@ Implements  StoredItem
 		  Dim doc As HTTPResponse
 		  Try
 		    clientrequest = New HTTPRequest(data, AuthenticationRealm, DigestAuthenticationOnly)
-		    If clientrequest.Headers.GetCookie("SessionID") <> Nil Then
-		      Dim session As String = clientrequest.Headers.GetCookie("SessionID").Value
-		      If Me.Sessions.HasKey(session) Then
-		        Dim s As SessionInterface = Me.Sessions.Value(session)
-		        clientrequest.Session = s
-		      End If
+		    AddHandler clientrequest.GetSession, AddressOf Me.GetSessionHandler
+		    If clientrequest.Session = Nil Then
+		      Dim session As New HTTPSession
+		      session.NewSession = true
+		      clientrequest.Session = session
+		      Me.Sessions.Value(Session.SessionID) = clientrequest.Session
 		    End If
+		    
+		    
 		    Me.Log(ClientRequest.MethodName + " " + ClientRequest.Path + " " + "HTTP/" + Format(ClientRequest.ProtocolVersion, "#.0"), 0)
 		    Me.Log(ClientRequest.Headers.Source, -1)
 		    
@@ -89,13 +91,6 @@ Implements  StoredItem
 		    Me.Log("Using redirect.", -2)
 		  End If
 		  
-		  If clientrequest.Session = Nil Then
-		    Dim s As New HTTPSession
-		    Me.Sessions.Value(s.SessionID) = s
-		    clientrequest.Session = s
-		  End If
-		  
-		  
 		  
 		  Send:
 		  If doc = Nil Then
@@ -128,11 +123,20 @@ Implements  StoredItem
 		  End If
 		  
 		  doc.Session = clientrequest.Session
-		  If clientrequest.GetCookie("SessionID") = Nil Then
-		    doc.Headers.SetCookie(New HTTPCookie("SessionID=" + doc.Session.ID))
-		  End If
 		  
+		  If EnforceContentType Then
+		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
+		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
+		        SendResponse(Sender, doc)
+		        Return
+		      End If
+		    Next
+		    Dim accepted As ContentType = doc.MIMEType
+		    doc = New HTTPResponse(406, "") 'Not Acceptable
+		    doc.MIMEType = accepted
+		  End If
 		  SendResponse(Sender, doc)
+		  
 		  
 		  
 		Exception Err
@@ -174,7 +178,15 @@ Implements  StoredItem
 
 	#tag Method, Flags = &h21
 		Private Function GetSessionHandler(Sender As HTTPRequest, SessionID As String) As HTTPSession
-		  
+		  #pragma Unused Sender
+		  If Me.Sessions.HasKey(SessionID) Then
+		    Dim session As HTTPSession = Me.Sessions.Value(SessionID)
+		    If session.NewSession Then
+		      Sender.Headers.SetCookie(New HTTPCookie("SessionID=" + SessionID))
+		      session.NewSession = False
+		    End If
+		    Return session
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -203,9 +215,15 @@ Implements  StoredItem
 		  Dim tmp As HTTPResponse = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", -2)
-		    ResponseDocument  = tmp
+		    ResponseDocument = tmp
 		  End If
-		  If UseCache Then PageCache.Value(ResponseDocument.Path) = ResponseDocument
+		  'If UseCache Then 
+		  'If Session <> Nil Then
+		  'If Me.Sessions.Value(Session.ID) = Nil Then
+		  'e.Sessions.Value(Session.ID)).AddCacheItem(ResponseDocument)
+		  'End If
+		  'End If
+		  'End If
 		  If Not ResponseDocument.FromCache Then
 		    #If GZIPAvailable Then
 		      Me.Log("Running gzip", -2)
@@ -247,6 +265,7 @@ Implements  StoredItem
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
 		  If ResponseDocument.Headers.GetHeader("Connection") = "close" Then Socket.Close
+		  
 		  
 		  
 		  
@@ -308,6 +327,10 @@ Implements  StoredItem
 
 	#tag Property, Flags = &h0
 		DigestAuthenticationOnly As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		EnforceContentType As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -412,6 +435,7 @@ Implements  StoredItem
 			Group="Behavior"
 			InitialValue="""""Restricted Area"""""
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRequired"
@@ -425,10 +449,21 @@ Implements  StoredItem
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="EnforceContentType"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="KeepAlive"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"

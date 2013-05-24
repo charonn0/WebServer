@@ -13,12 +13,27 @@ Inherits InternetHeaders
 		    Dim n, v As String
 		    n = NthField(line, ": ", 1)
 		    v = Right(line, line.Len - (n.Len + 2)).Trim
-		    If n = "Cookie" or n = "Set-Cookie" Then
+		    Select Case n
+		    Case "Set-Cookie"
 		      Cookies.Append(New HTTPCookie(v))
-		      
+		    Case "Cookie"
+		      Dim s() As String = Split(v, ";")
+		      For x As Integer = 0 To UBound(s)
+		        If s(x).Trim = "" Then Continue
+		        Dim l, r As String
+		        l = NthField(s(x).Trim, "=", 1)
+		        r = NthField(s(x).Trim, "=", 2)
+		        Dim c As New HTTPCookie(l, r)
+		        Cookies.Append(c)
+		      Next
+		    Case "Accept"
+		      Dim s() As String = Split(v, ",")
+		      For x As Integer = 0 To UBound(s)
+		        AcceptableTypes.Append(New ContentType(s(x)))
+		      Next
 		    Else
 		      Me.AppendHeader(n, v)
-		    End If
+		    End Select
 		  Next
 		End Sub
 	#tag EndMethod
@@ -104,10 +119,29 @@ Inherits InternetHeaders
 		    End If
 		  Next
 		  
+		  Dim acc As String
+		  For i As Integer = 0 To UBound(AcceptableTypes)
+		    Dim type As ContentType = AcceptableTypes(i)
+		    If i > 0 And i < AcceptableTypes.Ubound Then
+		      acc = acc + type.ToString + ", "
+		    ElseIf i = 0 And AcceptableTypes.Ubound > 0 Then
+		      acc = acc + type.ToString + ", "
+		    ElseIf i = AcceptableTypes.Ubound And i > 0 Then
+		      acc = acc + type.ToString
+		    End If
+		  Next
+		  If acc <> "" Then
+		    data = data + CRLF + "Accept: " + acc
+		  End If
+		  
 		  Return data
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		AcceptableTypes() As ContentType
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		Cookies() As HTTPCookie

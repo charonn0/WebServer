@@ -19,6 +19,7 @@ Protected Class HTTPRequest
 		  Dim h As String = NthField(data, CRLF + CRLF, 1)
 		  Me.Headers = New HTTPHeaders(h)
 		  Me.MessageBody = Replace(data, h, "")
+		  
 		  If Me.Headers.HasHeader("Content-Type") Then
 		    Dim type As String = Me.Headers.GetHeader("Content-Type")
 		    If InStr(type, "multipart/form-data") > 0 Then
@@ -193,6 +194,10 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSession As SessionInterface
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty
 
@@ -208,9 +213,26 @@ Protected Class HTTPRequest
 		ProtocolVersion As Single
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mSession = Nil Then
+			    Dim ID As String
+			    If Me.Headers.GetCookie("SessionID") <> Nil Then
+			      ID = Me.Headers.GetCookie("SessionID").Value
+			    End If
+			    mSession = GetSession(ID)
+			  End If
+			  return mSession
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSession = value
+			End Set
+		#tag EndSetter
 		Session As SessionInterface
-	#tag EndProperty
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

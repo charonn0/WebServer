@@ -7,6 +7,18 @@ Protected Interface SessionInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewSession() As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NewSession(Assigns b As Boolean)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ResetTimeout()
 		  
 		End Sub

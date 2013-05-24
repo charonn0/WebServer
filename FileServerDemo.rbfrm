@@ -243,6 +243,7 @@ Begin Window FileServerDemo
       DirectoryBrowsing=   True
       Height          =   32
       Index           =   -2147483648
+      KeepAlive       =   ""
       Left            =   135
       LockedInPosition=   False
       MaximumSocketsConnected=   10
@@ -592,6 +593,37 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   68
    End
+   Begin PushButton PushButton4
+      AutoDeactivate  =   True
+      Bold            =   ""
+      ButtonStyle     =   0
+      Cancel          =   ""
+      Caption         =   "Generator"
+      Default         =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   5
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   0
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   374
+      Underline       =   ""
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
@@ -809,6 +841,13 @@ End
 	#tag Event
 		Sub Change()
 		  'Sock.AuthType = Me.ListIndex
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PushButton4
+	#tag Event
+		Sub Action()
+		  Generator.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents
