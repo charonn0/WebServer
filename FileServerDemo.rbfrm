@@ -253,7 +253,6 @@ Begin Window FileServerDemo
       Scope           =   0
       TabPanelIndex   =   0
       Top             =   12
-      UseCache        =   ""
       Width           =   32
    End
    Begin ComboBox LogLevel
@@ -619,7 +618,7 @@ End
 		  Sock.Document = SharedFile
 		  'Sock.Authenticate = CheckBox2.Value
 		  Dim redirect As New HTTPResponse("/bs", "http://www.boredomsoft.org")
-		  Sock.AddItem(redirect)
+		  Sock.AddRedirect(redirect)
 		  'Dim f As FolderItem = GetOpenFolderItem("")
 		  'Sock.AddRedirect(New RBScriptDocument("/test", f))
 		  Sock.Listen

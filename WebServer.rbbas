@@ -18,7 +18,7 @@ Inherits ServerSocket
 
 
 	#tag Method, Flags = &h0
-		Sub AddItem(Page As HTTPResponse)
+		Sub AddRedirect(Page As HTTPResponse)
 		  Redirects.Value(Page.Path) = Page
 		End Sub
 	#tag EndMethod
@@ -72,15 +72,13 @@ Inherits ServerSocket
 		    End If
 		  End If
 		  
-		  If Redirects.HasKey(clientrequest.Path) And doc = Nil Then
-		    doc = Redirects.Value(clientrequest.Path)
-		    doc.FromCache = True
-		    Me.Log("Using redirect.", -2)
-		  End If
-		  
 		  Send:
 		  Dim cache As HTTPResponse = clientrequest.Session.GetCacheItem(ClientRequest.Path)
-		  If cache <> Nil Then
+		  Dim redir As HTTPResponse = clientrequest.Session.GetRedirect(clientrequest.Path)
+		  If redir <> Nil Then
+		    doc = redir
+		    Me.Log("Using redirect.", -2)
+		  ElseIf cache <> Nil Then
 		    'Cache hit
 		    doc = Cache
 		    doc.FromCache = True
@@ -449,11 +447,6 @@ Inherits ServerSocket
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseCache"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

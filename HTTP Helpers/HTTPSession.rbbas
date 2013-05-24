@@ -68,18 +68,6 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NewSession() As Boolean
-		  Return mNewSession
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub NewSession(Assigns b As Boolean)
-		  mNewSession = b
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub RemoveCacheItem(HTTPpath As String)
 		  // Part of the StoredItem interface.
 		  If PageCache.HasKey(HTTPpath) Then
@@ -108,13 +96,6 @@ Protected Class HTTPSession
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SessionID() As String
-		  If mSessionID = "" Then mSessionID = UUID()
-		  Return mSessionID
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event CheckRedirect(Path As String) As HTTPResponse
@@ -126,10 +107,6 @@ Protected Class HTTPSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNewSession As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mPageCache As Dictionary
 	#tag EndProperty
 
@@ -137,8 +114,12 @@ Protected Class HTTPSession
 		Private mRedirects As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mSessionID As String
+	#tag Property, Flags = &h21
+		Private mSessionID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		NewSession As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -169,6 +150,21 @@ Protected Class HTTPSession
 			End Set
 		#tag EndSetter
 		Protected Redirects As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mSessionID = "" Then mSessionID = UUID()
+			  Return mSessionID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSessionID = value
+			End Set
+		#tag EndSetter
+		SessionID As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

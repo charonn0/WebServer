@@ -5,7 +5,6 @@ Inherits WebServer
 		Function HandleRequest(ClientRequest As HTTPRequest) As HTTPResponse
 		  Dim doc As HTTPResponse 'The response object
 		  Dim item As FolderItem = FindItem(ClientRequest.Path)
-		  
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
@@ -158,12 +157,6 @@ Inherits WebServer
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseCache"
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="WebServer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
