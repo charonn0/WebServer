@@ -1,7 +1,6 @@
 #tag Class
 Protected Class WebServer
 Inherits ServerSocket
-Implements StoredItem
 	#tag Event
 		Function AddSocket() As TCPSocket
 		  Dim sock As New TCPSocket
@@ -25,19 +24,6 @@ Implements StoredItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CacheCleaner(Sender As Timer)
-		  #pragma Unused Sender
-		  For Each Path As String In PageCache.Keys
-		    Dim doc As HTTPResponse = PageCache.Value(Path)
-		    Dim d As New Date
-		    If doc.Expires.TotalSeconds < d.TotalSeconds Then
-		      PageCache.Remove(Path)
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As TCPSocket)
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTPRequest
@@ -50,6 +36,7 @@ Implements StoredItem
 		      session.NewSession = true
 		      clientrequest.Session = session
 		      Me.Sessions.Value(Session.SessionID) = clientrequest.Session
+		      AddHandler Session.CheckRedirect, AddressOf Me.GetRedirectHandler
 		    End If
 		    
 		    
@@ -91,8 +78,19 @@ Implements StoredItem
 		    Me.Log("Using redirect.", -2)
 		  End If
 		  
-		  
 		  Send:
+		  Dim cache As HTTPResponse = clientrequest.Session.GetCacheItem(ClientRequest.Path)
+		  If cache <> Nil Then
+		    'Cache hit
+		    doc = Cache
+		    doc.FromCache = True
+		    Me.Log("Page from cache", -2)
+		    Cache.Expires = New Date
+		    Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
+		  ElseIf doc = Nil Then
+		    doc = HandleRequest(clientrequest)
+		    clientrequest.Session.AddCacheItem(doc)
+		  End If
 		  If doc = Nil Then
 		    doc = HandleRequest(clientrequest)
 		  End If
@@ -160,19 +158,12 @@ Implements StoredItem
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GetItem(Path As String, Alternate As Boolean = False) As HTTPResponse
-		  If Alternate Then 'Use Cache
-		    If Me.PageCache.HasKey(Path) Then
-		      Return Me.PageCache.Value(Path)
-		    End If
-		  Else 'use redirects
-		    If Me.Redirects.HasKey(Path) Then
-		      Return Me.Redirects.Value(Path)
-		    End If
+	#tag Method, Flags = &h21
+		Private Function GetRedirectHandler(Sender As HTTPSession, Path As String) As HTTPResponse
+		  #pragma Unused Sender
+		  If Me.Redirects.HasKey(Path) Then
+		    Return Me.Redirects.Value(Path)
 		  End If
-		  
-		  
 		End Function
 	#tag EndMethod
 
@@ -187,12 +178,6 @@ Implements StoredItem
 		    End If
 		    Return session
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ID() As String
-		  Return ""
 		End Function
 	#tag EndMethod
 
@@ -217,7 +202,7 @@ Implements StoredItem
 		    Me.Log("Outbound tamper.", -2)
 		    ResponseDocument = tmp
 		  End If
-		  'If UseCache Then 
+		  'If UseCache Then
 		  'If Session <> Nil Then
 		  'If Me.Sessions.Value(Session.ID) = Nil Then
 		  'e.Sessions.Value(Session.ID)).AddCacheItem(ResponseDocument)
@@ -250,7 +235,6 @@ Implements StoredItem
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    ResponseDocument.MessageBody = ""
-		    If PageCache.HasKey(ResponseDocument.Path) Then PageCache.Remove(ResponseDocument.Path)
 		  End If
 		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode), 0)
 		  Me.Log(ResponseDocument.Headers.Source(True), -1)
@@ -321,10 +305,6 @@ Implements StoredItem
 		AuthenticationRequired As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private CacheTimer As Timer
-	#tag EndProperty
-
 	#tag Property, Flags = &h0
 		DigestAuthenticationOnly As Boolean = False
 	#tag EndProperty
@@ -338,35 +318,12 @@ Implements StoredItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPageCache As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mRedirects As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSessions As Dictionary
 	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUseCache As Boolean
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  If mPageCache = Nil Then mPageCache = New Dictionary
-			  return mPageCache
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mPageCache = value
-			End Set
-		#tag EndSetter
-		Protected PageCache As Dictionary
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -401,28 +358,6 @@ Implements StoredItem
 	#tag Property, Flags = &h21
 		Private SessionTimer As Timer
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  return mUseCache 'And Not GZIPAvailable
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If value Then
-			    CacheTimer = New Timer
-			    CacheTimer.Period = 10000
-			    AddHandler CacheTimer.Action, AddressOf CacheCleaner
-			    CacheTimer.Mode = Timer.ModeMultiple
-			  Else
-			    CacheTimer = Nil
-			  End If
-			  mUseCache = value
-			End Set
-		#tag EndSetter
-		UseCache As Boolean
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"QnDHTTPd/1.0", Scope = Public

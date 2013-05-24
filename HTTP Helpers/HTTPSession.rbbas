@@ -1,8 +1,7 @@
 #tag Class
 Protected Class HTTPSession
-Implements SessionInterface,StoredItem
 	#tag Method, Flags = &h0
-		Sub AddCacheItem(Page As HTTPResponse) Implements StoredItem.AddItem
+		Sub AddCacheItem(Page As HTTPResponse)
 		  // Part of the StoredItem interface.
 		  Me.PageCache.Value(Page.Path) = Page
 		  
@@ -18,36 +17,55 @@ Implements SessionInterface,StoredItem
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  mSessionID = UUID
-		  Me.ResetTimeout()
+	#tag Method, Flags = &h21
+		Private Sub CacheCleaner(Sender As Timer)
+		  #pragma Unused Sender
+		  For Each Path As String In PageCache.Keys
+		    Dim doc As HTTPResponse = PageCache.Value(Path)
+		    Dim d As New Date
+		    If doc.Expires.TotalSeconds < d.TotalSeconds Then
+		      PageCache.Remove(Path)
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCacheItem(Path As String) As HTTPResponse Implements StoredItem.GetItem
+		Sub Constructor()
+		  mSessionID = UUID
+		  Me.ResetTimeout()
+		  Me.CacheTimer = New Timer
+		  Me.CacheTimer.Period = 1000
+		  AddHandler Me.CacheTimer.Action, AddressOf Me.CacheCleaner
+		  Me.CacheTimer.Mode = Timer.ModeMultiple
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCacheItem(Path As String) As HTTPResponse
 		  // Part of the StoredItem interface.
 		  Dim doc As HTTPResponse
 		  If Me.PageCache.HasKey(Path) Then
 		    doc = Me.PageCache.Value(Path)
 		  Else
-		    doc = LocalHost.GetItem(Path)
+		    doc = CheckCache(Path)
 		  End If
+		  
+		  Return doc
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetItem(Path As String, Alternate As Boolean = False) As HTTPResponse
-		  // Part of the Redirector interface.
+		Function GetRedirect(Path As String) As HTTPResponse
+		  // Part of the StoredItem interface.
 		  Dim doc As HTTPResponse
 		  If Me.Redirects.HasKey(Path) Then
 		    doc = Me.Redirects.Value(Path)
 		  Else
-		    doc = LocalHost.GetItem(Path)
+		    doc = CheckRedirect(Path)
 		  End If
 		  
-		  
+		  Return doc
 		End Function
 	#tag EndMethod
 
@@ -64,7 +82,7 @@ Implements SessionInterface,StoredItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveCacheItem(HTTPpath As String) Implements StoredItem.RemoveItem
+		Sub RemoveCacheItem(HTTPpath As String)
 		  // Part of the StoredItem interface.
 		  If PageCache.HasKey(HTTPpath) Then
 		    PageCache.Remove(HTTPpath)
@@ -88,20 +106,29 @@ Implements SessionInterface,StoredItem
 	#tag Method, Flags = &h0
 		Sub ResetTimeout()
 		  Me.TimeOut = New Date
-		  Me.TimeOut.TotalSeconds = Me.TimeOut.TotalSeconds + 60 *10 'ten minutes
+		  Me.TimeOut.TotalSeconds = Me.TimeOut.TotalSeconds + 10 'ten minutes
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SessionID() As String Implements SessionInterface.ID
+		Function SessionID() As String
 		  If mSessionID = "" Then mSessionID = UUID()
 		  Return mSessionID
 		End Function
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h1
-		Protected LocalHost As StoredItem
+	#tag Hook, Flags = &h0
+		Event CheckCache(Path As String) As HTTPResponse
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CheckRedirect(Path As String) As HTTPResponse
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private CacheTimer As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -116,8 +143,8 @@ Implements SessionInterface,StoredItem
 		Private mRedirects As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSessionID As String
+	#tag Property, Flags = &h1
+		Protected mSessionID As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -150,18 +177,6 @@ Implements SessionInterface,StoredItem
 		Protected Redirects As Dictionary
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		Request() As HTTPRequest
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Response() As HTTPResponse
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Socket As TCPSocket
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -172,8 +187,8 @@ Implements SessionInterface,StoredItem
 		TimedOut As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		TimeOut As Date
+	#tag Property, Flags = &h21
+		Private TimeOut As Date
 	#tag EndProperty
 
 

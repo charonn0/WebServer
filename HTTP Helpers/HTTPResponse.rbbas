@@ -295,7 +295,7 @@ Protected Class HTTPResponse
 		    End If
 		  #endif
 		  If Me.Session <> Nil Then
-		    Dim c As New HTTPCookie("SessionID=" + Me.Session.ID)
+		    Dim c As New HTTPCookie("SessionID=" + Me.Session.SessionID)
 		    Me.SetCookie(c)
 		  End If
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + Me.MessageBody
@@ -433,7 +433,7 @@ Protected Class HTTPResponse
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSession As SessionInterface
+		Private mSession As HTTPSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -465,7 +465,7 @@ Protected Class HTTPResponse
 			  mSession = value
 			End Set
 		#tag EndSetter
-		Session As SessionInterface
+		Session As HTTPSession
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0

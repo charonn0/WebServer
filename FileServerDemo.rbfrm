@@ -241,6 +241,7 @@ Begin Window FileServerDemo
       AuthenticationRealm=   """""Restricted Area"""""
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
+      EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
       KeepAlive       =   ""
@@ -529,38 +530,6 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   162
    End
-   Begin CheckBox CheckBox4
-      AutoDeactivate  =   True
-      Bold            =   ""
-      Caption         =   "Caching"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   ""
-      Left            =   5
-      LockBottom      =   ""
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
-      Scope           =   0
-      State           =   0
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0
-      TextUnit        =   0
-      Top             =   138
-      Underline       =   ""
-      Value           =   False
-      Visible         =   True
-      Width           =   162
-   End
    Begin ComboBox nic1
       AutoComplete    =   False
       AutoDeactivate  =   True
@@ -816,19 +785,6 @@ End
 	#tag Event
 		Sub TextChange()
 		  Sock.AuthenticationRealm = Me.Text
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CheckBox4
-	#tag Event
-		Sub Action()
-		  Sock.UseCache = Me.Value
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.Value = Sock.UseCache
-		  'Me.Enabled = Not GZIPAvailable
 		End Sub
 	#tag EndEvent
 #tag EndEvents

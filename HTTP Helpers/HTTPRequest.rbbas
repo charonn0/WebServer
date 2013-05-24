@@ -194,7 +194,7 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSession As SessionInterface
+		Private mSession As HTTPSession
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -231,7 +231,7 @@ Protected Class HTTPRequest
 			  mSession = value
 			End Set
 		#tag EndSetter
-		Session As SessionInterface
+		Session As HTTPSession
 	#tag EndComputedProperty
 
 

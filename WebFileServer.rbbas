@@ -8,14 +8,7 @@ Inherits WebServer
 		  
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
-		    If Me.GetItem(ClientRequest.Path) <> Nil Then
-		      'Cache hit
-		      Dim cache As HTTPResponse = Me.GetItem(ClientRequest.Path)
-		      doc = New HTTPResponse(cache, ClientRequest.Path)
-		      doc.FromCache = True
-		      Me.Log("Page from cache", -2)
-		      
-		    ElseIf item = Nil Then
+		    If item = Nil Then
 		      '404 Not found
 		      Me.Log("Page not found", -2)
 		      doc = New HTTPResponse(404, ClientRequest.Path)
@@ -97,11 +90,24 @@ Inherits WebServer
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="EnforceContentType"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			InheritedFrom="WebServer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="KeepAlive"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="WebServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
