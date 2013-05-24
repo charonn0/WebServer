@@ -43,7 +43,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -62,7 +61,6 @@ Begin Window Generator
          HasBackColor    =   False
          Height          =   384
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "GroupBox3"
          Left            =   622
          LockBottom      =   ""
@@ -79,7 +77,7 @@ Begin Window Generator
          Visible         =   True
          Width           =   569
       End
-      Begin BevelButton CookiesButton
+      Begin BevelButton CopyCookies
          AcceptFocus     =   False
          AutoDeactivate  =   True
          BackColor       =   0
@@ -145,7 +143,6 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   255
@@ -202,6 +199,50 @@ Begin Window Generator
          Visible         =   True
          Width           =   22
       End
+      Begin BevelButton CookiesButton
+         AcceptFocus     =   False
+         AutoDeactivate  =   True
+         BackColor       =   0
+         Bevel           =   4
+         Bold            =   False
+         ButtonType      =   0
+         Caption         =   ""
+         CaptionAlign    =   3
+         CaptionDelta    =   0
+         CaptionPlacement=   1
+         Enabled         =   True
+         HasBackColor    =   False
+         HasMenu         =   0
+         Height          =   22
+         HelpTag         =   ""
+         Icon            =   1167294463
+         IconAlign       =   1
+         IconDX          =   0
+         IconDY          =   0
+         Index           =   -2147483648
+         InitialParent   =   "GroupBox3"
+         Italic          =   False
+         Left            =   663
+         LockBottom      =   ""
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   ""
+         LockTop         =   True
+         MenuValue       =   0
+         Scope           =   0
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextColor       =   0
+         TextFont        =   "System"
+         TextSize        =   ""
+         TextUnit        =   0
+         Top             =   177
+         Underline       =   False
+         Value           =   False
+         Visible         =   False
+         Width           =   22
+      End
    End
    Begin GroupBox GroupBox2
       AutoDeactivate  =   True
@@ -222,7 +263,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -233,18 +273,14 @@ Begin Window Generator
    End
    Begin TCPSocket Sock
       Address         =   ""
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   501
       LockedInPosition=   False
       Port            =   0
       Scope           =   0
-      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   -1
-      Visible         =   True
       Width           =   32
    End
    Begin TextArea OutputLog
@@ -314,7 +350,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Code:"
       TextAlign       =   2
       TextColor       =   0
@@ -349,7 +384,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Message:"
       TextAlign       =   2
       TextColor       =   0
@@ -384,7 +418,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -419,7 +452,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   16711680
@@ -454,7 +486,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Remote IP:"
       TextAlign       =   2
       TextColor       =   0
@@ -489,7 +520,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -521,7 +551,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -817,7 +846,6 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
          TextColor       =   0
@@ -1017,7 +1045,6 @@ Begin Window Generator
       End
    End
    Begin Timer DataReceivedTimer
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   -3
@@ -1025,11 +1052,8 @@ Begin Window Generator
       Mode            =   0
       Period          =   1000
       Scope           =   0
-      TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   597
-      Visible         =   True
       Width           =   32
    End
    Begin Listbox ResponseHeaders
@@ -1151,6 +1175,7 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub Generate()
+		  Me.Response = Nil
 		  mTheURL = Nil
 		  Me.Request = New HTTPRequest()
 		  Me.Request.Method = HTTPMethod(Me.RequestMethod.Text)
@@ -1160,7 +1185,7 @@ End
 		  Me.Request.ProtocolVersion = CDbl(NthField(ProtocolVer.Text, "/", 2))
 		  Me.Request.Arguments = TheURL.Arguments
 		  Dim heads As New InternetHeaders
-		  For i As Integer = 0 To RequestHeaders.LastIndex
+		  For i As Integer = 0 To RequestHeaders.ListCount - 1
 		    heads.AppendHeader(RequestHeaders.Cell(i, 0), RequestHeaders.Cell(i, 1))
 		  Next
 		  Me.Request.Headers = New HTTPHeaders(heads.Source)
@@ -1227,6 +1252,9 @@ End
 		  CookiesButton.Visible = UBound(Response.Headers.Cookies) > -1
 		  CookiesButton.Invalidate(True)
 		  CookiesButton.HelpTag = Str(UBound(Response.Headers.Cookies) + 1) + " cookies"
+		  CopyCookies.Visible = UBound(Response.Headers.Cookies) > -1
+		  CopyCookies.Invalidate(True)
+		  CopyCookies.HelpTag = "Copy cookies to request"
 		  ResponseHeaderView.Enabled = True
 		  
 		  If Sock.IsConnected Then
@@ -1274,10 +1302,27 @@ End
 
 #tag EndWindowCode
 
-#tag Events CookiesButton
+#tag Events CopyCookies
 	#tag Event
 		Sub Action()
-		  CookieViewer.ShowCookies(Response.Headers.Cookies)
+		  Generate()
+		  For i As Integer = 0 To UBound(Self.Response.Headers.Cookies)
+		    Self.Request.Headers.SetCookie(Self.Response.Headers.Cookies(i))
+		  Next
+		  Dim data As String
+		  RequestHeaders.DeleteAllRows
+		  For i As Integer = 0 To UBound(Request.Headers.Cookies)
+		    Dim n, v As String
+		    n = Request.Headers.Cookies(i).Name
+		    v = Request.Headers.Cookies(i).Value
+		    
+		    data = data + n + "=" + v 
+		    If UBound(Request.Headers.Cookies) > i Then
+		      data = data + ";"
+		    End If
+		  Next
+		  
+		  RequestHeaders.AddRow("Cookie", data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1300,6 +1345,28 @@ End
 	#tag Event
 		Sub Action()
 		  HeaderViewer.ShowHeaders(Response.Headers)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CookiesButton
+	#tag Event
+		Sub Action()
+		  CookieViewer.ShowCookies(Response.Headers.Cookies)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseEnter()
+		  If Me.Enabled Then
+		    Me.Icon = cookie_icon
+		  Else
+		    Me.Icon = cookie_icon_grey
+		  End If
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseExit()
+		  Me.Icon = cookie_icon_grey
 		End Sub
 	#tag EndEvent
 #tag EndEvents
