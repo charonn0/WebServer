@@ -8,7 +8,7 @@ Inherits ServerSocket
 		  If Me.SessionTimer = Nil Then
 		    Me.SessionTimer = New Timer
 		    Me.SessionTimer = New Timer
-		    Me.SessionTimer.Period = 6000
+		    Me.SessionTimer.Period = Me.SessionTimeout
 		    AddHandler Me.SessionTimer.Action, AddressOf TimeOutHandler
 		    Me.SessionTimer.Mode = Timer.ModeMultiple
 		  End If
@@ -235,9 +235,7 @@ Inherits ServerSocket
 		    ResponseDocument.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE")
 		  End If
 		  
-		  If ResponseDocument.Session <> Nil Then
-		    ResponseDocument.Session.ResetTimeout
-		  End If
+		  If ResponseDocument.Session <> Nil Then ResponseDocument.Session.ExtendSession
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
@@ -259,9 +257,10 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub TimeOutHandler(Sender As Timer)
 		  #pragma Unused Sender
+		  Dim d As New Date
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTPSession = Me.Sessions.Value(Id)
-		    If session.TimedOut Then
+		    If session.LastActivity.TotalSeconds + Me.SessionTimeout > d.TotalSeconds Then
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next
@@ -347,6 +346,10 @@ Inherits ServerSocket
 		#tag EndSetter
 		Protected Sessions As Dictionary
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		SessionTimeout As Integer = 600000
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private SessionTimer As Timer

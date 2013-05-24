@@ -32,11 +32,18 @@ Protected Class HTTPSession
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Me.ResetTimeout()
+		  Me.ExtendSession()
 		  Me.CacheTimer = New Timer
 		  Me.CacheTimer.Period = 1000
 		  AddHandler Me.CacheTimer.Action, AddressOf Me.CacheCleaner
 		  Me.CacheTimer.Mode = Timer.ModeMultiple
+		  LastActive = New Date
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ExtendSession()
+		  Me.LastActive = New Date
 		End Sub
 	#tag EndMethod
 
@@ -69,6 +76,13 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastActivity() As Date
+		  If LastActive = Nil Then LastActive = New Date
+		  Return Me.LastActive
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveCacheItem(HTTPpath As String)
 		  // Part of the StoredItem interface.
 		  If PageCache.HasKey(HTTPpath) Then
@@ -90,13 +104,6 @@ Protected Class HTTPSession
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub ResetTimeout()
-		  Me.TimeOut = New Date
-		  Me.TimeOut.TotalSeconds = Me.TimeOut.TotalSeconds + 10 'ten minutes
-		End Sub
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event CheckRedirect(Path As String) As HTTPResponse
@@ -109,6 +116,10 @@ Protected Class HTTPSession
 
 	#tag Property, Flags = &h21
 		Private CacheTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected LastActive As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -162,7 +173,7 @@ Protected Class HTTPSession
 			Get
 			  If mSessionID = "" Then 
 			    If SessionKey <> "" Then
-			      mSessionID = EncodeHex(MD5(RC4(HTTPDate(Me.TimeOut), Me.SessionKey)))
+			      mSessionID = EncodeHex(MD5(RC4(HTTPDate(Me.LastActive), Me.SessionKey)))
 			    Else
 			      mSessionID = EncodeHex(MD5(UUID))
 			    End If
@@ -180,20 +191,6 @@ Protected Class HTTPSession
 
 	#tag Property, Flags = &h0
 		SessionKey As String
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Dim d As New Date
-			  Return d.TotalSeconds > Me.TimeOut.TotalSeconds
-			End Get
-		#tag EndGetter
-		TimedOut As Boolean
-	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private TimeOut As Date
 	#tag EndProperty
 
 

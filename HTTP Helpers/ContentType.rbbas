@@ -65,7 +65,7 @@ Protected Class ContentType
 		  End If
 		  'If Me.CharSet <> Nil Then
 		  'Select Case
-		  'Return Data
+		  Return Data
 		End Function
 	#tag EndMethod
 
