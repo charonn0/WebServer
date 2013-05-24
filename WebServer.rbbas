@@ -260,7 +260,7 @@ Inherits ServerSocket
 		  Dim d As New Date
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTPSession = Me.Sessions.Value(Id)
-		    If session.LastActivity.TotalSeconds + Me.SessionTimeout > d.TotalSeconds Then
+		    If session.LastActivity.TotalSeconds + Me.SessionTimeout < d.TotalSeconds Then
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next
@@ -348,7 +348,7 @@ Inherits ServerSocket
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
-		SessionTimeout As Integer = 600000
+		SessionTimeout As Integer = 600
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

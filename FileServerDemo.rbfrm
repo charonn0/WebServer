@@ -707,8 +707,6 @@ End
 		  Else
 		    Response.SetHeader("X-Judgement-Render", "Your request is denied.")
 		  End If
-		  Dim c As New HTTPCookie("time", Format(Microseconds, "####"))
-		  Response.SetCookie(c)
 		  Return True
 		  
 		End Function
