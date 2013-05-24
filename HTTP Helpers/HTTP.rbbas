@@ -3003,6 +3003,54 @@ Protected Module HTTP
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function RC4(strData As String, strKey As String) As String
+		  //Credit: http://forums.realsoftware.com/viewtopic.php?f=1&t=19930
+		  //Encodes or decodes the strData string with the RC4 symmetric ciper, using the strKey as the key.
+		  //On success, returns the En/Decoded string. On error, returns an empty string.
+		  
+		  Dim MM As MemoryBlock = strData
+		  Dim MM2 As New MemoryBlock(LenB(strData))
+		  Dim memAsciiArray(255), memKeyArray(255), memJump, memTemp, memY, intKeyLength, intIndex, intT, intX As integer
+		  
+		  intKeyLength = len(strKey)
+		  
+		  For intIndex = 0 to 255
+		    memKeyArray(intIndex) = asc(mid(strKey, ((intIndex) mod (intKeyLength)) + 1, 1))
+		  next
+		  
+		  For intIndex = 0 to 255
+		    memAsciiArray(intIndex) = intIndex
+		  next
+		  
+		  For intIndex = 0 to 255
+		    memJump = (memJump + memAsciiArray(intIndex) + memKeyArray(intIndex)) mod 256
+		    memTemp = memAsciiArray(intIndex)
+		    memAsciiArray(intIndex) = memAsciiArray(memJump)
+		    memAsciiArray(memJump) = memTemp
+		  next
+		  
+		  intIndex = 0
+		  memJump = 0
+		  
+		  For intX = 1 to MM2.Size
+		    intIndex = (intIndex + 1) mod 256
+		    memJump = (memJump + memAsciiArray(intIndex)) mod 256
+		    intT = (memAsciiArray(intIndex) + memAsciiArray(memJump)) mod 256
+		    memTemp = memAsciiArray(intIndex)
+		    memAsciiArray(intIndex) = memAsciiArray(memJump)
+		    memAsciiArray(memJump) = memTemp
+		    memY = memAsciiArray(intT)
+		    mm2.Byte(intX - 1) = bitwise.bitxor(val("&h" + hex(MM.byte(IntX - 1))), bitwise.bitxor(memTemp,memY))
+		  next
+		  
+		  return MM2
+		  
+		Exception
+		  Return ""
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RemoveMIMEType(FileExtension As String)
 		  If MIMETypes.HasKey(FileExtension) Then

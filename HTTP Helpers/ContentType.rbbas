@@ -64,7 +64,7 @@ Protected Class ContentType
 		    data = data + "; q=" + Format(Me.Weight, ".##")
 		  End If
 		  'If Me.CharSet <> Nil Then
-		  'Select Case 
+		  'Select Case
 		  'Return Data
 		End Function
 	#tag EndMethod

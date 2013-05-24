@@ -81,19 +81,18 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetCookie(c As HTTPCookie)
-		  'Dim data As String
-		  'If Me.HasHeader("Set-Cookie") Then
-		  'data = Me.Value("Set-Cookie") + ";" + c.Name + "=" + c.Right
-		  'Else
-		  'data = c.Name + "=" + c.Right
-		  'End If
-		  'Me.SetHeader("Set-Cookie", data)
+		Sub RemoveCookie(Name As String)
 		  For i As Integer = UBound(Me.Cookies) DownTo 0
-		    If Me.Cookies(i).Name = c.Name Then
+		    If Me.Cookies(i).Name = Name Then
 		      Me.Cookies.Remove(i)
 		    End If
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetCookie(c As HTTPCookie)
+		  Me.RemoveCookie(c.Name)
 		  Cookies.Append(c)
 		End Sub
 	#tag EndMethod

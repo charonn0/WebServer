@@ -3,7 +3,7 @@ Protected Class HTTPSession
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPResponse)
 		  // Part of the StoredItem interface.
-		  Me.PageCache.Value(Page.Path) = Page
+		  If Me.Cacheable Then Me.PageCache.Value(Page.Path) = Page
 		  
 		End Sub
 	#tag EndMethod
@@ -32,7 +32,6 @@ Protected Class HTTPSession
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  mSessionID = UUID
 		  Me.ResetTimeout()
 		  Me.CacheTimer = New Timer
 		  Me.CacheTimer.Period = 1000
@@ -45,8 +44,10 @@ Protected Class HTTPSession
 		Function GetCacheItem(Path As String) As HTTPResponse
 		  // Part of the StoredItem interface.
 		  Dim doc As HTTPResponse
-		  If Me.PageCache.HasKey(Path) Then
-		    doc = Me.PageCache.Value(Path)
+		  If Me.Cacheable Then 
+		    If Me.PageCache.HasKey(Path) Then
+		      doc = Me.PageCache.Value(Path)
+		    End If
 		  End If
 		  
 		  Return doc
@@ -102,6 +103,10 @@ Protected Class HTTPSession
 	#tag EndHook
 
 
+	#tag Property, Flags = &h0
+		Cacheable As Boolean = True
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private CacheTimer As Timer
 	#tag EndProperty
@@ -155,7 +160,13 @@ Protected Class HTTPSession
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mSessionID = "" Then mSessionID = UUID()
+			  If mSessionID = "" Then 
+			    If SessionKey <> "" Then
+			      mSessionID = EncodeHex(MD5(RC4(HTTPDate(Me.TimeOut), Me.SessionKey)))
+			    Else
+			      mSessionID = EncodeHex(MD5(UUID))
+			    End If
+			  End If
 			  Return mSessionID
 			End Get
 		#tag EndGetter
@@ -166,6 +177,10 @@ Protected Class HTTPSession
 		#tag EndSetter
 		SessionID As String
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		SessionKey As String
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

@@ -169,12 +169,7 @@ Inherits ServerSocket
 		Private Function GetSessionHandler(Sender As HTTPRequest, SessionID As String) As HTTPSession
 		  #pragma Unused Sender
 		  If Me.Sessions.HasKey(SessionID) Then
-		    Dim session As HTTPSession = Me.Sessions.Value(SessionID)
-		    If session.NewSession Then
-		      Sender.Headers.SetCookie(New HTTPCookie("SessionID=" + SessionID))
-		      session.NewSession = False
-		    End If
-		    Return session
+		    Return Me.Sessions.Value(SessionID)
 		  End If
 		End Function
 	#tag EndMethod

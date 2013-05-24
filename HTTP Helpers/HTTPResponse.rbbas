@@ -266,6 +266,12 @@ Protected Class HTTPResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveCookie(CookieName As String)
+		  Me.Headers.RemoveCookie(CookieName)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SetCookie(NewCookie As HTTPCookie)
 		  Me.Headers.SetCookie(NewCookie)
 		End Sub
@@ -295,8 +301,13 @@ Protected Class HTTPResponse
 		    End If
 		  #endif
 		  If Me.Session <> Nil Then
-		    Dim c As New HTTPCookie("SessionID=" + Me.Session.SessionID)
-		    Me.SetCookie(c)
+		    If Me.Session.NewSession Then 
+		      Dim c As New HTTPCookie("SessionID=" + Me.Session.SessionID)
+		      Me.SetCookie(c)
+		      Me.Session.NewSession = False
+		    Else
+		      Me.RemoveCookie("SessionID")
+		    End If
 		  End If
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + Me.MessageBody
 		  
