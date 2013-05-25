@@ -3,13 +3,16 @@ Protected Class HTTPClientSocket
 Inherits TCPSocket
 	#tag Method, Flags = &h0
 		Function ValidateSession(Request As HTTPRequest) As Boolean
+		  #If DebugBuild Then 
+		    #pragma BreakOnExceptions Off
+		  #endif
 		  Dim s As HTTPSession = GetSession(Request.SessionID)
 		  If s.SessionID = Request.SessionID Then
 		    Me.SessionID = Request.SessionID
 		    s.NewSession = False
 		    Return True
 		  End If
-		  
+		  #pragma BreakOnExceptions Default
 		Exception
 		  Return False
 		End Function
@@ -28,7 +31,7 @@ Inherits TCPSocket
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mSessionID = "" Then 
+			  If mSessionID = "" Then
 			    Dim s As HTTPSession = GetSession("")
 			    If s <> Nil Then
 			      mSessionID = s.SessionID
@@ -86,6 +89,7 @@ Inherits TCPSocket
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

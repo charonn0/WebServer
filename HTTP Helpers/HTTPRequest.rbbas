@@ -276,6 +276,11 @@ Protected Class HTTPRequest
 			Type="Single"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="SessionID"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

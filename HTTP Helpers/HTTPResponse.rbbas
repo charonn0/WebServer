@@ -5,6 +5,7 @@ Protected Class HTTPResponse
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
 		  If page.Directory Then
 		    Me.MessageBody = DirectoryIndex(Path, page)
+		    Me.MIMEType = New ContentType("text/html")
 		  Else
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
@@ -26,6 +27,7 @@ Protected Class HTTPResponse
 		  Me.StatusCode = 200
 		  Me.Modified = CachedPage.Modified
 		  Me.Path = Path
+		  Me.MIMEType = CachedPage.MIMEType
 		  mHeaders = CachedPage.Headers
 		  Me.Expires = CachedPage.Expires
 		End Sub
@@ -39,7 +41,7 @@ Protected Class HTTPResponse
 		  Me.MessageBody = ErrorPage(StatusCode, Param)
 		  Me.StatusCode = ErrorCode
 		  Me.Modified = New Date
-		  
+		  Me.MIMEType = New ContentType("text/html")
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		End Sub
 	#tag EndMethod
@@ -53,7 +55,7 @@ Protected Class HTTPResponse
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New ContentType(MIMEstring("foo.html"))
+		  Me.MIMEType = New ContentType("text/html")
 		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		End Sub
 	#tag EndMethod
@@ -350,7 +352,7 @@ Protected Class HTTPResponse
 			    If Me.MessageBody.LenB > 0 Then
 			      mHeaders.AppendHeader("Content-Length", Str(MessageBody.LenB))
 			      mHeaders.AppendHeader("Content-Encoding", "Identity")
-			      mHeaders.AppendHeader("Content-Type", "text/html")
+			      mHeaders.AppendHeader("Content-Type", Me.MIMEType.ToString)
 			    End If
 			    'headers.AppendHeader("Accept-Ranges", "bytes")
 			    headers.AppendHeader("Server", WebServer.DaemonVersion)
@@ -419,7 +421,10 @@ Protected Class HTTPResponse
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mMIMEType = Nil Then mMIMEType = New ContentType("text/html")
+			  If mMIMEType = Nil Then
+			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path, "/", CountFields(Me.Path, "/")))
+			    mMIMEType = New ContentType(f)
+			  End If
 			  return mMIMEType
 			End Get
 		#tag EndGetter

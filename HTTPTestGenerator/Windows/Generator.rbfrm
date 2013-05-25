@@ -93,7 +93,7 @@ Begin Window Generator
          HasMenu         =   0
          Height          =   22
          HelpTag         =   ""
-         Icon            =   1167294463
+         Icon            =   1965037567
          IconAlign       =   1
          IconDX          =   0
          IconDY          =   0
@@ -171,7 +171,7 @@ Begin Window Generator
          HasMenu         =   0
          Height          =   22
          HelpTag         =   "Expanded Header View"
-         Icon            =   86560767
+         Icon            =   849696767
          IconAlign       =   1
          IconDX          =   0
          IconDY          =   0
@@ -895,7 +895,7 @@ Begin Window Generator
          HasMenu         =   0
          Height          =   22
          HelpTag         =   ""
-         Icon            =   1167294463
+         Icon            =   1965037567
          IconAlign       =   1
          IconDX          =   0
          IconDY          =   0
@@ -1162,6 +1162,17 @@ End
 		    Me.Request.Headers.SetHeader("User-Agent", ua)
 		  Else
 		    Me.Request.Headers.AppendHeader("User-Agent", ua)
+		  End If
+		  If Me.Request.ProtocolVersion >= 1.1 Then 
+		    If Me.Request.Headers.HasHeader("Connection") Then
+		      Me.Request.Headers.SetHeader("close", ua)
+		    Else
+		      Me.Request.Headers.AppendHeader("Connection", "close")
+		    End If
+		  End If
+		  
+		  If Me.Request.Headers.AcceptableTypes.Ubound <= -1 Then
+		    Me.Request.Headers.SetHeader("Accept", "*/*")
 		  End If
 		  
 		  Me.Request.MessageBody = MessageBody.Text
