@@ -3,18 +3,19 @@ Protected Class WebFileServer
 Inherits WebServer
 	#tag Event
 		Function HandleRequest(ClientRequest As HTTPRequest) As HTTPResponse
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTPResponse 'The response object
 		  Dim item As FolderItem = FindItem(ClientRequest.Path)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
 		      '404 Not found
-		      Me.Log("Page not found", -2)
+		      Me.Log("Page not found", Log_Debug)
 		      doc = New HTTPResponse(404, ClientRequest.Path)
 		      
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
-		      Me.Log("Page is directory and DirectoryBrowsing=False", -2)
+		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
 		      doc = New HTTPResponse(403, ClientRequest.Path)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
@@ -23,7 +24,7 @@ Inherits WebServer
 		      doc = New HTTPResponse("/", Location)
 		    Else
 		      '200 OK
-		      Me.Log("Found page", -2)
+		      Me.Log("Found page", Log_Debug)
 		      doc = New HTTPResponse(item, ClientRequest.Path)
 		    End If
 		  End Select
@@ -36,6 +37,7 @@ Inherits WebServer
 
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
+		  Me.Log(CurrentMethodName + "(" + Path + ")", WebServer.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  
 		  If Not Document.Directory And "\" + Document.Name = path Then
@@ -46,8 +48,11 @@ Inherits WebServer
 		  Dim item As FolderItem = GetTrueFolderItem(Path, FolderItem.PathTypeAbsolute)
 		  
 		  If item <> Nil And item.Exists Then
+		    Me.Log(CurrentMethodName + "Found: " + item.AbsolutePath + ")", Log_Debug)
 		    Return item
 		  End If
+		  
+		  Me.Log(CurrentMethodName + "miss!: " + Path + ")", WebServer.Log_Debug)
 		End Function
 	#tag EndMethod
 
@@ -146,6 +151,13 @@ Inherits WebServer
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="SessionTimeout"
+			Group="Behavior"
+			InitialValue="600"
+			Type="Integer"
+			InheritedFrom="WebServer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -157,6 +169,13 @@ Inherits WebServer
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseSessions"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			InheritedFrom="WebServer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -3,37 +3,70 @@ Protected Class WebServer
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
-		  Me.Log("Add socket", -2)
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  'Me.Log("Add socket " + Str(Me.ActiveConnections.UBound + 1), Log_Socket)
 		  Dim sock As New HTTPClientSocket
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
 		  AddHandler sock.GetSession, AddressOf Me.GetSessionHandler
+		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
+		  AddHandler sock.Log, AddressOf Me.ClientLogHandler
 		  Return sock
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Error(ErrorCode as Integer)
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Dim err As String = SocketErrorMessage(ErrorCode)
+		  
+		  If ErrorCode <> 102 Then
+		    Me.Log(err, Log_Error)
+		  Else
+		    Me.Log(err, Log_Socket)
+		  End If
+		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTPResponse)
-		  Me.Log("Add redirect for " + page.Path, -2)
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Me.Log("Add redirect for " + page.Path, Log_Debug)
 		  Redirects.Value(Page.Path) = Page
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ClientErrorHandler(Sender As HTTPClientSocket)
+		  Me.Log(CurrentMethodName + "(" + Sender.SessionID + ")", Log_Trace)
+		  Me.Log(SocketErrorMessage(Sender.LastErrorCode) + "(Client " + Sender.SessionID + ")", Log_Socket)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ClientLogHandler(Sender As HTTPClientSocket, Message As String, Level As Integer)
+		  #pragma Unused Sender
+		  Me.Log(Message, Level)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As HTTPClientSocket)
-		  Me.Log("Request received", -2)
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Me.Log("Incoming data", Log_Socket)
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTPRequest
 		  Dim doc As HTTPResponse
 		  Try
 		    clientrequest = New HTTPRequest(data)
-		    Me.Log("Request is well formed", -2)
+		    Me.Log("Request is well formed", Log_Debug)
 		    If clientrequest.Headers.HasHeader("Connection") Then
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
 		    End If
+		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
 		      If Not Sender.ValidateSession(clientrequest) Then
-		        Me.Log("No valid session", -2)
+		        Me.Log("No valid session", Log_Debug)
 		        Dim s As HTTPSession = NewSession()
 		        clientrequest.SessionID = s.SessionID
 		        Sender.SessionID = s.SessionID
@@ -41,7 +74,7 @@ Inherits ServerSocket
 		      End If
 		    End If
 		    
-		    Me.Log(clientrequest.ToString, 0)
+		    
 		    
 		    Dim tmp As HTTPRequest = clientrequest
 		    If TamperRequest(tmp) Then
@@ -50,30 +83,30 @@ Inherits ServerSocket
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
 		      doc = New HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
-		      Me.Log("Unsupported protocol version", -2)
+		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
-		      Me.Log("Authenticating", -2)
+		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
-		        Me.Log("Authentication failed", -2)
+		        Me.Log("Authentication failed", Log_Error)
 		        doc = New HTTPResponse(401, clientrequest.Path)
 		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      End If
 		    End If
 		  Catch err As UnsupportedFormatException
 		    doc = New HTTPResponse(400, "") 'bad request
-		    Me.Log("Request is NOT well formed", -2)
+		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
 		  
 		  Dim cache As HTTPResponse = GetCache(Sender, clientRequest.Path)
 		  Dim redir As HTTPResponse = GetRedirect(Sender, clientrequest.Path)
 		  If redir <> Nil Then
 		    doc = redir
-		    Me.Log("Using redirect.", -2)
+		    Me.Log("Using redirect.", Log_Debug)
 		  ElseIf cache <> Nil Then
 		    'Cache hit
 		    doc = Cache
 		    doc.FromCache = True
-		    Me.Log("Page from cache", -2)
+		    Me.Log("Page from cache", Log_Debug)
 		    Cache.Expires = New Date
 		    Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		  ElseIf doc = Nil Then
@@ -84,37 +117,37 @@ Inherits ServerSocket
 		    End If
 		  End If
 		  If doc = Nil Then
-		    Me.Log("Running HandleRequest event", -2)
+		    Me.Log("Running HandleRequest event", Log_Debug)
 		    doc = HandleRequest(clientrequest)
 		  End If
 		  If doc = Nil Then
 		    Select Case clientrequest.Method
 		    Case RequestMethod.TRACE
-		      Me.Log("Request is a TRACE", -2)
+		      Me.Log("Request is a TRACE", Log_Debug)
 		      doc = New HTTPResponse(200, "")
 		      doc.Headers.SetHeader("Content-Length", Str(Data.Size))
 		      doc.Headers.SetHeader("Content-Type", "message/http")
 		      doc.MessageBody = Data
 		    Case RequestMethod.OPTIONS
-		      Me.Log("Request is a OPTIONS", -2)
+		      Me.Log("Request is a OPTIONS", Log_Debug)
 		      doc = New HTTPResponse(200, "")
 		      doc.MessageBody = ""
 		      doc.Headers.SetHeader("Content-Length", "0")
 		      doc.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		      doc.Headers.SetHeader("Accept-Ranges", "bytes")
 		    Case RequestMethod.GET, RequestMethod.HEAD
-		      Me.Log("Request is a HEAD", -2)
+		      Me.Log("Request is a HEAD", Log_Debug)
 		      doc = New HTTPResponse(404, clientrequest.Path)
 		    Else
 		      If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
 		        doc = New HTTPResponse(501, clientrequest.MethodName) 'Not implemented
-		        Me.Log("Request is not implemented", -2)
+		        Me.Log("Request is not implemented", Log_Error)
 		      ElseIf clientrequest.MethodName = "" Then
 		        doc = New HTTPResponse(400, "") 'bad request
-		        Me.Log("Request is malformed", -2)
+		        Me.Log("Request is malformed", Log_Error)
 		      ElseIf clientrequest.MethodName <> "" Then
 		        doc = New HTTPResponse(405, clientrequest.MethodName)
-		        Me.Log("Request is a NOT ALLOWED", -2)
+		        Me.Log("Request is a NOT ALLOWED", Log_Error)
 		      End If
 		    End Select
 		  End If
@@ -135,10 +168,10 @@ Inherits ServerSocket
 		  
 		  
 		  If EnforceContentType Then
-		    Me.Log("Checking Accepts", -2)
+		    Me.Log("Checking Accepts", Log_Debug)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
-		        Me.Log("Response is a Acceptable", -2)
+		        Me.Log("Response is a Acceptable", Log_Debug)
 		        SendResponse(Sender, doc)
 		        Return
 		      End If
@@ -146,14 +179,14 @@ Inherits ServerSocket
 		    Dim accepted As ContentType = doc.MIMEType
 		    doc = New HTTPResponse(406, "") 'Not Acceptable
 		    doc.MIMEType = accepted
-		    Me.Log("Response is not Acceptable", -2)
+		    Me.Log("Response is not Acceptable", Log_Error)
 		  End If
 		  SendResponse(Sender, doc)
 		  
 		  
 		  
 		Exception Err
-		  Me.Log("EXCEPTION", -2)
+		  Me.Log("EXCEPTION", Log_Error)
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
 		  Dim errpage As HTTPResponse
@@ -176,64 +209,75 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetCache(Sender As HTTPClientSocket, Path As String) As HTTPResponse
-		  Me.Log("Get cache item: " + Path, -2)
+		  Me.Log(CurrentMethodName + "(" + Sender.SessionID + ")", Log_Trace)
 		  Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
 		  If session.GetCacheItem(Path) <> Nil Then
+		    Me.Log("(hit!) Get cache item: " + Path, Log_Debug)
 		    Return session.GetCacheItem(Path)
 		  End If
+		  Me.Log("(miss!) Get cache item: " + Path, Log_Debug)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function GetRedirect(Sender As HTTPClientSocket, Path As String) As HTTPResponse
-		  Me.Log("Get redirect: " + Path, -2)
+		  Me.Log(CurrentMethodName + "(" + Sender.SessionID + ")", Log_Trace)
 		  Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
 		  If session.GetRedirect(Path) <> Nil Then
+		    Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
 		    Return session.GetRedirect(Path)
 		  End If
 		  
 		  If Me.Redirects.HasKey(Path) Then
+		    Me.Log("(global hit!) Get redirect: " + Path, Log_Debug)
 		    Return Me.Redirects.Value(Path)
 		  End If
+		  Me.Log("(miss!) Get redirect: " + Path, Log_Debug)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function GetSessionHandler(Sender As HTTPClientSocket, ID As String) As HTTPSession
+		  Me.Log(CurrentMethodName + "(" + ID + ")", Log_Trace)
 		  #pragma Unused Sender
-		  Me.Log("Get session: " + ID, -2)
 		  If Sessions.HasKey(ID) Then
+		    Me.Log("(hit!) Get session: " + ID, Log_Debug)
 		    Return Sessions.Value(ID)
 		  End If
+		  Me.Log("(miss!) Get session: " + ID, Log_Debug)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Listen()
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Me.Log("Server now listening...", Log_Socket)
 		  Sessions = New Dictionary
 		  Super.Listen
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Log(Message As String, Severity As Integer)
-		  RaiseEvent Log(Message.Trim + EndofLine, Severity)
+		Sub Log(Message As String, Type As Integer)
+		  RaiseEvent Log(Message.Trim + EndofLine, Type)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function NewSession() As HTTPSession
+		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim s As New HTTPSession
 		  s.NewSession = True
 		  Sessions.Value(s.SessionID) = s
-		  Me.Log("Session created: " + s.SessionID, -2)
+		  Me.Log("Session created: " + s.SessionID, Log_Debug)
 		  Return s
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RemoveRedirect(HTTPpath As String)
-		  Me.Log("Remove redirect: " + HTTPPath, -2)
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Me.Log("Remove redirect: " + HTTPPath, Log_Debug)
 		  If Redirects.HasKey(HTTPpath) Then
 		    Redirects.Remove(HTTPpath)
 		  End If
@@ -242,15 +286,16 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub SendResponse(Socket As HTTPClientSocket, ResponseDocument As HTTPResponse)
+		  Me.Log(CurrentMethodName + "(" + Socket.SessionID + ")", Log_Trace)
 		  Dim tmp As HTTPResponse = ResponseDocument
 		  If TamperResponse(tmp) Then
-		    Me.Log("Outbound tamper.", -2)
+		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
 		  End If
 		  
 		  If Not ResponseDocument.FromCache Then
 		    #If GZIPAvailable Then
-		      Me.Log("Running gzip", -2)
+		      Me.Log("Running gzip", Log_Debug)
 		      ResponseDocument.Headers.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
 		      Try
@@ -267,10 +312,8 @@ Inherits ServerSocket
 		  End If
 		  If Me.KeepAlive Then
 		    ResponseDocument.Headers.SetHeader("Connection", "keep-alive")
-		    Me.Log("Set keep-alive", -2)
 		  Else
 		    ResponseDocument.Headers.SetHeader("Connection", "close")
-		    Me.Log("Set keep-alive=FALSE", -2)
 		  End If
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
@@ -284,18 +327,19 @@ Inherits ServerSocket
 		    Dim session As HTTPSession = GetSessionHandler(Socket, Socket.SessionID)
 		    If session <> Nil Then session.ExtendSession
 		    If session.NewSession Then
-		      Me.Log("Set session cookie: " + Session.SessionID, -2)
+		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
 		      ResponseDocument.Headers.SetCookie("SessionID") = session.SessionID
 		    ElseIf ResponseDocument.Headers.HasCookie("SessionID") Then
-		      Me.Log("Clear session cookie", -2)
+		      Me.Log("Clear session cookie", Log_Debug)
 		      ResponseDocument.Headers.RemoveCookie("SessionID")
 		    End If
 		  End If
-		  
-		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), 0)
+		  Me.Log("Sending data", Log_Socket)
+		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
+		  Me.Log("Send complete", Log_Socket)
 		  If ResponseDocument.Headers.GetHeader("Connection") = "close" Then Socket.Close
 		  
 		  
@@ -311,13 +355,23 @@ Inherits ServerSocket
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub StopListening()
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  Super.StopListening
+		  Me.Log("Server stopped listening.", Log_Socket)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub TimeOutHandler(Sender As Timer)
 		  #pragma Unused Sender
+		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim d As New Date
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTPSession = Me.Sessions.Value(Id)
 		    If session.LastActivity.TotalSeconds + Me.SessionTimeout < d.TotalSeconds Then
+		      Me.Log("Session timed out (" + ID + ")", Log_Debug)
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next
@@ -414,6 +468,24 @@ Inherits ServerSocket
 
 
 	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"QnDHTTPd/1.0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Error, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Request, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Response, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Socket, Type = Double, Dynamic = False, Default = \"-2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-3", Scope = Public
 	#tag EndConstant
 
 

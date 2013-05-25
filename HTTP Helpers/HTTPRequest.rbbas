@@ -36,7 +36,7 @@ Protected Class HTTPRequest
 		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  
-		  Me.Path = DecodeURLComponent(NthField(line, " ", 2).Trim)
+		  Me.Path = URLDecode(NthField(line, " ", 2).Trim)
 		  Dim tmp As String = NthField(Me.Path, "?", 2)
 		  path = Replace(path, "?" + tmp, "")
 		  Me.Arguments = Split(tmp, "&")
@@ -79,7 +79,7 @@ Protected Class HTTPRequest
 		  If Me.Arguments.Ubound > -1 Then
 		    args = "?" + Join(Me.Arguments, "&")
 		  End If
-		  Dim data As String = MethodName + " " + EncodeURLComponent(Path) + EncodeURLComponent(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
+		  Dim data As String = MethodName + " " + URLEncode(Path) + URLEncode(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
 		    Me.Headers.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
 		    Me.MessageBody = Me.MultiPart.ToString

@@ -7,23 +7,23 @@ Begin Window FileServerDemo
    Frame           =   0
    FullScreen      =   False
    HasBackColor    =   False
-   Height          =   401
+   Height          =   5.18e+2
    ImplicitInstance=   True
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   False
+   MaximizeButton  =   True
    MaxWidth        =   32000
    MenuBar         =   1027555327
    MenuBarVisible  =   True
    MinHeight       =   64
    MinimizeButton  =   True
    MinWidth        =   64
-   Placement       =   0
+   Placement       =   2
    Resizeable      =   True
    Title           =   "Server Demo"
    Visible         =   True
-   Width           =   779
+   Width           =   7.79e+2
    Begin PushButton PushButton1
       AutoDeactivate  =   True
       Bold            =   ""
@@ -37,12 +37,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   13
-      LockBottom      =   ""
+      Left            =   10
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -50,7 +50,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   12
+      Top             =   439
       Underline       =   ""
       Visible         =   True
       Width           =   80
@@ -68,12 +68,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   13
-      LockBottom      =   ""
+      Left            =   10
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -81,7 +81,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   46
+      Top             =   412
       Underline       =   ""
       Visible         =   True
       Width           =   80
@@ -98,12 +98,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   5
-      LockBottom      =   ""
+      Left            =   113
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
       State           =   0
       TabIndex        =   4
@@ -112,7 +112,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   11
       TextUnit        =   0
-      Top             =   181
+      Top             =   465
       Underline       =   ""
       Value           =   False
       Visible         =   True
@@ -135,13 +135,13 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   ""
-      Left            =   13
+      Left            =   257
       LimitText       =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Mask            =   ""
       Password        =   ""
       ReadOnly        =   ""
@@ -154,7 +154,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   112
+      Top             =   415
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -172,13 +172,13 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   ""
-      Left            =   13
+      Left            =   113
       ListIndex       =   0
-      LockBottom      =   ""
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -186,7 +186,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   80
+      Top             =   414
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -200,7 +200,7 @@ Begin Window FileServerDemo
       Height          =   32
       Index           =   -2147483648
       KeepAlive       =   ""
-      Left            =   135
+      Left            =   507
       LockedInPosition=   False
       MaximumSocketsConnected=   10
       MinimumSocketsAvailable=   2
@@ -208,7 +208,7 @@ Begin Window FileServerDemo
       Scope           =   0
       SessionTimeout  =   600
       TabPanelIndex   =   0
-      Top             =   12
+      Top             =   439
       UseSessions     =   True
       Width           =   32
    End
@@ -224,13 +224,13 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   ""
-      Left            =   5
-      ListIndex       =   1
-      LockBottom      =   ""
+      Left            =   611
+      ListIndex       =   0
+      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -238,7 +238,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   218
+      Top             =   403
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -257,12 +257,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   93
-      LockBottom      =   ""
+      Left            =   699
+      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -270,31 +270,10 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   218
+      Top             =   403
       Underline       =   ""
       Visible         =   True
       Width           =   80
-   End
-   Begin ProgressBar ProgressBar1
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   9
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   11
-      LockBottom      =   ""
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
-      Maximum         =   100
-      Scope           =   0
-      TabPanelIndex   =   0
-      Top             =   203
-      Value           =   0
-      Visible         =   True
-      Width           =   162
    End
    Begin CheckBox CheckBox3
       AutoDeactivate  =   True
@@ -308,12 +287,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   5
-      LockBottom      =   ""
+      Left            =   113
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
       State           =   0
       TabIndex        =   13
@@ -322,7 +301,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   160
+      Top             =   440
       Underline       =   ""
       Value           =   False
       Visible         =   True
@@ -345,13 +324,13 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   ""
-      Left            =   5
+      Left            =   322
       LimitText       =   0
-      LockBottom      =   ""
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Mask            =   ""
       Password        =   ""
       ReadOnly        =   ""
@@ -364,7 +343,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   281
+      Top             =   440
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -382,12 +361,12 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   5
-      LockBottom      =   ""
+      Left            =   322
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
       State           =   0
       TabIndex        =   8
@@ -396,7 +375,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   257
+      Top             =   416
       Underline       =   ""
       Value           =   False
       Visible         =   True
@@ -419,13 +398,13 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   ""
-      Left            =   5
+      Left            =   322
       LimitText       =   0
-      LockBottom      =   ""
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Mask            =   ""
       Password        =   ""
       ReadOnly        =   ""
@@ -438,7 +417,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   305
+      Top             =   464
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -461,13 +440,13 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   ""
-      Left            =   5
+      Left            =   322
       LimitText       =   0
-      LockBottom      =   ""
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Mask            =   ""
       Password        =   ""
       ReadOnly        =   ""
@@ -480,7 +459,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   329
+      Top             =   488
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -498,13 +477,13 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialValue    =   "None\r\nBasic\r\nHash"
       Italic          =   ""
-      Left            =   99
+      Left            =   416
       ListIndex       =   0
-      LockBottom      =   ""
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   0
       TabIndex        =   15
       TabPanelIndex   =   0
@@ -512,7 +491,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   256
+      Top             =   415
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
@@ -531,7 +510,7 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   ""
-      Left            =   5
+      Left            =   10
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -544,7 +523,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   374
+      Top             =   465
       Underline       =   ""
       Visible         =   True
       Width           =   80
@@ -554,9 +533,9 @@ Begin Window FileServerDemo
       AutoHideScrollbars=   True
       Bold            =   ""
       Border          =   True
-      ColumnCount     =   1
+      ColumnCount     =   3
       ColumnsResizable=   ""
-      ColumnWidths    =   ""
+      ColumnWidths    =   "70%,20%,10%"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
@@ -565,20 +544,20 @@ Begin Window FileServerDemo
       EnableDragReorder=   ""
       GridLinesHorizontal=   0
       GridLinesVertical=   0
-      HasHeading      =   ""
+      HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   401
       HelpTag         =   ""
       Hierarchical    =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
+      InitialValue    =   "Log Data	Date	Type"
       Italic          =   ""
-      Left            =   185
-      LockBottom      =   ""
+      Left            =   0
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
+      LockRight       =   True
       LockTop         =   True
       RequiresSelection=   ""
       Scope           =   0
@@ -595,8 +574,54 @@ Begin Window FileServerDemo
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   594
+      Width           =   779
       _ScrollWidth    =   -1
+   End
+   Begin Label Label1
+      AutoDeactivate  =   True
+      Bold            =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   249
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   ""
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      Text            =   ":"
+      TextAlign       =   0
+      TextColor       =   &h000000
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   415
+      Transparent     =   True
+      Underline       =   ""
+      Visible         =   True
+      Width           =   8
+   End
+   Begin Timer LogTimer
+      Height          =   32
+      Index           =   -2147483648
+      Left            =   551
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   1
+      Scope           =   0
+      TabPanelIndex   =   0
+      Top             =   439
+      Width           =   32
    End
 End
 #tag EndWindow
@@ -632,6 +657,14 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private LastLogDirection As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected Messages() As Pair
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private SharedFile As FolderItem
@@ -689,41 +722,21 @@ End
 		  Dim i As Integer
 		  For i = 0 To System.NetworkInterfaceCount - 1
 		    Me.AddRow(System.GetNetworkInterface(i).IPAddress)
-		    Me.RowTag(i) = System.GetNetworkInterface(i)
+		    If System.GetNetworkInterface(i).IPAddress <> "0.0.0.0" Then 
+		      Me.RowTag(i) = System.GetNetworkInterface(i)
+		    End If
 		  Next
-		  'Me.AddRow("Auto")
-		  Me.ListIndex = i
+		  For i = Me.ListCount - 1 DownTo 0
+		    If Me.RowTag(i) = Nil Then
+		      Me.RemoveRow(i)
+		    Else
+		      Me.ListIndex = i
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Sock
-	#tag Event
-		Sub Log(Message As String, Severity As Integer)
-		  If Severity >= Val(LogLevel.Text) Then
-		    Dim c As Color
-		    Select Case Severity
-		    Case 0
-		      c = &cC0C0C000
-		    Case 1
-		      c = &cFF808000
-		    Case -1
-		      c = &cC0C0C000
-		    Case -2
-		      c = &cFFFF8000
-		    Else
-		      c = &cFFFFFF00
-		    End Select
-		    Dim lines() As String = Split(Message, EndOfLine)
-		    For i As Integer = 0 To UBound(lines)
-		      If lines(i).Trim <> "" Then
-		        Listbox1.AddRow(lines(i))
-		        Listbox1.RowTag(Listbox1.LastIndex) = c
-		      End If
-		    Next
-		    Listbox1.ScrollPosition = Listbox1.LastIndex
-		  End If
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Function TamperResponse(ByRef Response As HTTPResponse) As Boolean
 		  If Response.StatusCode = 200 Then
@@ -746,14 +759,27 @@ End
 		  
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub Log(Message As String, Severity As Integer)
+		  Messages.Insert(0, Message:Severity)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events LogLevel
 	#tag Event
 		Sub Open()
-		  For i As Integer = 2 DownTo -2
-		    Me.AddRow(Format(i, "-0"))
-		  Next
-		  Me.ListIndex = 3
+		  'For i As Integer = 2 DownTo -2
+		  'Me.AddRow(Format(i, "-0"))
+		  'Next
+		  'Me.ListIndex = 3
+		  Me.AddRow("Normal")
+		  Me.RowTag(0) = 1
+		  Me.AddRow("Debug")
+		  Me.RowTag(1) = -1
+		  Me.AddRow("Socket")
+		  Me.RowTag(2) = -2
+		  Me.AddRow("Trace")
+		  Me.RowTag(3) = -3
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -774,7 +800,12 @@ End
 #tag Events CheckBox3
 	#tag Event
 		Sub Action()
+		  If Sock.IsListening Then
+		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") = 6 Then Return
+		  End If
+		  Sock.StopListening
 		  Sock.DirectoryBrowsing = Me.Value
+		  Sock.Listen
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -841,5 +872,82 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events LogTimer
+	#tag Event
+		Sub Action()
+		  Dim message As String
+		  Dim severity As Integer
+		  While UBound(messages) > -1
+		    Dim p As Pair = messages.Pop
+		    message = P.Left
+		    severity = p.Right
+		    Dim lines() As String = Split(Message, EndOfLine)
+		    Dim squelch As Integer
+		    #pragma BreakOnExceptions Off
+		    Try
+		      squelch = LogLevel.RowTag(LogLevel.ListIndex)
+		    Catch
+		      'meh
+		    End Try
+		    #pragma BreakOnExceptions default
+		    Dim now As New Date
+		    For i As Integer = 0 To UBound(lines)
+		      If lines(i).Trim <> "" Then
+		        Select Case Severity
+		        Case WebServer.Log_Request
+		          If Severity < squelch And squelch <> WebServer.Log_Response Then Return
+		          If i = 0 Then
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "HTTP Request")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
+		          Else
+		            Listbox1.AddRow(lines(i), " ", " ")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(greenarrowright.Width, greenarrowright.Height)
+		          End If
+		          
+		          Listbox1.RowTag(Listbox1.LastIndex) = &c0080FF99
+		          
+		        Case WebServer.Log_Response
+		          If Severity < squelch And squelch <> WebServer.Log_Request Then Return
+		          
+		          If i = 0 Then
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "HTTP Reply")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = blue_left_arrow
+		          Else
+		            Listbox1.AddRow(lines(i), " ", " ")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(blue_left_arrow.Width, blue_left_arrow.Height)
+		          End If
+		          
+		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
+		        Case WebServer.Log_Error
+		          If Severity < squelch Then Return
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Error")
+		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
+		        Case WebServer.Log_Debug
+		          If Severity < squelch Then Return
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Debug")
+		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
+		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
+		        Case WebServer.Log_Socket
+		          If Severity < squelch Then Return
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Socket")
+		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
+		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
+		        Case WebServer.Log_Trace
+		          If Severity < squelch Then Return
+		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.ShortTime, "Trace"
+		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099
+		          Listbox1.RowPicture(Listbox1.LastIndex) = traceIcon
+		        Else
+		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.ShortTime, "Unspecified"
+		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFFFF99
+		        End Select
+		      End If
+		      Listbox1.ScrollPosition = Listbox1.LastIndex
+		    Next
+		    
+		  Wend
+		End Sub
 	#tag EndEvent
 #tag EndEvents
