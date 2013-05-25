@@ -208,13 +208,6 @@ Protected Class HTTPSession
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Address"
-			Visible=true
-			Group="Behavior"
-			Type="String"
-			InheritedFrom="TCPSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Cacheable"
 			Group="Behavior"
 			InitialValue="True"
@@ -251,22 +244,16 @@ Protected Class HTTPSession
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Port"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			InheritedFrom="TCPSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionKey"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

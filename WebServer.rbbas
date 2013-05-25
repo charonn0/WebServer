@@ -178,19 +178,9 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSessionHandler(Sender As HTTPClientSocket, ID As String) As HTTPSession
-		  'If ID.Trim = "" Then
-		  'Dim s As New HTTPSession
-		  's.NewSession = True
-		  'Sessions.Value(s.SessionID) = s
-		  'Return s
-		  'End If
+		  #pragma Unused Sender
 		  If Sessions.HasKey(ID) Then
 		    Return Sessions.Value(ID)
-		    'Else
-		    'Dim s As New HTTPSession
-		    's.NewSession = True
-		    'Sessions.Value(s.SessionID) = s
-		    'Return s
 		  End If
 		End Function
 	#tag EndMethod
@@ -262,9 +252,9 @@ Inherits ServerSocket
 		    Dim session As HTTPSession = GetSessionHandler(Socket, Socket.SessionID)
 		    If session <> Nil Then session.ExtendSession
 		    If session.NewSession Then
-		      ResponseDocument.SetCookie("SessionID") = session.SessionID
+		      ResponseDocument.Headers.SetCookie("SessionID") = session.SessionID
 		    Else
-		      ResponseDocument.RemoveCookie("SessionID")
+		      ResponseDocument.Headers.RemoveCookie("SessionID")
 		    End If
 		  End If
 		  

@@ -1,6 +1,12 @@
 #tag Class
 Protected Class HTTPHeaders
 Inherits InternetHeaders
+	#tag Method, Flags = &h0
+		Function AllCookies() As HTTPCookie()
+		  Return Cookies
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1000
 		Sub Constructor(Data As String)
 		  // Calling the overridden superclass constructor.
@@ -51,10 +57,10 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCookie(Name As String) As HTTPCookie
+		Function GetCookie(Name As String) As String
 		  For i As Integer = UBound(Me.Cookies) DownTo 0
 		    If Me.Cookies(i).Name = Name Then
-		      Return Me.Cookies(i)
+		      Return Me.Cookies(i).Value
 		    End If
 		  Next
 		End Function
@@ -73,6 +79,14 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasCookie(CookieName As String) As Boolean
+		  For i As Integer = 0 To Cookies.Ubound
+		    If Cookies(i).Name = CookieName Then Return True
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasHeader(HeaderName As String) As Boolean
 		  For i As Integer = 0 To Me.Count - 1
 		    If Me.Name(i) = HeaderName Then Return True
@@ -87,13 +101,6 @@ Inherits InternetHeaders
 		      Me.Cookies.Remove(i)
 		    End If
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetCookie(c As HTTPCookie)
-		  Me.RemoveCookie(c.Name)
-		  Cookies.Append(c)
 		End Sub
 	#tag EndMethod
 
@@ -150,8 +157,8 @@ Inherits InternetHeaders
 		AcceptableTypes() As ContentType
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Cookies() As HTTPCookie
+	#tag Property, Flags = &h1
+		Protected Cookies() As HTTPCookie
 	#tag EndProperty
 
 

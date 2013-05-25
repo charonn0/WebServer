@@ -28,8 +28,8 @@ Protected Class HTTPRequest
 		    End If
 		  End If
 		  
-		  If Me.Headers.GetCookie("SessionID") <> Nil Then
-		    Me.SessionID = Me.Headers.GetCookie("SessionID").Value
+		  If Me.Headers.Hascookie("SessionID") Then
+		    Me.SessionID = Me.Headers.GetCookie("SessionID")
 		  End If
 		  
 		  
@@ -57,16 +57,6 @@ Protected Class HTTPRequest
 		    
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetCookie(CookieName As String) As HTTPCookie
-		  For i As Integer = 0 To UBound(Headers.Cookies)
-		    If Headers.Cookies(i).Name = CookieName Then
-		      Return Headers.Cookies(i)
-		    End If
-		  Next
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -193,6 +183,10 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSessionID As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty
 
@@ -208,9 +202,22 @@ Protected Class HTTPRequest
 		ProtocolVersion As Single
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mSessionID = "" Then
+			    If Headers.HasCookie("SessionID") Then mSessionID = Headers.GetCookie("SessionID")
+			  End If
+			  return mSessionID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSessionID = value
+			End Set
+		#tag EndSetter
 		SessionID As String
-	#tag EndProperty
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -279,6 +286,7 @@ Protected Class HTTPRequest
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

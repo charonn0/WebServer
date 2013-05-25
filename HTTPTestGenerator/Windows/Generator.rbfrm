@@ -1163,7 +1163,7 @@ End
 		  Else
 		    Me.Request.Headers.AppendHeader("User-Agent", ua)
 		  End If
-		  If Me.Request.ProtocolVersion >= 1.1 Then 
+		  If Me.Request.ProtocolVersion >= 1.1 Then
 		    If Me.Request.Headers.HasHeader("Connection") Then
 		      Me.Request.Headers.SetHeader("close", ua)
 		    Else
@@ -1215,9 +1215,9 @@ End
 		    
 		    ResponseHeaders.AddRow(n, v)
 		  Next
-		  CookiesButton.Visible = UBound(Response.Headers.Cookies) > -1
+		  CookiesButton.Visible = UBound(Response.Headers.AllCookies) > -1
 		  CookiesButton.Invalidate(True)
-		  CookiesButton.HelpTag = Str(UBound(Response.Headers.Cookies) + 1) + " cookies"
+		  CookiesButton.HelpTag = Str(UBound(Response.Headers.AllCookies) + 1) + " cookies"
 		  ResponseHeaderView.Enabled = True
 		  
 		  If Sock.IsConnected Then
@@ -1268,7 +1268,7 @@ End
 #tag Events CookiesButton
 	#tag Event
 		Sub Action()
-		  CookieViewer.ShowCookies(Response.Headers.Cookies)
+		  CookieViewer.ShowCookies(Response.Headers.AllCookies)
 		End Sub
 	#tag EndEvent
 	#tag Event

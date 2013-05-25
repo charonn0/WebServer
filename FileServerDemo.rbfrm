@@ -241,6 +241,7 @@ Begin Window FileServerDemo
       AuthenticationRealm=   """""Restricted Area"""""
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
+      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -251,8 +252,11 @@ Begin Window FileServerDemo
       MinimumSocketsAvailable=   2
       Port            =   0
       Scope           =   0
+      TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   12
+      Visible         =   True
       Width           =   32
    End
    Begin ComboBox LogLevel
@@ -333,7 +337,9 @@ Begin Window FileServerDemo
       LockTop         =   True
       Maximum         =   100
       Scope           =   0
+      TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   203
       Value           =   0
       Visible         =   True
@@ -701,11 +707,11 @@ End
 	#tag Event
 		Function TamperResponse(ByRef Response As HTTPResponse) As Boolean
 		  If Response.StatusCode = 200 Then
-		    Response.SetHeader("X-Judgement-Render", "Your request is granted.")
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is granted.")
 		  ElseIf Response.StatusCode = 302 Then
-		    Response.SetHeader("X-Judgement-Render", "Your request is pending.")
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is pending.")
 		  Else
-		    Response.SetHeader("X-Judgement-Render", "Your request is denied.")
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is denied.")
 		  End If
 		  Return True
 		  

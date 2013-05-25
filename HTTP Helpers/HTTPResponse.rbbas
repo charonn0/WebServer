@@ -226,16 +226,6 @@ Protected Class HTTPResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCookie(CookieName As String) As HTTPCookie
-		  For i As Integer = 0 To UBound(Headers.Cookies)
-		    If Headers.Cookies(i).Name = CookieName Then
-		      Return Headers.Cookies(i)
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MethodName() As String
 		  Select Case Me.Method
 		  Case RequestMethod.GET
@@ -265,35 +255,6 @@ Protected Class HTTPResponse
 		  
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemoveCookie(CookieName As String)
-		  Me.Headers.RemoveCookie(CookieName)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetCookie(NewCookie As HTTPCookie)
-		  Me.Headers.SetCookie(NewCookie)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetCookie(Name As String, Assigns Value As String)
-		  Dim c As New HTTPCookie(Name, Value)
-		  Me.RemoveCookie(c.Name)
-		  Me.Headers.Cookies.Append(c)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetHeader(Name As String, Value As String)
-		  If Headers.HasHeader(Name) Then
-		    Headers.Delete(Name)
-		  End If
-		  Me.Headers.AppendHeader(Name, Value)
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
