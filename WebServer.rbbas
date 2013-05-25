@@ -28,10 +28,11 @@ Inherits ServerSocket
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
 		    End If
 		    If UseSessions Then
-		      If Sender.ValidateSession(clientrequest) Then
-		        clientrequest.Headers.RemoveCookie("SessionID")
-		      Else
-		        clientrequest.SessionID = Sender.SessionID
+		      If Not Sender.ValidateSession(clientrequest) Then
+		        Dim s As HTTPSession = NewSession()
+		        clientrequest.SessionID = s.SessionID
+		        Sender.SessionID = s.SessionID
+		        clientrequest.Headers.SetCookie("SessionID") = s.SessionID
 		      End If
 		    End If
 		    
@@ -177,19 +178,19 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSessionHandler(Sender As HTTPClientSocket, ID As String) As HTTPSession
-		  If ID.Trim = "" Then
-		    Dim s As New HTTPSession
-		    s.NewSession = True
-		    Sessions.Value(s.SessionID) = s
-		    Return s
-		  End If
+		  'If ID.Trim = "" Then
+		  'Dim s As New HTTPSession
+		  's.NewSession = True
+		  'Sessions.Value(s.SessionID) = s
+		  'Return s
+		  'End If
 		  If Sessions.HasKey(ID) Then
 		    Return Sessions.Value(ID)
-		  Else
-		    Dim s As New HTTPSession
-		    s.NewSession = True
-		    Sessions.Value(s.SessionID) = s
-		    Return s
+		    'Else
+		    'Dim s As New HTTPSession
+		    's.NewSession = True
+		    'Sessions.Value(s.SessionID) = s
+		    'Return s
 		  End If
 		End Function
 	#tag EndMethod
@@ -198,6 +199,15 @@ Inherits ServerSocket
 		Sub Log(Message As String, Severity As Integer)
 		  RaiseEvent Log(Message.Trim + EndofLine, Severity)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function NewSession() As HTTPSession
+		  Dim s As New HTTPSession
+		  s.NewSession = True
+		  Sessions.Value(s.SessionID) = s
+		  Return s
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -251,6 +261,11 @@ Inherits ServerSocket
 		  If UseSessions Then
 		    Dim session As HTTPSession = GetSessionHandler(Socket, Socket.SessionID)
 		    If session <> Nil Then session.ExtendSession
+		    If session.NewSession Then
+		      ResponseDocument.SetCookie("SessionID") = session.SessionID
+		    Else
+		      ResponseDocument.RemoveCookie("SessionID")
+		    End If
 		  End If
 		  
 		  Socket.Write(ResponseDocument.ToString)

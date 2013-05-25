@@ -6,8 +6,12 @@ Inherits TCPSocket
 		  Dim s As HTTPSession = GetSession(Request.SessionID)
 		  If s.SessionID = Request.SessionID Then
 		    Me.SessionID = Request.SessionID
+		    s.NewSession = False
 		    Return True
 		  End If
+		  
+		Exception
+		  Return False
 		End Function
 	#tag EndMethod
 
