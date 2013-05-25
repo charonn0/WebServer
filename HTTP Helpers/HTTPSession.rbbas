@@ -2,7 +2,7 @@
 Protected Class HTTPSession
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPResponse)
-		  // Part of the StoredItem interface.
+		  If Page = Nil Then Return
 		  If Me.Cacheable Then
 		    Me.PageCache.Value(Page.Path) = Page
 		  End If
