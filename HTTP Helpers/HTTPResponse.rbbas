@@ -116,7 +116,7 @@ Protected Class HTTPResponse
 		      Dim line As String
 		      Dim name, href, icon As String
 		      name = f.TrueItem(i).Name
-		      href = URLEncode(ReplaceAll(ServerPath + "/" + name, "//", "/"))
+		      href = EncodeURLComponent(ReplaceAll(ServerPath + "/" + name, "//", "/"))
 		      While Name.len > 40
 		        Dim start As Integer
 		        Dim snip As String
@@ -126,7 +126,7 @@ Protected Class HTTPResponse
 		      Wend
 		      
 		      line = TableRow
-		      line = ReplaceAll(line, "%FILENAME%", URLDecode(name))
+		      line = ReplaceAll(line, "%FILENAME%", DecodeURLComponent(name))
 		      line = ReplaceAll(line, "%FILEPATH%", href)
 		      line = ReplaceAll(line, "%FILEDATE%", HTTPDate(f.TrueItem(i).ModificationDate))
 		      if f.TrueItem(i).Directory Then

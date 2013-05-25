@@ -119,6 +119,21 @@ Inherits ServerSocket
 		    End Select
 		  End If
 		  
+		  If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
+		    If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
+		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
+		        doc = New HTTPResponse(304, "")
+		        doc.MessageBody = ""
+		      End If
+		    Else
+		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
+		        doc = New HTTPResponse(412, "") 'Precondition failed
+		        doc.MessageBody = ""
+		      End If
+		    End If
+		  End If
+		  
+		  
 		  If EnforceContentType Then
 		    Me.Log("Checking Accepts", -2)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -191,6 +206,13 @@ Inherits ServerSocket
 		    Return Sessions.Value(ID)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Listen()
+		  Sessions = New Dictionary
+		  Super.Listen
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

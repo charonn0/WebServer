@@ -36,7 +36,7 @@ Protected Class HTTPRequest
 		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  
-		  Me.Path = URLDecode(NthField(line, " ", 2).Trim)
+		  Me.Path = DecodeURLComponent(NthField(line, " ", 2).Trim)
 		  Dim tmp As String = NthField(Me.Path, "?", 2)
 		  path = Replace(path, "?" + tmp, "")
 		  Me.Arguments = Split(tmp, "&")
@@ -79,7 +79,7 @@ Protected Class HTTPRequest
 		  If Me.Arguments.Ubound > -1 Then
 		    args = "?" + Join(Me.Arguments, "&")
 		  End If
-		  Dim data As String = MethodName + " " + URLEncode(Path) + URLEncode(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
+		  Dim data As String = MethodName + " " + EncodeURLComponent(Path) + EncodeURLComponent(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
 		    Me.Headers.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
 		    Me.MessageBody = Me.MultiPart.ToString
@@ -123,6 +123,24 @@ Protected Class HTTPRequest
 	#tag Property, Flags = &h0
 		Headers As HTTPHeaders
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Headers.HasHeader("If-Modified-Since") Then
+			    Return HTTPDate(Headers.GetHeader("If-Modified-Since"))
+			  End If
+			  
+			  If Headers.HasHeader("If-Unmodified-Since") Then
+			    Return HTTPDate(Headers.GetHeader("If-Unmodified-Since"))
+			  End If
+			  
+			  Exception
+			    Return Nil
+			End Get
+		#tag EndGetter
+		IfModifiedSince As Date
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		MessageBody As String

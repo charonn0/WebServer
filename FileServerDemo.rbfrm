@@ -86,51 +86,6 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   80
    End
-   Begin TextArea TextArea1
-      AcceptTabs      =   ""
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
-      BackColor       =   16777215
-      Bold            =   ""
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   399
-      HelpTag         =   ""
-      HideSelection   =   True
-      Index           =   -2147483648
-      Italic          =   ""
-      Left            =   185
-      LimitText       =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Multiline       =   True
-      ReadOnly        =   ""
-      Scope           =   0
-      ScrollbarHorizontal=   ""
-      ScrollbarVertical=   True
-      Styled          =   True
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   0
-      TextFont        =   "System"
-      TextSize        =   0
-      TextUnit        =   0
-      Top             =   2
-      Underline       =   ""
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   594
-   End
    Begin CheckBox CheckBox1
       AutoDeactivate  =   True
       Bold            =   ""
@@ -241,7 +196,6 @@ Begin Window FileServerDemo
       AuthenticationRealm=   """""Restricted Area"""""
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
-      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -252,11 +206,10 @@ Begin Window FileServerDemo
       MinimumSocketsAvailable=   2
       Port            =   0
       Scope           =   0
-      TabIndex        =   6
+      SessionTimeout  =   600
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   12
-      Visible         =   True
+      UseSessions     =   True
       Width           =   32
    End
    Begin ComboBox LogLevel
@@ -337,9 +290,7 @@ Begin Window FileServerDemo
       LockTop         =   True
       Maximum         =   100
       Scope           =   0
-      TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   203
       Value           =   0
       Visible         =   True
@@ -598,6 +549,55 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   80
    End
+   Begin Listbox Listbox1
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   ""
+      Border          =   True
+      ColumnCount     =   1
+      ColumnsResizable=   ""
+      ColumnWidths    =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   -1
+      Enabled         =   True
+      EnableDrag      =   ""
+      EnableDragReorder=   ""
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   ""
+      HeadingIndex    =   -1
+      Height          =   401
+      HelpTag         =   ""
+      Hierarchical    =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   ""
+      Left            =   185
+      LockBottom      =   ""
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   ""
+      LockTop         =   True
+      RequiresSelection=   ""
+      Scope           =   0
+      ScrollbarHorizontal=   ""
+      ScrollBarVertical=   True
+      SelectionType   =   0
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   0
+      Underline       =   ""
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   594
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndWindow
 
@@ -700,7 +700,27 @@ End
 	#tag Event
 		Sub Log(Message As String, Severity As Integer)
 		  If Severity >= Val(LogLevel.Text) Then
-		    TextArea1.AppendText(Message + EndOfLine)
+		    Dim c As Color
+		    Select Case Severity
+		    Case 0
+		      c = &cC0C0C000
+		    Case 1
+		      c = &cFF808000
+		    Case -1
+		      c = &cC0C0C000
+		    Case -2
+		      c = &cFFFF8000
+		    Else
+		      c = &cFFFFFF00
+		    End Select
+		    Dim lines() As String = Split(Message, EndOfLine)
+		    For i As Integer = 0 To UBound(lines)
+		      If lines(i).Trim <> "" Then
+		        Listbox1.AddRow(lines(i))
+		        Listbox1.RowTag(Listbox1.LastIndex) = c
+		      End If
+		    Next
+		    Listbox1.ScrollPosition = Listbox1.LastIndex
 		  End If
 		End Sub
 	#tag EndEvent
@@ -808,5 +828,18 @@ End
 		Sub Action()
 		  Generator.Show
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Listbox1
+	#tag Event
+		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
+		  #pragma Unused column
+		  If row > Me.LastIndex Then Return False
+		  If Me.RowTag(row) <> Nil Then
+		    g.ForeColor = Me.RowTag(row)
+		    g.FillRect(0, 0, g.Width, g.Height)
+		  End If
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
