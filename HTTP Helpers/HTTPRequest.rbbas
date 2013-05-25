@@ -7,7 +7,7 @@ Protected Class HTTPRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Data As String, AuthRealm As String, RequireDigestAuth As Boolean)
+		Sub Constructor(Data As String)
 		  Dim line As String
 		  line = NthField(data, CRLF, 1)
 		  
@@ -43,18 +43,12 @@ Protected Class HTTPRequest
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
 		  Me.Expiry = New Date
 		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 60
-		  Me.AuthDigest = RequireDigestAuth
-		  Me.AuthRealm = AuthRealm
-		  Dim pw As String = Me.Headers.GetHeader("Authorization")
-		  If Not Me.AuthDigest Then
+		  If Me.Headers.HasHeader("Authorization") Then
+		    Dim pw As String = Me.Headers.GetHeader("Authorization")
 		    pw = pw.Replace("Basic ", "")
 		    pw = DecodeBase64(pw)
 		    Me.AuthPassword = NthField(pw, ":", 2)
 		    Me.AuthUsername = NthField(pw, ":", 1)
-		    
-		  Else
-		    #pragma Warning "FixMe"
-		    
 		  End If
 		End Sub
 	#tag EndMethod
@@ -104,10 +98,6 @@ Protected Class HTTPRequest
 
 	#tag Property, Flags = &h0
 		Arguments() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		AuthDigest As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

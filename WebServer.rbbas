@@ -26,7 +26,7 @@ Inherits ServerSocket
 		  Dim clientrequest As HTTPRequest
 		  Dim doc As HTTPResponse
 		  Try
-		    clientrequest = New HTTPRequest(data, AuthenticationRealm, DigestAuthenticationOnly)
+		    clientrequest = New HTTPRequest(data)
 		    Me.Log("Request is well formed", -2)
 		    If clientrequest.Headers.HasHeader("Connection") Then
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
@@ -41,43 +41,29 @@ Inherits ServerSocket
 		      End If
 		    End If
 		    
-		    
 		    Me.Log(clientrequest.ToString, 0)
 		    
 		    Dim tmp As HTTPRequest = clientrequest
 		    If TamperRequest(tmp) Then
 		      clientrequest = tmp
 		    End If
+		    
+		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
+		      doc = New HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      Me.Log("Unsupported protocol version", -2)
+		    ElseIf AuthenticationRequired Then
+		      Me.Log("Authenticating", -2)
+		      If Not Authenticate(clientrequest) Then
+		        Me.Log("Authentication failed", -2)
+		        doc = New HTTPResponse(401, clientrequest.Path)
+		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
+		      End If
+		    End If
 		  Catch err As UnsupportedFormatException
 		    doc = New HTTPResponse(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", -2)
-		    GoTo Send
 		  End Try
 		  
-		  If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		    doc = New HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
-		    Me.Log("Unsupported protocol version", -2)
-		    GoTo Send
-		  End If
-		  
-		  If AuthenticationRequired Then
-		    Me.Log("Authenticating", -2)
-		    If Not Authenticate(clientrequest) Then
-		      Me.Log("Authentication failed", -2)
-		      doc = New HTTPResponse(401, clientrequest.Path)
-		      If DigestAuthenticationOnly Or clientrequest.AuthDigest Then
-		        'digest
-		        'Work in progress
-		        Dim rand As New Random
-		        doc.Headers.SetHeader("WWW-Authenticate", "Digest realm=""" + clientrequest.AuthRealm + """,nonce=""" + Str(Rand.InRange(50000, 100000)) + """")
-		      Else 'basic
-		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
-		        
-		      End If
-		    End If
-		  End If
-		  
-		  Send:
 		  Dim cache As HTTPResponse = GetCache(Sender, clientRequest.Path)
 		  Dim redir As HTTPResponse = GetRedirect(Sender, clientrequest.Path)
 		  If redir <> Nil Then
@@ -344,10 +330,6 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h0
 		AuthenticationRequired As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		DigestAuthenticationOnly As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
