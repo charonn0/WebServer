@@ -3,18 +3,9 @@ Protected Class WebServer
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
-		  Dim sock As New HTTPSession
+		  Dim sock As New HTTPClientSocket
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
-		  If UseSessions Then
-		    Sessions.Value(sock.SessionID) = sock
-		    If Me.SessionTimer = Nil Then
-		      Me.SessionTimer = New Timer
-		      Me.SessionTimer = New Timer
-		      Me.SessionTimer.Period = Me.SessionTimeout
-		      AddHandler Me.SessionTimer.Action, AddressOf TimeOutHandler
-		      Me.SessionTimer.Mode = Timer.ModeMultiple
-		    End If
-		  End If
+		  AddHandler sock.GetSession, AddressOf Me.GetSessionHandler
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -27,7 +18,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DataAvailable(Sender As HTTPSession)
+		Private Sub DataAvailable(Sender As HTTPClientSocket)
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTPRequest
 		  Dim doc As HTTPResponse
@@ -37,10 +28,10 @@ Inherits ServerSocket
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
 		    End If
 		    If UseSessions Then
-		      If Not Sessions.HasKey(Sender.SessionID) Then
-		        Sender.NewSession = true
-		        Me.Sessions.Value(Sender.SessionID) = Sender
-		        AddHandler Sender.CheckRedirect, AddressOf Me.GetRedirectHandler
+		      If Sender.ValidateSession(clientrequest) Then
+		        clientrequest.Headers.RemoveCookie("SessionID")
+		      Else
+		        clientrequest.SessionID = Sender.SessionID
 		      End If
 		    End If
 		    
@@ -78,8 +69,8 @@ Inherits ServerSocket
 		  End If
 		  
 		  Send:
-		  Dim cache As HTTPResponse = Sender.GetCacheItem(ClientRequest.Path)
-		  Dim redir As HTTPResponse = Sender.GetRedirect(clientrequest.Path)
+		  Dim cache As HTTPResponse = GetCache(Sender, clientRequest.Path)
+		  Dim redir As HTTPResponse = GetRedirect(Sender, clientrequest.Path)
 		  If redir <> Nil Then
 		    doc = redir
 		    Me.Log("Using redirect.", -2)
@@ -92,7 +83,10 @@ Inherits ServerSocket
 		    Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		  ElseIf doc = Nil Then
 		    doc = HandleRequest(clientrequest)
-		    If UseSessions Then Sender.AddCacheItem(doc)
+		    If UseSessions And GetSessionHandler(Sender, clientrequest.SessionID) <> Nil Then
+		      Dim session As HTTPSession = GetSessionHandler(Sender, clientrequest.SessionID)
+		      Session.AddCacheItem(doc)
+		    End If
 		  End If
 		  If doc = Nil Then
 		    doc = HandleRequest(clientrequest)
@@ -160,10 +154,42 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetRedirectHandler(Sender As HTTPSession, Path As String) As HTTPResponse
-		  #pragma Unused Sender
+		Private Function GetCache(Sender As HTTPClientSocket, Path As String) As HTTPResponse
+		  Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
+		  If session.GetCacheItem(Path) <> Nil Then
+		    Return session.GetCacheItem(Path)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetRedirect(Sender As HTTPClientSocket, Path As String) As HTTPResponse
+		  Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
+		  If session.GetRedirect(Path) <> Nil Then
+		    Return session.GetRedirect(Path)
+		  End If
+		  
 		  If Me.Redirects.HasKey(Path) Then
 		    Return Me.Redirects.Value(Path)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetSessionHandler(Sender As HTTPClientSocket, ID As String) As HTTPSession
+		  If ID.Trim = "" Then
+		    Dim s As New HTTPSession
+		    s.NewSession = True
+		    Sessions.Value(s.SessionID) = s
+		    Return s
+		  End If
+		  If Sessions.HasKey(ID) Then
+		    Return Sessions.Value(ID)
+		  Else
+		    Dim s As New HTTPSession
+		    s.NewSession = True
+		    Sessions.Value(s.SessionID) = s
+		    Return s
 		  End If
 		End Function
 	#tag EndMethod
@@ -183,7 +209,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As HTTPSession, ResponseDocument As HTTPResponse)
+		Private Sub SendResponse(Socket As HTTPClientSocket, ResponseDocument As HTTPResponse)
 		  Dim tmp As HTTPResponse = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", -2)
@@ -223,14 +249,8 @@ Inherits ServerSocket
 		  End If
 		  
 		  If UseSessions Then
-		    Socket.ExtendSession
-		    If Socket.NewSession Then
-		      Dim c As New HTTPCookie("SessionID=" + Socket.SessionID)
-		      ResponseDocument.SetCookie(c)
-		      Socket.NewSession = False
-		    Else
-		      ResponseDocument.RemoveCookie("SessionID")
-		    End If
+		    Dim session As HTTPSession = GetSessionHandler(Socket, Socket.SessionID)
+		    If session <> Nil Then session.ExtendSession
 		  End If
 		  
 		  Socket.Write(ResponseDocument.ToString)
@@ -257,7 +277,6 @@ Inherits ServerSocket
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTPSession = Me.Sessions.Value(Id)
 		    If session.LastActivity.TotalSeconds + Me.SessionTimeout < d.TotalSeconds Then
-		      session.Close
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next
@@ -435,6 +454,12 @@ Inherits ServerSocket
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="SessionTimeout"
+			Group="Behavior"
+			InitialValue="600"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -446,6 +471,12 @@ Inherits ServerSocket
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseSessions"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

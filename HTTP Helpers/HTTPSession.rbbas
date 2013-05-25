@@ -1,17 +1,9 @@
 #tag Class
 Protected Class HTTPSession
-Inherits TCPSocket
-	#tag Event
-		Sub Error()
-		  Me.LastActive = New Date(1999, 12, 31, 23, 59, 59)
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPResponse)
 		  // Part of the StoredItem interface.
-		  If Me.Cacheable Then 
+		  If Me.Cacheable Then
 		    Me.PageCache.Value(Page.Path) = Page
 		  End If
 		  
@@ -67,7 +59,7 @@ Inherits TCPSocket
 		Function GetCacheItem(Path As String) As HTTPResponse
 		  // Part of the StoredItem interface.
 		  Dim doc As HTTPResponse
-		  If Me.Cacheable Then 
+		  If Me.Cacheable Then
 		    If Me.PageCache.HasKey(Path) Then
 		      doc = Me.PageCache.Value(Path)
 		    End If
@@ -83,8 +75,6 @@ Inherits TCPSocket
 		  Dim doc As HTTPResponse
 		  If Me.Redirects.HasKey(Path) Then
 		    doc = Me.Redirects.Value(Path)
-		  Else
-		    doc = CheckRedirect(Path)
 		  End If
 		  
 		  Return doc
@@ -122,7 +112,7 @@ Inherits TCPSocket
 
 
 	#tag Hook, Flags = &h0
-		Event CheckRedirect(Path As String) As HTTPResponse
+		Event GetCache(Path As String) As HTTPResponse
 	#tag EndHook
 
 
@@ -191,12 +181,13 @@ Inherits TCPSocket
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mSessionID = "" Then 
+			  If mSessionID = "" Then
 			    If SessionKey <> "" Then
 			      mSessionID = EncodeHex(MD5(RC4(HTTPDate(Me.LastActive), Me.SessionKey)))
 			    Else
 			      mSessionID = EncodeHex(MD5(UUID))
 			    End If
+			    Me.NewSession = True
 			  End If
 			  Return mSessionID
 			End Get
@@ -217,11 +208,29 @@ Inherits TCPSocket
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Address"
+			Visible=true
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="TCPSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Cacheable"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="KeepAlive"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -237,15 +246,33 @@ Inherits TCPSocket
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="NewSession"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Port"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			InheritedFrom="TCPSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SessionID"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SessionKey"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TimedOut"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

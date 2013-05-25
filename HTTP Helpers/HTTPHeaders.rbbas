@@ -98,6 +98,14 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SetCookie(Name As String, Assigns Value As String)
+		  Dim c As New HTTPCookie(Name, Value)
+		  Me.RemoveCookie(c.Name)
+		  Cookies.Append(c)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SetHeader(Name As String, Value As String)
 		  If Me.HasHeader(Name) Then
 		    Me.Delete(Name)

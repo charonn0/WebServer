@@ -28,6 +28,10 @@ Protected Class HTTPRequest
 		    End If
 		  End If
 		  
+		  If Me.Headers.GetCookie("SessionID") <> Nil Then
+		    Me.SessionID = Me.Headers.GetCookie("SessionID").Value
+		  End If
+		  
 		  
 		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
@@ -202,6 +206,10 @@ Protected Class HTTPRequest
 
 	#tag Property, Flags = &h0
 		ProtocolVersion As Single
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SessionID As String
 	#tag EndProperty
 
 

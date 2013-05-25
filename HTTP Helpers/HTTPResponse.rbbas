@@ -278,6 +278,14 @@ Protected Class HTTPResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SetCookie(Name As String, Assigns Value As String)
+		  Dim c As New HTTPCookie(Name, Value)
+		  Me.RemoveCookie(c.Name)
+		  Me.Headers.Cookies.Append(c)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SetHeader(Name As String, Value As String)
 		  If Headers.HasHeader(Name) Then
 		    Headers.Delete(Name)
