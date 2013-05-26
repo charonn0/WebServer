@@ -102,7 +102,16 @@ Inherits ServerSocket
 		  End Try
 		  
 		  If UseSessions Then
-		    Dim cache As HTTPResponse = GetCache(Sender, clientRequest.Path)
+		    Dim cache As HTTPResponse
+		    If clientrequest.CacheDirective <> "" Then
+		      Select Case clientrequest.CacheDirective
+		      Case "no-cache", "max-age=0"
+		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
+		        cache = Nil
+		      End Select
+		    Else
+		      cache = GetCache(Sender, clientRequest.Path)
+		    End If
 		    Dim redir As HTTPResponse = GetRedirect(Sender, clientrequest.Path)
 		    If redir <> Nil Then
 		      doc = redir
@@ -116,7 +125,7 @@ Inherits ServerSocket
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		    ElseIf doc = Nil Then
 		      doc = HandleRequest(clientrequest)
-		      If UseSessions And GetSessionHandler(Sender, clientrequest.SessionID) <> Nil Then
+		      If UseSessions And GetSessionHandler(Sender, clientrequest.SessionID) <> Nil And clientrequest.CacheDirective <> "no-store" Then
 		        Dim session As HTTPSession = GetSessionHandler(Sender, clientrequest.SessionID)
 		        Session.AddCacheItem(doc)
 		      End If
@@ -420,7 +429,7 @@ Inherits ServerSocket
 
 
 	#tag Property, Flags = &h0
-		AuthenticationRealm As String = """Restricted Area"""
+		AuthenticationRealm As String = "Restricted Area"
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -443,15 +452,21 @@ Inherits ServerSocket
 		Private mSessions As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUseSessions As Boolean = True
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
+			  Me.Log(CurrentMethodName, Log_Trace)
 			  If mRedirects = Nil Then mRedirects = New Dictionary
 			  return mRedirects
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Me.Log(CurrentMethodName, Log_Trace)
 			  mRedirects = value
 			End Set
 		#tag EndSetter
@@ -461,12 +476,20 @@ Inherits ServerSocket
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  If mSessions = Nil Then mSessions = New Dictionary
+			  Me.Log(CurrentMethodName, Log_Trace)
+			  If mSessions = Nil Then 
+			    mSessions = New Dictionary
+			    SessionTimer = New Timer
+			    AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler
+			    SessionTimer.Period = 5000
+			    SessionTimer.Mode = Timer.ModeMultiple
+			  End If
 			  return mSessions
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Me.Log(CurrentMethodName, Log_Trace)
 			  mSessions = value
 			End Set
 		#tag EndSetter
@@ -481,12 +504,28 @@ Inherits ServerSocket
 		Private SessionTimer As Timer
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Me.Log(CurrentMethodName, Log_Trace)
+			  return mUseSessions
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.Log(CurrentMethodName, Log_Trace)
+			  mUseSessions = value
+			  If IsListening Then
+			    StopListening
+			    Listen
+			  End If
+			End Set
+		#tag EndSetter
 		UseSessions As Boolean
-	#tag EndProperty
+	#tag EndComputedProperty
 
 
-	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"QnDHTTPd/1.0", Scope = Public
+	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public

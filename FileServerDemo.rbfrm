@@ -192,26 +192,6 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   132
    End
-   Begin WebFileServer Sock
-      AuthenticationRealm=   """""Restricted Area"""""
-      AuthenticationRequired=   ""
-      DirectoryBrowsing=   True
-      EnforceContentType=   True
-      Height          =   32
-      Index           =   -2147483648
-      KeepAlive       =   ""
-      Left            =   507
-      LockedInPosition=   False
-      MaximumSocketsConnected=   10
-      MinimumSocketsAvailable=   2
-      Port            =   0
-      Scope           =   0
-      SessionTimeout  =   600
-      TabPanelIndex   =   0
-      Top             =   439
-      UseSessions     =   True
-      Width           =   32
-   End
    Begin ComboBox LogLevel
       AutoComplete    =   False
       AutoDeactivate  =   True
@@ -294,7 +274,7 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Scope           =   0
-      State           =   0
+      State           =   1
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
@@ -303,7 +283,7 @@ Begin Window FileServerDemo
       TextUnit        =   0
       Top             =   440
       Underline       =   ""
-      Value           =   False
+      Value           =   True
       Visible         =   True
       Width           =   162
    End
@@ -642,7 +622,7 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Scope           =   0
-      State           =   0
+      State           =   1
       TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
@@ -651,9 +631,29 @@ Begin Window FileServerDemo
       TextUnit        =   0
       Top             =   489
       Underline       =   ""
-      Value           =   False
+      Value           =   True
       Visible         =   True
       Width           =   175
+   End
+   Begin WebFileServer Sock
+      AuthenticationRealm=   """""Restricted Area"""""
+      AuthenticationRequired=   ""
+      DirectoryBrowsing=   True
+      EnforceContentType=   True
+      Height          =   32
+      Index           =   -2147483648
+      KeepAlive       =   ""
+      Left            =   507
+      LockedInPosition=   False
+      MaximumSocketsConnected=   10
+      MinimumSocketsAvailable=   2
+      Port            =   0
+      Scope           =   0
+      SessionTimeout  =   600
+      TabPanelIndex   =   0
+      Top             =   439
+      UseSessions     =   True
+      Width           =   32
    End
 End
 #tag EndWindow
@@ -672,7 +672,6 @@ End
 		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") = 6 Then Return
 		  End If
 		  Sock.StopListening
-		  Sock.UseSessions = False
 		  If nic.Text.Trim <> "" Then
 		    Sock.NetworkInterface = nic.RowTag(nic.ListIndex)
 		  Else
@@ -685,7 +684,8 @@ End
 		  Sock.AddRedirect(redirect)
 		  'Dim f As FolderItem = GetOpenFolderItem("")
 		  'Sock.AddRedirect(New RBScriptDocument("/test", f))
-		  Sock.Listen
+		  Sock.UseSessions = UseSessions.Value
+		  sock.Listen
 		  ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
 		End Sub
 	#tag EndMethod
@@ -769,35 +769,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Sock
-	#tag Event
-		Function TamperResponse(ByRef Response As HTTPResponse) As Boolean
-		  If Response.StatusCode = 200 Then
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is granted.")
-		  ElseIf Response.StatusCode = 302 Then
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is pending.")
-		  Else
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is denied.")
-		  End If
-		  Return True
-		  
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function Authenticate(ClientRequest As HTTPRequest) As Boolean
-		  Return Username.Text  = ClientRequest.AuthUsername And Password.Text = ClientRequest.AuthPassword 'And realmtext.Text = ClientRequest.AuthRealm
-		  
-		  
-		  
-		  
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Log(Message As String, Severity As Integer)
-		  Messages.Insert(0, Message:Severity)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events LogLevel
 	#tag Event
 		Sub Open()
@@ -845,7 +816,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.Value = Sock.DirectoryBrowsing
+		  'Me.Value = Sock.DirectoryBrowsing
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -934,7 +905,7 @@ End
 		        Case WebServer.Log_Request
 		          If Severity < squelch And squelch <> WebServer.Log_Response Then Return
 		          If i = 0 Then
-		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "HTTP Request")
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
 		          Else
 		            Listbox1.AddRow(lines(i), " ", " ")
@@ -947,7 +918,7 @@ End
 		          If Severity < squelch And squelch <> WebServer.Log_Request Then Return
 		          
 		          If i = 0 Then
-		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "HTTP Reply")
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Reply")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = blue_left_arrow
 		          Else
 		            Listbox1.AddRow(lines(i), " ", " ")
@@ -957,31 +928,30 @@ End
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
 		        Case WebServer.Log_Error
 		          If Severity < squelch Then Return
-		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Error")
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
 		        Case WebServer.Log_Debug
 		          If Severity < squelch Then Return
-		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Debug")
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Debug")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
 		        Case WebServer.Log_Socket
 		          If Severity < squelch Then Return
-		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.ShortTime, "Socket")
+		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Socket")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
 		        Case WebServer.Log_Trace
 		          If Severity < squelch Then Return
-		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.ShortTime, "Trace"
+		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Trace"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = traceIcon
 		        Else
-		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.ShortTime, "Unspecified"
+		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Unspecified"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFFFF99
 		        End Select
 		      End If
-		      Listbox1.ScrollPosition = Listbox1.LastIndex
 		    Next
-		    
+		    Listbox1.ScrollPosition = Listbox1.LastIndex
 		  Wend
 		End Sub
 	#tag EndEvent
@@ -1000,11 +970,35 @@ End
 		        Return
 		      End If
 		    End If
-		    Sock.StopListening
 		    Sock.UseSessions = Me.Value
-		    Sock.Listen
 		  End If
 		  
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Sock
+	#tag Event
+		Function Authenticate(ClientRequest As HTTPRequest) As Boolean
+		  Return Username.Text  = ClientRequest.AuthUsername And Password.Text = ClientRequest.AuthPassword 'And realmtext.Text = ClientRequest.AuthRealm
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Log(Message As String, Severity As Integer)
+		  Messages.Insert(0, Message:Severity)
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function TamperResponse(ByRef Response As HTTPResponse) As Boolean
+		  If Response.StatusCode = 200 Then
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is granted.")
+		  ElseIf Response.StatusCode = 302 Then
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is pending.")
+		  Else
+		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is denied.")
+		  End If
+		  Return True
+		  
+		End Function
 	#tag EndEvent
 #tag EndEvents

@@ -317,10 +317,9 @@ Protected Class HTTPResponse
 			      mHeaders.AppendHeader("Content-Type", Me.MIMEType.ToString)
 			    End If
 			    'headers.AppendHeader("Accept-Ranges", "bytes")
-			    headers.AppendHeader("Server", WebServer.DaemonVersion)
 			    headers.AppendHeader("Connection", "Close")
 			  End If
-			  
+			  mheaders.SetHeader("Server", WebServer.DaemonVersion)
 			  return mHeaders
 			End Get
 		#tag EndGetter

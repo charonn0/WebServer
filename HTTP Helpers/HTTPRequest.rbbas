@@ -1,6 +1,12 @@
 #tag Class
 Protected Class HTTPRequest
 	#tag Method, Flags = &h0
+		Function CacheDirective() As String
+		  Return Me.Headers.GetHeader("Cache-Control")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(UseSessions As Boolean = False)
 		  'Construct an empty HTTPRequest
 		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
