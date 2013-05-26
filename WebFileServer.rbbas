@@ -81,13 +81,6 @@ Inherits WebServer
 			InheritedFrom="WebServer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DigestAuthenticationOnly"
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			InheritedFrom="WebServer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DirectoryBrowsing"
 			Group="Behavior"
 			InitialValue="True"

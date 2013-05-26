@@ -1,13 +1,14 @@
 #tag Class
 Protected Class HTTPRequest
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(UseSessions As Boolean = False)
 		  'Construct an empty HTTPRequest
+		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Data As String)
+		Sub Constructor(Data As String, UseSessions As Boolean = False)
 		  Dim line As String
 		  line = NthField(data, CRLF, 1)
 		  
@@ -50,6 +51,7 @@ Protected Class HTTPRequest
 		    Me.AuthPassword = NthField(pw, ":", 2)
 		    Me.AuthUsername = NthField(pw, ":", 1)
 		  End If
+		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
 		End Sub
 	#tag EndMethod
 
@@ -229,12 +231,6 @@ Protected Class HTTPRequest
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AuthDigest"
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthPassword"
 			Group="Behavior"

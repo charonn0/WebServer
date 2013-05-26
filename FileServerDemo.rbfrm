@@ -623,6 +623,38 @@ Begin Window FileServerDemo
       Top             =   439
       Width           =   32
    End
+   Begin CheckBox UseSessions
+      AutoDeactivate  =   True
+      Bold            =   ""
+      Caption         =   "Use Sessions"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   113
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   0
+      State           =   0
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   11
+      TextUnit        =   0
+      Top             =   489
+      Underline       =   ""
+      Value           =   False
+      Visible         =   True
+      Width           =   175
+   End
 End
 #tag EndWindow
 
@@ -640,6 +672,7 @@ End
 		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") = 6 Then Return
 		  End If
 		  Sock.StopListening
+		  Sock.UseSessions = False
 		  If nic.Text.Trim <> "" Then
 		    Sock.NetworkInterface = nic.RowTag(nic.ListIndex)
 		  Else
@@ -722,7 +755,7 @@ End
 		  Dim i As Integer
 		  For i = 0 To System.NetworkInterfaceCount - 1
 		    Me.AddRow(System.GetNetworkInterface(i).IPAddress)
-		    If System.GetNetworkInterface(i).IPAddress <> "0.0.0.0" Then 
+		    If System.GetNetworkInterface(i).IPAddress <> "0.0.0.0" Then
 		      Me.RowTag(i) = System.GetNetworkInterface(i)
 		    End If
 		  Next
@@ -801,11 +834,13 @@ End
 	#tag Event
 		Sub Action()
 		  If Sock.IsListening Then
-		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") = 6 Then Return
+		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then Return
 		  End If
-		  Sock.StopListening
 		  Sock.DirectoryBrowsing = Me.Value
-		  Sock.Listen
+		  If Sock.IsListening Then
+		    Sock.StopListening
+		    Sock.Listen
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -948,6 +983,28 @@ End
 		    Next
 		    
 		  Wend
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UseSessions
+	#tag Event
+		Sub Open()
+		  Me.Value = Sock.UseSessions
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  If Sock.UseSessions <> Me.Value Then
+		    If Sock.IsListening Then
+		      If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then 
+		        Return
+		      End If
+		    End If
+		    Sock.StopListening
+		    Sock.UseSessions = Me.Value
+		    Sock.Listen
+		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
