@@ -3,11 +3,11 @@ Protected Class ClientSocket
 Inherits TCPSocket
 	#tag Method, Flags = &h0
 		Function ValidateSession(Request As HTTPParse.Request) As Boolean
-		  Log(CurrentMethodName, Server.Log_Trace)
+		  Log(CurrentMethodName, BaseServer.Log_Trace)
 		  Dim s As HTTP.Session = GetSession(Request.SessionID)
 		  If s = Nil Then Return False
 		  If s.SessionID = Request.SessionID Then
-		    Log("Validatated session: " + s.SessionID, Server.Log_Debug)
+		    Log("Validatated session: " + s.SessionID, BaseServer.Log_Debug)
 		    Me.SessionID = Request.SessionID
 		    s.NewSession = False
 		    Return True
@@ -35,9 +35,9 @@ Inherits TCPSocket
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Log(CurrentMethodName, Server.Log_Trace)
+			  Log(CurrentMethodName, BaseServer.Log_Trace)
 			  If mSessionID = "" Then
-			    Log("Generate new SessionID", Server.Log_Debug)
+			    Log("Generate new SessionID", BaseServer.Log_Debug)
 			    Dim s As HTTP.Session = GetSession("")
 			    If s <> Nil Then
 			      mSessionID = s.SessionID

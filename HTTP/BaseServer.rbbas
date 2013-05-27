@@ -1,5 +1,5 @@
 #tag Class
-Protected Class Server
+Protected Class BaseServer
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket

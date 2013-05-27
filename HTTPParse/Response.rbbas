@@ -151,7 +151,7 @@ Protected Class Response
 		    Wend
 		    
 		    MessageBody = ReplaceAll(MessageBody, "%INDEXCOUNT%", Format(i - 1, "###,###,##0"))
-		    MessageBody = MessageBody + ReplaceAll(pageend, "%DAEMON%", HTTP.Server.DaemonVersion)
+		    MessageBody = MessageBody + ReplaceAll(pageend, "%DAEMON%", HTTP.BaseServer.DaemonVersion)
 		  Else
 		    MessageBody = "Not a Directory"
 		    
@@ -211,7 +211,7 @@ Protected Class Response
 		    page = ReplaceAll(page, "%DOCUMENT%", "An HTTP error of the type specified above has occurred. No further information is available.")
 		  End Select
 		  
-		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + HTTP.Server.DaemonVersion + "</em><br />")
+		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + HTTP.BaseServer.DaemonVersion + "</em><br />")
 		  
 		  If page.LenB < 512 Then
 		    page = page + "<!--"
@@ -319,7 +319,7 @@ Protected Class Response
 			    'headers.AppendHeader("Accept-Ranges", "bytes")
 			    headers.AppendHeader("Connection", "Close")
 			  End If
-			  mheaders.SetHeader("Server", HTTP.Server.DaemonVersion)
+			  mheaders.SetHeader("Server", HTTP.BaseServer.DaemonVersion)
 			  return mHeaders
 			End Get
 		#tag EndGetter

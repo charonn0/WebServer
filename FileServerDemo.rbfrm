@@ -902,8 +902,8 @@ End
 		    For i As Integer = 0 To UBound(lines)
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
-		        Case HTTP.Server.Log_Request
-		          If Severity < squelch And squelch <> HTTP.Server.Log_Response Then Return
+		        Case HTTP.BaseServer.Log_Request
+		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Response Then Return
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
@@ -914,8 +914,8 @@ End
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c0080FF99
 		          
-		        Case HTTP.Server.Log_Response
-		          If Severity < squelch And squelch <> HTTP.Server.Log_Request Then Return
+		        Case HTTP.BaseServer.Log_Response
+		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Request Then Return
 		          
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Reply")
@@ -926,7 +926,7 @@ End
 		          End If
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
-		        Case HTTP.Server.Log_Error
+		        Case HTTP.BaseServer.Log_Error
 		          If Severity < squelch Then Return
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error!")
@@ -936,17 +936,17 @@ End
 		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(error.Width, error.Height)
 		          End If
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
-		        Case HTTP.Server.Log_Debug
+		        Case HTTP.BaseServer.Log_Debug
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Debug")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
-		        Case HTTP.Server.Log_Socket
+		        Case HTTP.BaseServer.Log_Socket
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Socket")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
-		        Case HTTP.Server.Log_Trace
+		        Case HTTP.BaseServer.Log_Trace
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Trace"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099

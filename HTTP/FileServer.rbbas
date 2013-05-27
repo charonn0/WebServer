@@ -1,6 +1,6 @@
 #tag Class
 Protected Class FileServer
-Inherits HTTP.Server
+Inherits HTTP.BaseServer
 	#tag Event
 		Function HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
@@ -38,7 +38,7 @@ Inherits HTTP.Server
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
 		  Dim origpath As String = Path.Trim
-		  Me.Log(CurrentMethodName + "(" + Path + ")", Server.Log_Trace)
+		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  
 		  If Not Document.Directory And "\" + Document.Name = path Then
@@ -53,7 +53,7 @@ Inherits HTTP.Server
 		    Return item
 		  End If
 		  
-		  Me.Log(CurrentMethodName + " File not found: '" + origpath + "'", Server.Log_Error)
+		  Me.Log(CurrentMethodName + " File not found: '" + origpath + "'", BaseServer.Log_Error)
 		End Function
 	#tag EndMethod
 
