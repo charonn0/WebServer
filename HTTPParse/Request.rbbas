@@ -40,7 +40,7 @@ Protected Class Request
 		  End If
 		  
 		  
-		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
+		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  
 		  Me.Path = URLDecode(NthField(line, " ", 2).Trim)

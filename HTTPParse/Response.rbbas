@@ -71,7 +71,7 @@ Protected Class Response
 		  data = Replace(data, line + CRLF, "")
 		  data = Replace(data, Me.MessageBody, "")
 		  Me.Headers = New HTTPParse.Headers(data)
-		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
+		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
 		  Me.StatusCode = Val(NthField(line, " ", 2))
