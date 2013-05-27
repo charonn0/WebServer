@@ -1,31 +1,31 @@
 #tag Class
-Protected Class WebFileServer
-Inherits HTTP.WebServer
+Protected Class FileServer
+Inherits HTTP.Server
 	#tag Event
-		Function HandleRequest(ClientRequest As HTTPParse.HTTPRequest) As HTTPParse.HTTPResponse
+		Function HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
-		  Dim doc As HTTPParse.HTTPResponse 'The response object
+		  Dim doc As HTTPParse.Response 'The response object
 		  Dim item As FolderItem = FindItem(ClientRequest.Path)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(404, ClientRequest.Path)
+		      doc = New HTTPParse.Response(404, ClientRequest.Path)
 		      
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(403, ClientRequest.Path)
+		      doc = New HTTPParse.Response(403, ClientRequest.Path)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
-		      doc = New HTTPParse.HTTPResponse("/", Location)
+		      doc = New HTTPParse.Response("/", Location)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(item, ClientRequest.Path)
+		      doc = New HTTPParse.Response(item, ClientRequest.Path)
 		    End If
 		  End Select
 		  If doc <> Nil Then doc.Method = ClientRequest.Method
@@ -38,7 +38,7 @@ Inherits HTTP.WebServer
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
 		  Dim origpath As String = Path.Trim
-		  Me.Log(CurrentMethodName + "(" + Path + ")", WebServer.Log_Trace)
+		  Me.Log(CurrentMethodName + "(" + Path + ")", Server.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  
 		  If Not Document.Directory And "\" + Document.Name = path Then
@@ -53,7 +53,7 @@ Inherits HTTP.WebServer
 		    Return item
 		  End If
 		  
-		  Me.Log(CurrentMethodName + " File not found: '" + origpath + "'", WebServer.Log_Error)
+		  Me.Log(CurrentMethodName + " File not found: '" + origpath + "'", Server.Log_Error)
 		End Function
 	#tag EndMethod
 

@@ -1,5 +1,5 @@
 #tag Class
-Protected Class HTTPResponse
+Protected Class Response
 	#tag Method, Flags = &h0
 		Sub Constructor(page As FolderItem, Path As String)
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
@@ -21,7 +21,7 @@ Protected Class HTTPResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(CachedPage As HTTPParse.HTTPResponse, Path As String)
+		Sub Constructor(CachedPage As HTTPParse.Response, Path As String)
 		  'Use this constructor to create a document from another document
 		  Me.MessageBody = CachedPage.MessageBody
 		  Me.StatusCode = 200
@@ -70,7 +70,7 @@ Protected Class HTTPResponse
 		  line = NthField(data, CRLF, 1)
 		  data = Replace(data, line + CRLF, "")
 		  data = Replace(data, Me.MessageBody, "")
-		  Me.Headers = New HTTPParse.HTTPHeaders(data)
+		  Me.Headers = New HTTPParse.Headers(data)
 		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
@@ -308,7 +308,7 @@ Protected Class HTTPResponse
 		#tag Getter
 			Get
 			  If mHeaders = Nil Then
-			    mHeaders = New HTTPParse.HTTPHeaders
+			    mHeaders = New HTTPParse.Headers
 			    Dim now As New Date
 			    mHeaders.AppendHeader("Date", HTTPDate(now))
 			    If Me.MessageBody.LenB > 0 Then
@@ -328,7 +328,7 @@ Protected Class HTTPResponse
 			  mHeaders = value
 			End Set
 		#tag EndSetter
-		Headers As HTTPParse.HTTPHeaders
+		Headers As HTTPParse.Headers
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -376,7 +376,7 @@ Protected Class HTTPResponse
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mHeaders As HTTPParse.HTTPHeaders
+		Private mHeaders As HTTPParse.Headers
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

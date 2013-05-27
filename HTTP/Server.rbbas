@@ -1,11 +1,11 @@
 #tag Class
-Protected Class WebServer
+Protected Class Server
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  'Me.Log("Add socket " + Str(Me.ActiveConnections.UBound + 1), Log_Socket)
-		  Dim sock As New HTTPClientSocket
+		  Dim sock As New ClientSocket
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
 		  AddHandler sock.GetSession, AddressOf Me.GetSessionHandler
 		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
@@ -29,7 +29,7 @@ Inherits ServerSocket
 
 
 	#tag Method, Flags = &h0
-		Sub AddRedirect(Page As HTTPParse.HTTPResponse)
+		Sub AddRedirect(Page As HTTPParse.Response)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Add redirect for " + page.Path, Log_Debug)
 		  Redirects.Value(Page.Path) = Page
@@ -37,27 +37,27 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientErrorHandler(Sender As HTTPClientSocket)
+		Private Sub ClientErrorHandler(Sender As ClientSocket)
 		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientLogHandler(Sender As HTTPClientSocket, Message As String, Level As Integer)
+		Private Sub ClientLogHandler(Sender As ClientSocket, Message As String, Level As Integer)
 		  #pragma Unused Sender
 		  Me.Log(Message, Level)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DataAvailable(Sender As HTTPClientSocket)
+		Private Sub DataAvailable(Sender As ClientSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Socket)
 		  Dim data As MemoryBlock = Sender.ReadAll
-		  Dim clientrequest As HTTPParse.HTTPRequest
-		  Dim doc As HTTPParse.HTTPResponse
+		  Dim clientrequest As HTTPParse.Request
+		  Dim doc As HTTPParse.Response
 		  Try
-		    clientrequest = New HTTPParse.HTTPRequest(data, UseSessions)
+		    clientrequest = New HTTPParse.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
 		    If clientrequest.Headers.HasHeader("Connection") Then
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
@@ -66,7 +66,7 @@ Inherits ServerSocket
 		    If UseSessions Then
 		      If Not Sender.ValidateSession(clientrequest) Then
 		        Me.Log("No valid session", Log_Debug)
-		        Dim s As HTTPSession = NewSession()
+		        Dim s As HTTP.Session = NewSession()
 		        clientrequest.SessionID = s.SessionID
 		        Sender.SessionID = s.SessionID
 		        clientrequest.Headers.SetCookie("SessionID") = s.SessionID
@@ -75,31 +75,31 @@ Inherits ServerSocket
 		    
 		    
 		    
-		    Dim tmp As HTTPParse.HTTPRequest = clientrequest
+		    Dim tmp As HTTPParse.Request = clientrequest
 		    If TamperRequest(tmp) Then
 		      clientrequest = tmp
 		    End If
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = New HTTPParse.HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      doc = New HTTPParse.Response(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPParse.HTTPResponse(401, clientrequest.Path)
+		        doc = New HTTPParse.Response(401, clientrequest.Path)
 		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
 		    End If
 		  Catch err As UnsupportedFormatException
-		    doc = New HTTPParse.HTTPResponse(400, "") 'bad request
+		    doc = New HTTPParse.Response(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
 		  
 		  If UseSessions Then
-		    Dim cache As HTTPParse.HTTPResponse
+		    Dim cache As HTTPParse.Response
 		    If clientrequest.CacheDirective <> "" Then
 		      Select Case clientrequest.CacheDirective
 		      Case "no-cache", "max-age=0"
@@ -109,7 +109,7 @@ Inherits ServerSocket
 		    Else
 		      cache = GetCache(Sender, clientRequest.Path)
 		    End If
-		    Dim redir As HTTPParse.HTTPResponse = GetRedirect(Sender, clientrequest.Path)
+		    Dim redir As HTTPParse.Response = GetRedirect(Sender, clientrequest.Path)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -123,7 +123,7 @@ Inherits ServerSocket
 		    ElseIf doc = Nil Then
 		      doc = HandleRequest(clientrequest)
 		      If UseSessions And GetSessionHandler(Sender, clientrequest.SessionID) <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		        Dim session As HTTPSession = GetSessionHandler(Sender, clientrequest.SessionID)
+		        Dim session As HTTP.Session = GetSessionHandler(Sender, clientrequest.SessionID)
 		        Session.AddCacheItem(doc)
 		      End If
 		    End If
@@ -136,29 +136,29 @@ Inherits ServerSocket
 		    Select Case clientrequest.Method
 		    Case RequestMethod.TRACE
 		      Me.Log("Request is a TRACE", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(200, "")
+		      doc = New HTTPParse.Response(200, "")
 		      doc.Headers.SetHeader("Content-Length", Str(Data.Size))
 		      doc.Headers.SetHeader("Content-Type", "message/http")
 		      doc.MessageBody = Data
 		    Case RequestMethod.OPTIONS
 		      Me.Log("Request is a OPTIONS", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(200, "")
+		      doc = New HTTPParse.Response(200, "")
 		      doc.MessageBody = ""
 		      doc.Headers.SetHeader("Content-Length", "0")
 		      doc.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		      doc.Headers.SetHeader("Accept-Ranges", "bytes")
 		    Case RequestMethod.GET, RequestMethod.HEAD
 		      Me.Log("Request is a HEAD", Log_Debug)
-		      doc = New HTTPParse.HTTPResponse(404, clientrequest.Path)
+		      doc = New HTTPParse.Response(404, clientrequest.Path)
 		    Else
 		      If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		        doc = New HTTPParse.HTTPResponse(501, clientrequest.MethodName) 'Not implemented
+		        doc = New HTTPParse.Response(501, clientrequest.MethodName) 'Not implemented
 		        Me.Log("Request is not implemented", Log_Error)
 		      ElseIf clientrequest.MethodName = "" Then
-		        doc = New HTTPParse.HTTPResponse(400, "") 'bad request
+		        doc = New HTTPParse.Response(400, "") 'bad request
 		        Me.Log("Request is malformed", Log_Error)
 		      ElseIf clientrequest.MethodName <> "" Then
-		        doc = New HTTPParse.HTTPResponse(405, clientrequest.MethodName)
+		        doc = New HTTPParse.Response(405, clientrequest.MethodName)
 		        Me.Log("Request is a NOT ALLOWED", Log_Error)
 		      End If
 		    End Select
@@ -167,12 +167,12 @@ Inherits ServerSocket
 		  If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
 		    If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.HTTPResponse(304, "")
+		        doc = New HTTPParse.Response(304, "")
 		        doc.MessageBody = ""
 		      End If
 		    Else
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.HTTPResponse(412, "") 'Precondition failed
+		        doc = New HTTPParse.Response(412, "") 'Precondition failed
 		        doc.MessageBody = ""
 		      End If
 		    End If
@@ -188,7 +188,7 @@ Inherits ServerSocket
 		      End If
 		    Next
 		    Dim accepted As HTTPParse.ContentType = doc.MIMEType
-		    doc = New HTTPParse.HTTPResponse(406, "") 'Not Acceptable
+		    doc = New HTTPParse.Response(406, "") 'Not Acceptable
 		    doc.MIMEType = accepted
 		    Me.Log("Response is not Acceptable", Log_Error)
 		  End If
@@ -199,7 +199,7 @@ Inherits ServerSocket
 		Exception Err
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
-		  Dim errpage As HTTPParse.HTTPResponse
+		  Dim errpage As HTTPParse.Response
 		  Dim stack As String
 		  #If DebugBuild Then
 		    If UBound(Err.Stack) <= -1 Then
@@ -213,7 +213,7 @@ Inherits ServerSocket
 		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
 		    Me.Log(logtxt , Log_Error)
 		  #endif
-		  errpage = New HTTPParse.HTTPResponse(500, stack)
+		  errpage = New HTTPParse.Response(500, stack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
@@ -221,12 +221,12 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetCache(Sender As HTTPClientSocket, Path As String) As HTTPParse.HTTPResponse
+		Private Function GetCache(Sender As ClientSocket, Path As String) As HTTPParse.Response
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions Then
-		    Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
+		    Dim session As HTTP.Session = GetSessionHandler(Sender, Sender.SessionID)
 		    If session.GetCacheItem(Path) <> Nil Then
 		      Me.Log("(hit!) Get cache item: " + Path, Log_Debug)
 		      Return session.GetCacheItem(Path)
@@ -237,12 +237,12 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetRedirect(Sender As HTTPClientSocket, Path As String) As HTTPParse.HTTPResponse
+		Private Function GetRedirect(Sender As ClientSocket, Path As String) As HTTPParse.Response
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions THen
-		    Dim session As HTTPSession = GetSessionHandler(Sender, Sender.SessionID)
+		    Dim session As HTTP.Session = GetSessionHandler(Sender, Sender.SessionID)
 		    If session.GetRedirect(Path) <> Nil Then
 		      Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
 		      Return session.GetRedirect(Path)
@@ -258,7 +258,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetSessionHandler(Sender As HTTPClientSocket, ID As String) As HTTPSession
+		Private Function GetSessionHandler(Sender As ClientSocket, ID As String) As HTTP.Session
 		  Me.Log(CurrentMethodName + "(" + ID + ")", Log_Trace)
 		  #pragma Unused Sender
 		  If Not UseSessions Then Return Nil
@@ -286,10 +286,10 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function NewSession() As HTTPSession
+		Private Function NewSession() As HTTP.Session
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  If UseSessions Then
-		    Dim s As New HTTPSession
+		    Dim s As New HTTP.Session
 		    s.NewSession = True
 		    Sessions.Value(s.SessionID) = s
 		    Me.Log("Session created: " + s.SessionID, Log_Debug)
@@ -309,11 +309,11 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As HTTPClientSocket, ResponseDocument As HTTPParse.HTTPResponse)
+		Private Sub SendResponse(Socket As ClientSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Socket.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
-		  Dim tmp As HTTPParse.HTTPResponse = ResponseDocument
+		  Dim tmp As HTTPParse.Response = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
@@ -350,7 +350,7 @@ Inherits ServerSocket
 		  End If
 		  
 		  If UseSessions Then
-		    Dim session As HTTPSession = GetSessionHandler(Socket, Socket.SessionID)
+		    Dim session As HTTP.Session = GetSessionHandler(Socket, Socket.SessionID)
 		    If session <> Nil Then session.ExtendSession
 		    If session.NewSession Then
 		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
@@ -395,7 +395,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim d As New Date
 		  For Each Id As String In Sessions.Keys
-		    Dim session As HTTPSession = Me.Sessions.Value(Id)
+		    Dim session As HTTP.Session = Me.Sessions.Value(Id)
 		    If session.LastActivity.TotalSeconds + Me.SessionTimeout < d.TotalSeconds Then
 		      Me.Log("Session timed out (" + ID + ")", Log_Debug)
 		      Me.Sessions.Remove(Id)
@@ -406,11 +406,11 @@ Inherits ServerSocket
 
 
 	#tag Hook, Flags = &h0
-		Event Authenticate(ClientRequest As HTTPParse.HTTPRequest) As Boolean
+		Event Authenticate(ClientRequest As HTTPParse.Request) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event HandleRequest(ClientRequest As HTTPParse.HTTPRequest) As HTTPParse.HTTPResponse
+		Event HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -418,11 +418,11 @@ Inherits ServerSocket
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperRequest(ByRef Request As HTTPParse.HTTPRequest) As Boolean
+		Event TamperRequest(ByRef Request As HTTPParse.Request) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperResponse(ByRef Response As HTTPParse.HTTPResponse) As Boolean
+		Event TamperResponse(ByRef Response As HTTPParse.Response) As Boolean
 	#tag EndHook
 
 

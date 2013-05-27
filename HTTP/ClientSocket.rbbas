@@ -1,13 +1,13 @@
 #tag Class
-Protected Class HTTPClientSocket
+Protected Class ClientSocket
 Inherits TCPSocket
 	#tag Method, Flags = &h0
-		Function ValidateSession(Request As HTTPParse.HTTPRequest) As Boolean
-		  Log(CurrentMethodName, WebServer.Log_Trace)
-		  Dim s As HTTPSession = GetSession(Request.SessionID)
+		Function ValidateSession(Request As HTTPParse.Request) As Boolean
+		  Log(CurrentMethodName, Server.Log_Trace)
+		  Dim s As HTTP.Session = GetSession(Request.SessionID)
 		  If s = Nil Then Return False
 		  If s.SessionID = Request.SessionID Then
-		    Log("Validatated session: " + s.SessionID, WebServer.Log_Debug)
+		    Log("Validatated session: " + s.SessionID, Server.Log_Debug)
 		    Me.SessionID = Request.SessionID
 		    s.NewSession = False
 		    Return True
@@ -20,7 +20,7 @@ Inherits TCPSocket
 
 
 	#tag Hook, Flags = &h0
-		Event GetSession(ID As String) As HTTPSession
+		Event GetSession(ID As String) As HTTP.Session
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -35,10 +35,10 @@ Inherits TCPSocket
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Log(CurrentMethodName, WebServer.Log_Trace)
+			  Log(CurrentMethodName, Server.Log_Trace)
 			  If mSessionID = "" Then
-			    Log("Generate new SessionID", WebServer.Log_Debug)
-			    Dim s As HTTPSession = GetSession("")
+			    Log("Generate new SessionID", Server.Log_Debug)
+			    Dim s As HTTP.Session = GetSession("")
 			    If s <> Nil Then
 			      mSessionID = s.SessionID
 			    End If

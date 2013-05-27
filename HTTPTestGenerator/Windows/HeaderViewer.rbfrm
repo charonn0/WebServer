@@ -78,7 +78,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Sub ShowHeaders(head As HTTPParse.HTTPHeaders)
+		Sub ShowHeaders(head As HTTPParse.Headers)
 		  Headers1.DeleteAllRows
 		  For i As Integer = 0 To head.Count - 1
 		    Headers1.AddRow("")

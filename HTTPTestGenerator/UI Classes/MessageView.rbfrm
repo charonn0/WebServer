@@ -341,7 +341,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mResponse As HTTPParse.HTTPResponse
+		Private mResponse As HTTPParse.Response
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -369,7 +369,7 @@ End
 			  PagePanel1.Value = 0
 			End Set
 		#tag EndSetter
-		Response As HTTPParse.HTTPResponse
+		Response As HTTPParse.Response
 	#tag EndComputedProperty
 
 

@@ -1152,7 +1152,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Generate()
 		  mTheURL = Nil
-		  Me.Request = New HTTPParse.HTTPRequest()
+		  Me.Request = New HTTPParse.Request()
 		  Me.Request.Method = HTTPMethod(Me.RequestMethod.Text)
 		  If Me.Request.Method = HTTP.RequestMethod.InvalidMethod Then Me.Request.MethodName = Me.RequestMethod.Text
 		  Me.Request.Path = theURL.ServerFile
@@ -1163,7 +1163,7 @@ End
 		  For i As Integer = 0 To RequestHeaders.LastIndex
 		    heads.AppendHeader(RequestHeaders.Cell(i, 0), RequestHeaders.Cell(i, 1))
 		  Next
-		  Me.Request.Headers = New HTTPParse.HTTPHeaders(heads.Source)
+		  Me.Request.Headers = New HTTPParse.Headers(heads.Source)
 		  
 		  If AutoHost.Value Then
 		    If Me.Request.Headers.HasHeader("Host") Then
@@ -1206,7 +1206,7 @@ End
 
 	#tag Method, Flags = &h1000
 		Sub Update(Raw As String)
-		  Response = New HTTPParse.HTTPResponse(Raw, "", False)
+		  Response = New HTTPParse.Response(Raw, "", False)
 		  'Dim response, h(), data As String
 		  'response = NthField(Raw, CRLF, 1)
 		  'Raw = Replace(Raw, response + CRLF, "")
@@ -1263,11 +1263,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Request As HTTPParse.HTTPRequest
+		Request As HTTPParse.Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Response As HTTPParse.HTTPResponse
+		Response As HTTPParse.Response
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -1425,10 +1425,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim c As HTTPParse.HTTPCookie
+		  Dim c As HTTPParse.Cookie
 		  Dim editindex As Integer = -1
 		  If RequestHeaders.Cell(RequestHeaders.ListIndex, 0) = "Cookie" Then
-		    c = New HTTPParse.HTTPCookie(NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 1), NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 2))
+		    c = New HTTPParse.Cookie(NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 1), NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 2))
 		    editindex = RequestHeaders.ListIndex
 		  End If
 		  c = CookieEdit.GetCookie(c)

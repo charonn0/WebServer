@@ -1,7 +1,7 @@
 #tag Class
-Protected Class HTTPSession
+Protected Class Session
 	#tag Method, Flags = &h0
-		Sub AddCacheItem(Page As HTTPParse.HTTPResponse)
+		Sub AddCacheItem(Page As HTTPParse.Response)
 		  If Page = Nil Then Return
 		  If Me.Cacheable Then
 		    Me.PageCache.Value(Page.Path) = Page
@@ -11,7 +11,7 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddRedirect(Page As HTTPParse.HTTPResponse)
+		Sub AddRedirect(Page As HTTPParse.Response)
 		  // Part of the Redirector interface.
 		  Me.Redirects.Value(Page.Path) = Page
 		  
@@ -23,7 +23,7 @@ Protected Class HTTPSession
 		Private Sub CacheCleaner(Sender As Timer)
 		  #pragma Unused Sender
 		  For Each Path As String In PageCache.Keys
-		    Dim doc As HTTPParse.HTTPResponse = PageCache.Value(Path)
+		    Dim doc As HTTPParse.Response = PageCache.Value(Path)
 		    Dim d As New Date
 		    If doc.Expires.TotalSeconds < d.TotalSeconds Then
 		      PageCache.Remove(Path)
@@ -56,9 +56,9 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCacheItem(Path As String) As HTTPParse.HTTPResponse
+		Function GetCacheItem(Path As String) As HTTPParse.Response
 		  // Part of the StoredItem interface.
-		  Dim doc As HTTPParse.HTTPResponse
+		  Dim doc As HTTPParse.Response
 		  If Me.Cacheable Then
 		    If Me.PageCache.HasKey(Path) Then
 		      doc = Me.PageCache.Value(Path)
@@ -70,9 +70,9 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRedirect(Path As String) As HTTPParse.HTTPResponse
+		Function GetRedirect(Path As String) As HTTPParse.Response
 		  // Part of the StoredItem interface.
-		  Dim doc As HTTPParse.HTTPResponse
+		  Dim doc As HTTPParse.Response
 		  If Me.Redirects.HasKey(Path) Then
 		    doc = Me.Redirects.Value(Path)
 		  End If
@@ -112,7 +112,7 @@ Protected Class HTTPSession
 
 
 	#tag Hook, Flags = &h0
-		Event GetCache(Path As String) As HTTPParse.HTTPResponse
+		Event GetCache(Path As String) As HTTPParse.Response
 	#tag EndHook
 
 
