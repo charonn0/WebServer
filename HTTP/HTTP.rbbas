@@ -324,2112 +324,12 @@ Protected Module HTTP
 
 	#tag Method, Flags = &h0
 		Function MIMEstring(FileName As String) As String
-		  'This method is from here: https://github.com/bskrtich/RBHTTPServer
 		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
+		  If MIMETypes.HasKey(ext) Then 
+		    Return MIMETypes.Value(ext)
+		  End If
+		  Return "application/octet-stream"
 		  
-		  If MIMETypes.HasKey(ext) Then Return MIMETypes.Value(ext)
-		  
-		  Select Case ext
-		  Case "ez"
-		    Return "application/andrew-inset"
-		    
-		  Case "aw"
-		    Return "application/applixware"
-		    
-		  Case "atom"
-		    Return "application/atom+xml"
-		    
-		  Case "atomcat"
-		    Return "application/atomcat+xml"
-		    
-		  Case "atomsvc"
-		    Return "application/atomsvc+xml"
-		    
-		  Case "ccxml"
-		    Return "application/ccxml+xml"
-		    
-		  Case "cdmia"
-		    Return "application/cdmi-capability"
-		    
-		  Case "cdmic"
-		    Return "application/cdmi-container"
-		    
-		  Case "cdmid"
-		    Return "application/cdmi-domain"
-		    
-		  Case "cdmio"
-		    Return "application/cdmi-object"
-		    
-		  Case "cdmiq"
-		    Return "application/cdmi-queue"
-		    
-		  Case "cu"
-		    Return "application/cu-seeme"
-		    
-		  Case "davmount"
-		    Return "application/davmount+xml"
-		    
-		  Case "dssc"
-		    Return "application/dssc+der"
-		    
-		  Case "xdssc"
-		    Return "application/dssc+xml"
-		    
-		  Case "ecma"
-		    Return "application/ecmascript"
-		    
-		  Case "emma"
-		    Return "application/emma+xml"
-		    
-		  Case "epub"
-		    Return "application/epub+zip"
-		    
-		  Case "exi"
-		    Return "application/exi"
-		    
-		  Case "pfr"
-		    Return "application/font-tdpfr"
-		    
-		  Case "stk"
-		    Return "application/hyperstudio"
-		    
-		  Case "ipfix"
-		    Return "application/ipfix"
-		    
-		  Case "jar"
-		    Return "application/java-archive"
-		    
-		  Case "ser"
-		    Return "application/java-serialized-object"
-		    
-		  Case "class"
-		    Return "application/java-vm"
-		    
-		  Case "js"
-		    Return "application/javascript"
-		    
-		  Case "json"
-		    Return "application/json"
-		    
-		  Case "lostxml"
-		    Return "application/lost+xml"
-		    
-		  Case "hqx"
-		    Return "application/mac-binhex40"
-		    
-		  Case "cpt"
-		    Return "application/mac-compactpro"
-		    
-		  Case "mads"
-		    Return "application/mads+xml"
-		    
-		  Case "mrc"
-		    Return "application/marc"
-		    
-		  Case "mrcx"
-		    Return "application/marcxml+xml"
-		    
-		  Case "ma", "nb", "mb"
-		    Return "application/mathematica"
-		    
-		  Case "mathml"
-		    Return "application/mathml+xml"
-		    
-		  Case "mbox"
-		    Return "application/mbox"
-		    
-		  Case "mscml"
-		    Return "application/mediaservercontrol+xml"
-		    
-		  Case "meta4"
-		    Return "application/metalink4+xml"
-		    
-		  Case "mets"
-		    Return "application/mets+xml"
-		    
-		  Case "mods"
-		    Return "application/mods+xml"
-		    
-		  Case "m21", "mp21"
-		    Return "application/mp21"
-		    
-		  Case "mp4s"
-		    Return "application/mp4"
-		    
-		  Case "doc", "dot"
-		    Return "application/msword"
-		    
-		  Case "mxf"
-		    Return "application/mxf"
-		    
-		  Case "bin", "dms", "lha", "lrf", "lzh", "so", "iso", "dmg", "dist", "distz", "pkg", "bpk", "dump", "elc", "deploy", "mobipocket-ebook"
-		    Return "application/octet-stream"
-		    
-		  Case "oda"
-		    Return "application/oda"
-		    
-		  Case "opf"
-		    Return "application/oebps-package+xml"
-		    
-		  Case "ogx"
-		    Return "application/ogg"
-		    
-		  Case "onetoc", "onetoc2", "onetmp", "onepkg"
-		    Return "application/onenote"
-		    
-		  Case "xer"
-		    Return "application/patch-ops-error+xml"
-		    
-		  Case "pdf"
-		    Return "application/pdf"
-		    
-		  Case "pgp"
-		    Return "application/pgp-encrypted"
-		    
-		  Case "asc", "sig"
-		    Return "application/pgp-signature"
-		    
-		  Case "prf"
-		    Return "application/pics-rules"
-		    
-		  Case "p10"
-		    Return "application/pkcs10"
-		    
-		  Case "p7m", "p7c"
-		    Return "application/pkcs7-mime"
-		    
-		  Case "p7s"
-		    Return "application/pkcs7-signature"
-		    
-		  Case "p8"
-		    Return "application/pkcs8"
-		    
-		  Case "ac"
-		    Return "application/pkix-attr-cert"
-		    
-		  Case "cer"
-		    Return "application/pkix-cert"
-		    
-		  Case "crl"
-		    Return "application/pkix-crl"
-		    
-		  Case "pkipath"
-		    Return "application/pkix-pkipath"
-		    
-		  Case "pki"
-		    Return "application/pkixcmp"
-		    
-		  Case "pls"
-		    Return "application/pls+xml"
-		    
-		  Case "ai", "eps", "ps"
-		    Return "application/postscript"
-		    
-		  Case "cww"
-		    Return "application/prs.cww"
-		    
-		  Case "pskcxml"
-		    Return "application/pskc+xml"
-		    
-		  Case "rdf"
-		    Return "application/rdf+xml"
-		    
-		  Case "rif"
-		    Return "application/reginfo+xml"
-		    
-		  Case "rnc"
-		    Return "application/relax-ng-compact-syntax"
-		    
-		  Case "rl"
-		    Return "application/resource-lists+xml"
-		    
-		  Case "rld"
-		    Return "application/resource-lists-diff+xml"
-		    
-		  Case "rs"
-		    Return "application/rls-services+xml"
-		    
-		  Case "rsd"
-		    Return "application/rsd+xml"
-		    
-		  Case "rss"
-		    Return "application/rss+xml"
-		    
-		  Case "rtf"
-		    Return "application/rtf"
-		    
-		  Case "sbml"
-		    Return "application/sbml+xml"
-		    
-		  Case "scq"
-		    Return "application/scvp-cv-request"
-		    
-		  Case "scs"
-		    Return "application/scvp-cv-response"
-		    
-		  Case "spq"
-		    Return "application/scvp-vp-request"
-		    
-		  Case "spp"
-		    Return "application/scvp-vp-response"
-		    
-		  Case "sdp"
-		    Return "application/sdp"
-		    
-		  Case "setpay"
-		    Return "application/set-payment-initiation"
-		    
-		  Case "setreg"
-		    Return "application/set-registration-initiation"
-		    
-		  Case "shf"
-		    Return "application/shf+xml"
-		    
-		  Case "smi", "smil"
-		    Return "application/smil+xml"
-		    
-		  Case "rq"
-		    Return "application/sparql-query"
-		    
-		  Case "srx"
-		    Return "application/sparql-results+xml"
-		    
-		  Case "gram"
-		    Return "application/srgs"
-		    
-		  Case "grxml"
-		    Return "application/srgs+xml"
-		    
-		  Case "sru"
-		    Return "application/sru+xml"
-		    
-		  Case "ssml"
-		    Return "application/ssml+xml"
-		    
-		  Case "tei", "teicorpus"
-		    Return "application/tei+xml"
-		    
-		  Case "tfi"
-		    Return "application/thraud+xml"
-		    
-		  Case "tsd"
-		    Return "application/timestamped-data"
-		    
-		  Case "plb"
-		    Return "application/vnd.3gpp.pic-bw-large"
-		    
-		  Case "psb"
-		    Return "application/vnd.3gpp.pic-bw-small"
-		    
-		  Case "pvb"
-		    Return "application/vnd.3gpp.pic-bw-var"
-		    
-		  Case "tcap"
-		    Return "application/vnd.3gpp2.tcap"
-		    
-		  Case "pwn"
-		    Return "application/vnd.3m.post-it-notes"
-		    
-		  Case "aso"
-		    Return "application/vnd.accpac.simply.aso"
-		    
-		  Case "imp"
-		    Return "application/vnd.accpac.simply.imp"
-		    
-		  Case "acu"
-		    Return "application/vnd.acucobol"
-		    
-		  Case "atc", "acutc"
-		    Return "application/vnd.acucorp"
-		    
-		  Case "air"
-		    Return "application/vnd.adobe.air-application-installer-package+zip"
-		    
-		  Case "fxp", "fxpl"
-		    Return "application/vnd.adobe.fxp"
-		    
-		  Case "xdp"
-		    Return "application/vnd.adobe.xdp+xml"
-		    
-		  Case "xfdf"
-		    Return "application/vnd.adobe.xfdf"
-		    
-		  Case "ahead"
-		    Return "application/vnd.ahead.space"
-		    
-		  Case "azf"
-		    Return "application/vnd.airzip.filesecure.azf"
-		    
-		  Case "azs"
-		    Return "application/vnd.airzip.filesecure.azs"
-		    
-		  Case "azw"
-		    Return "application/vnd.amazon.ebook"
-		    
-		  Case "acc"
-		    Return "application/vnd.americandynamics.acc"
-		    
-		  Case "ami"
-		    Return "application/vnd.amiga.ami"
-		    
-		  Case "apk"
-		    Return "application/vnd.android.package-archive"
-		    
-		  Case "cii"
-		    Return "application/vnd.anser-web-certificate-issue-initiation"
-		    
-		  Case "fti"
-		    Return "application/vnd.anser-web-funds-transfer-initiation"
-		    
-		  Case "atx"
-		    Return "application/vnd.antix.game-component"
-		    
-		  Case "mpkg"
-		    Return "application/vnd.apple.installer+xml"
-		    
-		  Case "m3u8"
-		    Return "application/vnd.apple.mpegurl"
-		    
-		  Case "swi"
-		    Return "application/vnd.aristanetworks.swi"
-		    
-		  Case "aep"
-		    Return "application/vnd.audiograph"
-		    
-		  Case "mpm"
-		    Return "application/vnd.blueice.multipass"
-		    
-		  Case "bmi"
-		    Return "application/vnd.bmi"
-		    
-		  Case "rep"
-		    Return "application/vnd.businessobjects"
-		    
-		  Case "cdxml"
-		    Return "application/vnd.chemdraw+xml"
-		    
-		  Case "mmd"
-		    Return "application/vnd.chipnuts.karaoke-mmd"
-		    
-		  Case "cdy"
-		    Return "application/vnd.cinderella"
-		    
-		  Case "cla"
-		    Return "application/vnd.claymore"
-		    
-		  Case "rp9"
-		    Return "application/vnd.cloanto.rp9"
-		    
-		  Case "c4g", "c4d", "c4f", "c4p", "c4u"
-		    Return "application/vnd.clonk.c4group"
-		    
-		  Case "c11amc"
-		    Return "application/vnd.cluetrust.cartomobile-config"
-		    
-		  Case "c11amz"
-		    Return "application/vnd.cluetrust.cartomobile-config-pkg"
-		    
-		  Case "csp"
-		    Return "application/vnd.commonspace"
-		    
-		  Case "cdbcmsg"
-		    Return "application/vnd.contact.cmsg"
-		    
-		  Case "cmc"
-		    Return "application/vnd.cosmocaller"
-		    
-		  Case "clkx"
-		    Return "application/vnd.crick.clicker"
-		    
-		  Case "clkk"
-		    Return "application/vnd.crick.clicker.keyboard"
-		    
-		  Case "clkp"
-		    Return "application/vnd.crick.clicker.palette"
-		    
-		  Case "clkt"
-		    Return "application/vnd.crick.clicker.template"
-		    
-		  Case "clkw"
-		    Return "application/vnd.crick.clicker.wordbank"
-		    
-		  Case "wbs"
-		    Return "application/vnd.criticaltools.wbs+xml"
-		    
-		  Case "pml"
-		    Return "application/vnd.ctc-posml"
-		    
-		  Case "ppd"
-		    Return "application/vnd.cups-ppd"
-		    
-		  Case "car"
-		    Return "application/vnd.curl.car"
-		    
-		  Case "pcurl"
-		    Return "application/vnd.curl.pcurl"
-		    
-		  Case "rdz"
-		    Return "application/vnd.data-vision.rdz"
-		    
-		  Case "uvf", "uvvf", "uvd", "uvvd"
-		    Return "application/vnd.dece.data"
-		    
-		  Case "uvt", "uvvt"
-		    Return "application/vnd.dece.ttml+xml"
-		    
-		  Case "uvx", "uvvx"
-		    Return "application/vnd.dece.unspecified"
-		    
-		  Case "fe_launch"
-		    Return "application/vnd.denovo.fcselayout-link"
-		    
-		  Case "dna"
-		    Return "application/vnd.dna"
-		    
-		  Case "mlp"
-		    Return "application/vnd.dolby.mlp"
-		    
-		  Case "dpg"
-		    Return "application/vnd.dpgraph"
-		    
-		  Case "dfac"
-		    Return "application/vnd.dreamfactory"
-		    
-		  Case "ait"
-		    Return "application/vnd.dvb.ait"
-		    
-		  Case "svc"
-		    Return "application/vnd.dvb.service"
-		    
-		  Case "geo"
-		    Return "application/vnd.dynageo"
-		    
-		  Case "mag"
-		    Return "application/vnd.ecowin.chart"
-		    
-		  Case "nml"
-		    Return "application/vnd.enliven"
-		    
-		  Case "esf"
-		    Return "application/vnd.epson.esf"
-		    
-		  Case "msf"
-		    Return "application/vnd.epson.msf"
-		    
-		  Case "qam"
-		    Return "application/vnd.epson.quickanime"
-		    
-		  Case "slt"
-		    Return "application/vnd.epson.salt"
-		    
-		  Case "ssf"
-		    Return "application/vnd.epson.ssf"
-		    
-		  Case "es3", "et3"
-		    Return "application/vnd.eszigno3+xml"
-		    
-		  Case "ez2"
-		    Return "application/vnd.ezpix-album"
-		    
-		  Case "ez3"
-		    Return "application/vnd.ezpix-package"
-		    
-		  Case "fdf"
-		    Return "application/vnd.fdf"
-		    
-		  Case "mseed"
-		    Return "application/vnd.fdsn.mseed"
-		    
-		  Case "seed", "dataless"
-		    Return "application/vnd.fdsn.seed"
-		    
-		  Case "gph"
-		    Return "application/vnd.flographit"
-		    
-		  Case "ftc"
-		    Return "application/vnd.fluxtime.clip"
-		    
-		  Case "fm", "frame", "maker", "book"
-		    Return "application/vnd.framemaker"
-		    
-		  Case "fnc"
-		    Return "application/vnd.frogans.fnc"
-		    
-		  Case "ltf"
-		    Return "application/vnd.frogans.ltf"
-		    
-		  Case "fsc"
-		    Return "application/vnd.fsc.weblaunch"
-		    
-		  Case "oas"
-		    Return "application/vnd.fujitsu.oasys"
-		    
-		  Case "oa2"
-		    Return "application/vnd.fujitsu.oasys2"
-		    
-		  Case "oa3"
-		    Return "application/vnd.fujitsu.oasys3"
-		    
-		  Case "fg5"
-		    Return "application/vnd.fujitsu.oasysgp"
-		    
-		  Case "bh2"
-		    Return "application/vnd.fujitsu.oasysprs"
-		    
-		  Case "ddd"
-		    Return "application/vnd.fujixerox.ddd"
-		    
-		  Case "xdw"
-		    Return "application/vnd.fujixerox.docuworks"
-		    
-		  Case "xbd"
-		    Return "application/vnd.fujixerox.docuworks.binder"
-		    
-		  Case "fzs"
-		    Return "application/vnd.fuzzysheet"
-		    
-		  Case "txd"
-		    Return "application/vnd.genomatix.tuxedo"
-		    
-		  Case "ggb"
-		    Return "application/vnd.geogebra.file"
-		    
-		  Case "ggt"
-		    Return "application/vnd.geogebra.tool"
-		    
-		  Case "gex", "gre"
-		    Return "application/vnd.geometry-explorer"
-		    
-		  Case "gxt"
-		    Return "application/vnd.geonext"
-		    
-		  Case "g2w"
-		    Return "application/vnd.geoplan"
-		    
-		  Case "g3w"
-		    Return "application/vnd.geospace"
-		    
-		  Case "gmx"
-		    Return "application/vnd.gmx"
-		    
-		  Case "kml"
-		    Return "application/vnd.google-earth.kml+xml"
-		    
-		  Case "kmz"
-		    Return "application/vnd.google-earth.kmz"
-		    
-		  Case "gqf", "gqs"
-		    Return "application/vnd.grafeq"
-		    
-		  Case "gac"
-		    Return "application/vnd.groove-account"
-		    
-		  Case "ghf"
-		    Return "application/vnd.groove-help"
-		    
-		  Case "gim"
-		    Return "application/vnd.groove-identity-message"
-		    
-		  Case "grv"
-		    Return "application/vnd.groove-injector"
-		    
-		  Case "gtm"
-		    Return "application/vnd.groove-tool-message"
-		    
-		  Case "tpl"
-		    Return "application/vnd.groove-tool-template"
-		    
-		  Case "vcg"
-		    Return "application/vnd.groove-vcard"
-		    
-		  Case "hal"
-		    Return "application/vnd.hal+xml"
-		    
-		  Case "zmm"
-		    Return "application/vnd.handheld-entertainment+xml"
-		    
-		  Case "hbci"
-		    Return "application/vnd.hbci"
-		    
-		  Case "les"
-		    Return "application/vnd.hhe.lesson-player"
-		    
-		  Case "hpgl"
-		    Return "application/vnd.hp-hpgl"
-		    
-		  Case "hpid"
-		    Return "application/vnd.hp-hpid"
-		    
-		  Case "hps"
-		    Return "application/vnd.hp-hps"
-		    
-		  Case "jlt"
-		    Return "application/vnd.hp-jlyt"
-		    
-		  Case "pcl"
-		    Return "application/vnd.hp-pcl"
-		    
-		  Case "pclxl"
-		    Return "application/vnd.hp-pclxl"
-		    
-		  Case "sfd-hdstx"
-		    Return "application/vnd.hydrostatix.sof-data"
-		    
-		  Case "x3d"
-		    Return "application/vnd.hzn-3d-crossword"
-		    
-		  Case "mpy"
-		    Return "application/vnd.ibm.minipay"
-		    
-		  Case "afp", "listafp", "list3820"
-		    Return "application/vnd.ibm.modcap"
-		    
-		  Case "irm"
-		    Return "application/vnd.ibm.rights-management"
-		    
-		  Case "sc"
-		    Return "application/vnd.ibm.secure-container"
-		    
-		  Case "icc", "icm"
-		    Return "application/vnd.iccprofile"
-		    
-		  Case "igl"
-		    Return "application/vnd.igloader"
-		    
-		  Case "ivp"
-		    Return "application/vnd.immervision-ivp"
-		    
-		  Case "ivu"
-		    Return "application/vnd.immervision-ivu"
-		    
-		  Case "igm"
-		    Return "application/vnd.insors.igm"
-		    
-		  Case "xpw", "xpx"
-		    Return "application/vnd.intercon.formnet"
-		    
-		  Case "i2g"
-		    Return "application/vnd.intergeo"
-		    
-		  Case "qbo"
-		    Return "application/vnd.intu.qbo"
-		    
-		  Case "qfx"
-		    Return "application/vnd.intu.qfx"
-		    
-		  Case "rcprofile"
-		    Return "application/vnd.ipunplugged.rcprofile"
-		    
-		  Case "irp"
-		    Return "application/vnd.irepository.package+xml"
-		    
-		  Case "xpr"
-		    Return "application/vnd.is-xpr"
-		    
-		  Case "fcs"
-		    Return "application/vnd.isac.fcs"
-		    
-		  Case "jam"
-		    Return "application/vnd.jam"
-		    
-		  Case "rms"
-		    Return "application/vnd.jcp.javame.midlet-rms"
-		    
-		  Case "jisp"
-		    Return "application/vnd.jisp"
-		    
-		  Case "joda"
-		    Return "application/vnd.joost.joda-archive"
-		    
-		  Case "ktz", "ktr"
-		    Return "application/vnd.kahootz"
-		    
-		  Case "karbon"
-		    Return "application/vnd.kde.karbon"
-		    
-		  Case "chrt"
-		    Return "application/vnd.kde.kchart"
-		    
-		  Case "kfo"
-		    Return "application/vnd.kde.kformula"
-		    
-		  Case "flw"
-		    Return "application/vnd.kde.kivio"
-		    
-		  Case "kon"
-		    Return "application/vnd.kde.kontour"
-		    
-		  Case "kpr", "kpt"
-		    Return "application/vnd.kde.kpresenter"
-		    
-		  Case "ksp"
-		    Return "application/vnd.kde.kspread"
-		    
-		  Case "kwd", "kwt"
-		    Return "application/vnd.kde.kword"
-		    
-		  Case "htke"
-		    Return "application/vnd.kenameaapp"
-		    
-		  Case "kia"
-		    Return "application/vnd.kidspiration"
-		    
-		  Case "kne", "knp"
-		    Return "application/vnd.kinar"
-		    
-		  Case "skp", "skd", "skt", "skm"
-		    Return "application/vnd.koan"
-		    
-		  Case "sse"
-		    Return "application/vnd.kodak-descriptor"
-		    
-		  Case "lasxml"
-		    Return "application/vnd.las.las+xml"
-		    
-		  Case "lbd"
-		    Return "application/vnd.llamagraphics.life-balance.desktop"
-		    
-		  Case "lbe"
-		    Return "application/vnd.llamagraphics.life-balance.exchange+xml"
-		    
-		  Case "123"
-		    Return "application/vnd.lotus-1-2-3"
-		    
-		  Case "apr"
-		    Return "application/vnd.lotus-approach"
-		    
-		  Case "pre"
-		    Return "application/vnd.lotus-freelance"
-		    
-		  Case "nsf"
-		    Return "application/vnd.lotus-notes"
-		    
-		  Case "org"
-		    Return "application/vnd.lotus-organizer"
-		    
-		  Case "scm"
-		    Return "application/vnd.lotus-screencam"
-		    
-		  Case "lwp"
-		    Return "application/vnd.lotus-wordpro"
-		    
-		  Case "portpkg"
-		    Return "application/vnd.macports.portpkg"
-		    
-		  Case "mcd"
-		    Return "application/vnd.mcd"
-		    
-		  Case "mc1"
-		    Return "application/vnd.medcalcdata"
-		    
-		  Case "cdkey"
-		    Return "application/vnd.mediastation.cdkey"
-		    
-		  Case "mwf"
-		    Return "application/vnd.mfer"
-		    
-		  Case "mfm"
-		    Return "application/vnd.mfmp"
-		    
-		  Case "flo"
-		    Return "application/vnd.micrografx.flo"
-		    
-		  Case "igx"
-		    Return "application/vnd.micrografx.igx"
-		    
-		  Case "mif"
-		    Return "application/vnd.mif"
-		    
-		  Case "daf"
-		    Return "application/vnd.mobius.daf"
-		    
-		  Case "dis"
-		    Return "application/vnd.mobius.dis"
-		    
-		  Case "mbk"
-		    Return "application/vnd.mobius.mbk"
-		    
-		  Case "mqy"
-		    Return "application/vnd.mobius.mqy"
-		    
-		  Case "msl"
-		    Return "application/vnd.mobius.msl"
-		    
-		  Case "plc"
-		    Return "application/vnd.mobius.plc"
-		    
-		  Case "txf"
-		    Return "application/vnd.mobius.txf"
-		    
-		  Case "mpn"
-		    Return "application/vnd.mophun.application"
-		    
-		  Case "mpc"
-		    Return "application/vnd.mophun.certificate"
-		    
-		  Case "xul"
-		    Return "application/vnd.mozilla.xul+xml"
-		    
-		  Case "cil"
-		    Return "application/vnd.ms-artgalry"
-		    
-		  Case "cab"
-		    Return "application/vnd.ms-cab-compressed"
-		    
-		  Case "xls", "xlm", "xla", "xlc", "xlt", "xlw"
-		    Return "application/vnd.ms-excel"
-		    
-		  Case "xlam"
-		    Return "application/vnd.ms-excel.addin.macroenabled.12"
-		    
-		  Case "xlsb"
-		    Return "application/vnd.ms-excel.sheet.binary.macroenabled.12"
-		    
-		  Case "xlsm"
-		    Return "application/vnd.ms-excel.sheet.macroenabled.12"
-		    
-		  Case "xltm"
-		    Return "application/vnd.ms-excel.template.macroenabled.12"
-		    
-		  Case "eot"
-		    Return "application/vnd.ms-fontobject"
-		    
-		  Case "chm"
-		    Return "application/vnd.ms-htmlhelp"
-		    
-		  Case "ims"
-		    Return "application/vnd.ms-ims"
-		    
-		  Case "lrm"
-		    Return "application/vnd.ms-lrm"
-		    
-		  Case "thmx"
-		    Return "application/vnd.ms-officetheme"
-		    
-		  Case "cat"
-		    Return "application/vnd.ms-pki.seccat"
-		    
-		  Case "stl"
-		    Return "application/vnd.ms-pki.stl"
-		    
-		  Case "ppt", "pps", "pot"
-		    Return "application/vnd.ms-powerpoint"
-		    
-		  Case "ppam"
-		    Return "application/vnd.ms-powerpoint.addin.macroenabled.12"
-		    
-		  Case "pptm"
-		    Return "application/vnd.ms-powerpoint.presentation.macroenabled.12"
-		    
-		  Case "sldm"
-		    Return "application/vnd.ms-powerpoint.slide.macroenabled.12"
-		    
-		  Case "ppsm"
-		    Return "application/vnd.ms-powerpoint.slideshow.macroenabled.12"
-		    
-		  Case "potm"
-		    Return "application/vnd.ms-powerpoint.template.macroenabled.12"
-		    
-		  Case "mpp", "mpt"
-		    Return "application/vnd.ms-project"
-		    
-		  Case "docm"
-		    Return "application/vnd.ms-word.document.macroenabled.12"
-		    
-		  Case "dotm"
-		    Return "application/vnd.ms-word.template.macroenabled.12"
-		    
-		  Case "wps", "wks", "wcm", "wdb"
-		    Return "application/vnd.ms-works"
-		    
-		  Case "wpl"
-		    Return "application/vnd.ms-wpl"
-		    
-		  Case "xps"
-		    Return "application/vnd.ms-xpsdocument"
-		    
-		  Case "mseq"
-		    Return "application/vnd.mseq"
-		    
-		  Case "mus"
-		    Return "application/vnd.musician"
-		    
-		  Case "msty"
-		    Return "application/vnd.muvee.style"
-		    
-		  Case "nlu"
-		    Return "application/vnd.neurolanguage.nlu"
-		    
-		  Case "nnd"
-		    Return "application/vnd.noblenet-directory"
-		    
-		  Case "nns"
-		    Return "application/vnd.noblenet-sealer"
-		    
-		  Case "nnw"
-		    Return "application/vnd.noblenet-web"
-		    
-		  Case "ngdat"
-		    Return "application/vnd.nokia.n-gage.data"
-		    
-		  Case "n-gage"
-		    Return "application/vnd.nokia.n-gage.symbian.install"
-		    
-		  Case "rpst"
-		    Return "application/vnd.nokia.radio-preset"
-		    
-		  Case "rpss"
-		    Return "application/vnd.nokia.radio-presets"
-		    
-		  Case "edm"
-		    Return "application/vnd.novadigm.edm"
-		    
-		  Case "edx"
-		    Return "application/vnd.novadigm.edx"
-		    
-		  Case "ext"
-		    Return "application/vnd.novadigm.ext"
-		    
-		  Case "odc"
-		    Return "application/vnd.oasis.opendocument.chart"
-		    
-		  Case "otc"
-		    Return "application/vnd.oasis.opendocument.chart-template"
-		    
-		  Case "odb"
-		    Return "application/vnd.oasis.opendocument.database"
-		    
-		  Case "odf"
-		    Return "application/vnd.oasis.opendocument.formula"
-		    
-		  Case "odft"
-		    Return "application/vnd.oasis.opendocument.formula-template"
-		    
-		  Case "odg"
-		    Return "application/vnd.oasis.opendocument.graphics"
-		    
-		  Case "otg"
-		    Return "application/vnd.oasis.opendocument.graphics-template"
-		    
-		  Case "odi"
-		    Return "application/vnd.oasis.opendocument.image"
-		    
-		  Case "oti"
-		    Return "application/vnd.oasis.opendocument.image-template"
-		    
-		  Case "odp"
-		    Return "application/vnd.oasis.opendocument.presentation"
-		    
-		  Case "otp"
-		    Return "application/vnd.oasis.opendocument.presentation-template"
-		    
-		  Case "ods"
-		    Return "application/vnd.oasis.opendocument.spreadsheet"
-		    
-		  Case "ots"
-		    Return "application/vnd.oasis.opendocument.spreadsheet-template"
-		    
-		  Case "odt"
-		    Return "application/vnd.oasis.opendocument.text"
-		    
-		  Case "odm"
-		    Return "application/vnd.oasis.opendocument.text-master"
-		    
-		  Case "ott"
-		    Return "application/vnd.oasis.opendocument.text-template"
-		    
-		  Case "oth"
-		    Return "application/vnd.oasis.opendocument.text-web"
-		    
-		  Case "xo"
-		    Return "application/vnd.olpc-sugar"
-		    
-		  Case "dd2"
-		    Return "application/vnd.oma.dd2+xml"
-		    
-		  Case "oxt"
-		    Return "application/vnd.openofficeorg.extension"
-		    
-		  Case "pptx"
-		    Return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-		    
-		  Case "sldx"
-		    Return "application/vnd.openxmlformats-officedocument.presentationml.slide"
-		    
-		  Case "ppsx"
-		    Return "application/vnd.openxmlformats-officedocument.presentationml.slideshow"
-		    
-		  Case "potx"
-		    Return "application/vnd.openxmlformats-officedocument.presentationml.template"
-		    
-		  Case "xlsx"
-		    Return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-		    
-		  Case "xltx"
-		    Return "application/vnd.openxmlformats-officedocument.spreadsheetml.template"
-		    
-		  Case "docx"
-		    Return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-		    
-		  Case "dotx"
-		    Return "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
-		    
-		  Case "mgp"
-		    Return "application/vnd.osgeo.mapguide.package"
-		    
-		  Case "dp"
-		    Return "application/vnd.osgi.dp"
-		    
-		  Case "pdb", "pqa", "oprc"
-		    Return "application/vnd.palm"
-		    
-		  Case "paw"
-		    Return "application/vnd.pawaafile"
-		    
-		  Case "str"
-		    Return "application/vnd.pg.format"
-		    
-		  Case "ei6"
-		    Return "application/vnd.pg.osasli"
-		    
-		  Case "efif"
-		    Return "application/vnd.picsel"
-		    
-		  Case "wg"
-		    Return "application/vnd.pmi.widget"
-		    
-		  Case "plf"
-		    Return "application/vnd.pocketlearn"
-		    
-		  Case "pbd"
-		    Return "application/vnd.powerbuilder6"
-		    
-		  Case "box"
-		    Return "application/vnd.previewsystems.box"
-		    
-		  Case "mgz"
-		    Return "application/vnd.proteus.magazine"
-		    
-		  Case "qps"
-		    Return "application/vnd.publishare-delta-tree"
-		    
-		  Case "ptid"
-		    Return "application/vnd.pvi.ptid1"
-		    
-		  Case "qxd", "qxt", "qwd", "qwt", "qxl", "qxb"
-		    Return "application/vnd.quark.quarkxpress"
-		    
-		  Case "bed"
-		    Return "application/vnd.realvnc.bed"
-		    
-		  Case "mxl"
-		    Return "application/vnd.recordare.musicxml"
-		    
-		  Case "musicxml"
-		    Return "application/vnd.recordare.musicxml+xml"
-		    
-		  Case "cryptonote"
-		    Return "application/vnd.rig.cryptonote"
-		    
-		  Case "cod"
-		    Return "application/vnd.rim.cod"
-		    
-		  Case "rm"
-		    Return "application/vnd.rn-realmedia"
-		    
-		  Case "link66"
-		    Return "application/vnd.route66.link66+xml"
-		    
-		  Case "st"
-		    Return "application/vnd.sailingtracker.track"
-		    
-		  Case "see"
-		    Return "application/vnd.seemail"
-		    
-		  Case "sema"
-		    Return "application/vnd.sema"
-		    
-		  Case "semd"
-		    Return "application/vnd.semd"
-		    
-		  Case "semf"
-		    Return "application/vnd.semf"
-		    
-		  Case "ifm"
-		    Return "application/vnd.shana.informed.formdata"
-		    
-		  Case "itp"
-		    Return "application/vnd.shana.informed.formtemplate"
-		    
-		  Case "iif"
-		    Return "application/vnd.shana.informed.interchange"
-		    
-		  Case "ipk"
-		    Return "application/vnd.shana.informed.package"
-		    
-		  Case "twd", "twds"
-		    Return "application/vnd.simtech-mindmapper"
-		    
-		  Case "mmf"
-		    Return "application/vnd.smaf"
-		    
-		  Case "teacher"
-		    Return "application/vnd.smart.teacher"
-		    
-		  Case "sdkm", "sdkd"
-		    Return "application/vnd.solent.sdkm+xml"
-		    
-		  Case "dxp"
-		    Return "application/vnd.spotfire.dxp"
-		    
-		  Case "sfs"
-		    Return "application/vnd.spotfire.sfs"
-		    
-		  Case "sdc"
-		    Return "application/vnd.stardivision.calc"
-		    
-		  Case "sda"
-		    Return "application/vnd.stardivision.draw"
-		    
-		  Case "sdd"
-		    Return "application/vnd.stardivision.impress"
-		    
-		  Case "smf"
-		    Return "application/vnd.stardivision.math"
-		    
-		  Case "sdw", "vor"
-		    Return "application/vnd.stardivision.writer"
-		    
-		  Case "sgl"
-		    Return "application/vnd.stardivision.writer-global"
-		    
-		  Case "sm"
-		    Return "application/vnd.stepmania.stepchart"
-		    
-		  Case "sxc"
-		    Return "application/vnd.sun.xml.calc"
-		    
-		  Case "stc"
-		    Return "application/vnd.sun.xml.calc.template"
-		    
-		  Case "sxd"
-		    Return "application/vnd.sun.xml.draw"
-		    
-		  Case "std"
-		    Return "application/vnd.sun.xml.draw.template"
-		    
-		  Case "sxi"
-		    Return "application/vnd.sun.xml.impress"
-		    
-		  Case "sti"
-		    Return "application/vnd.sun.xml.impress.template"
-		    
-		  Case "sxm"
-		    Return "application/vnd.sun.xml.math"
-		    
-		  Case "sxw"
-		    Return "application/vnd.sun.xml.writer"
-		    
-		  Case "sxg"
-		    Return "application/vnd.sun.xml.writer.global"
-		    
-		  Case "stw"
-		    Return "application/vnd.sun.xml.writer.template"
-		    
-		  Case "sus", "susp"
-		    Return "application/vnd.sus-calendar"
-		    
-		  Case "svd"
-		    Return "application/vnd.svd"
-		    
-		  Case "sis", "sisx"
-		    Return "application/vnd.symbian.install"
-		    
-		  Case "xsm"
-		    Return "application/vnd.syncml+xml"
-		    
-		  Case "bdm"
-		    Return "application/vnd.syncml.dm+wbxml"
-		    
-		  Case "xdm"
-		    Return "application/vnd.syncml.dm+xml"
-		    
-		  Case "tao"
-		    Return "application/vnd.tao.intent-module-archive"
-		    
-		  Case "tmo"
-		    Return "application/vnd.tmobile-livetv"
-		    
-		  Case "tpt"
-		    Return "application/vnd.trid.tpt"
-		    
-		  Case "mxs"
-		    Return "application/vnd.triscape.mxs"
-		    
-		  Case "tra"
-		    Return "application/vnd.trueapp"
-		    
-		  Case "ufd", "ufdl"
-		    Return "application/vnd.ufdl"
-		    
-		  Case "utz"
-		    Return "application/vnd.uiq.theme"
-		    
-		  Case "umj"
-		    Return "application/vnd.umajin"
-		    
-		  Case "unityweb"
-		    Return "application/vnd.unity"
-		    
-		  Case "uoml"
-		    Return "application/vnd.uoml+xml"
-		    
-		  Case "vcx"
-		    Return "application/vnd.vcx"
-		    
-		  Case "vsd", "vst", "vss", "vsw"
-		    Return "application/vnd.visio"
-		    
-		  Case "vis"
-		    Return "application/vnd.visionary"
-		    
-		  Case "vsf"
-		    Return "application/vnd.vsf"
-		    
-		  Case "wbxml"
-		    Return "application/vnd.wap.wbxml"
-		    
-		  Case "wmlc"
-		    Return "application/vnd.wap.wmlc"
-		    
-		  Case "wmlsc"
-		    Return "application/vnd.wap.wmlscriptc"
-		    
-		  Case "wtb"
-		    Return "application/vnd.webturbo"
-		    
-		  Case "nbp"
-		    Return "application/vnd.wolfram.player"
-		    
-		  Case "wpd"
-		    Return "application/vnd.wordperfect"
-		    
-		  Case "wqd"
-		    Return "application/vnd.wqd"
-		    
-		  Case "stf"
-		    Return "application/vnd.wt.stf"
-		    
-		  Case "xar"
-		    Return "application/vnd.xara"
-		    
-		  Case "xfdl"
-		    Return "application/vnd.xfdl"
-		    
-		  Case "hvd"
-		    Return "application/vnd.yamaha.hv-dic"
-		    
-		  Case "hvs"
-		    Return "application/vnd.yamaha.hv-script"
-		    
-		  Case "hvp"
-		    Return "application/vnd.yamaha.hv-voice"
-		    
-		  Case "osf"
-		    Return "application/vnd.yamaha.openscoreformat"
-		    
-		  Case "osfpvg"
-		    Return "application/vnd.yamaha.openscoreformat.osfpvg+xml"
-		    
-		  Case "saf"
-		    Return "application/vnd.yamaha.smaf-audio"
-		    
-		  Case "spf"
-		    Return "application/vnd.yamaha.smaf-phrase"
-		    
-		  Case "cmp"
-		    Return "application/vnd.yellowriver-custom-menu"
-		    
-		  Case "zir", "zirz"
-		    Return "application/vnd.zul"
-		    
-		  Case "zaz"
-		    Return "application/vnd.zzazz.deck+xml"
-		    
-		  Case "vxml"
-		    Return "application/voicexml+xml"
-		    
-		  Case "wgt"
-		    Return "application/widget"
-		    
-		  Case "hlp"
-		    Return "application/winhlp"
-		    
-		  Case "wsdl"
-		    Return "application/wsdl+xml"
-		    
-		  Case "wspolicy"
-		    Return "application/wspolicy+xml"
-		    
-		  Case "7z"
-		    Return "application/x-7z-compressed"
-		    
-		  Case "abw"
-		    Return "application/x-abiword"
-		    
-		  Case "ace"
-		    Return "application/x-ace-compressed"
-		    
-		  Case "aab", "x32", "u32", "vox"
-		    Return "application/x-authorware-bin"
-		    
-		  Case "aam"
-		    Return "application/x-authorware-map"
-		    
-		  Case "aas"
-		    Return "application/x-authorware-seg"
-		    
-		  Case "bcpio"
-		    Return "application/x-bcpio"
-		    
-		  Case "torrent"
-		    Return "application/x-bittorrent"
-		    
-		  Case "bz"
-		    Return "application/x-bzip"
-		    
-		  Case "bz2", "boz"
-		    Return "application/x-bzip2"
-		    
-		  Case "vcd"
-		    Return "application/x-cdlink"
-		    
-		  Case "chat"
-		    Return "application/x-chat"
-		    
-		  Case "pgn"
-		    Return "application/x-chess-pgn"
-		    
-		  Case "cpio"
-		    Return "application/x-cpio"
-		    
-		  Case "csh"
-		    Return "application/x-csh"
-		    
-		  Case "deb", "udeb"
-		    Return "application/x-debian-package"
-		    
-		  Case "dir", "dcr", "dxr", "cst", "cct", "cxt", "w3d", "fgd", "swa"
-		    Return "application/x-director"
-		    
-		  Case "wad"
-		    Return "application/x-doom"
-		    
-		  Case "ncx"
-		    Return "application/x-dtbncx+xml"
-		    
-		  Case "dtb"
-		    Return "application/x-dtbook+xml"
-		    
-		  Case "res"
-		    Return "application/x-dtbresource+xml"
-		    
-		  Case "dvi"
-		    Return "application/x-dvi"
-		    
-		  Case "bdf"
-		    Return "application/x-font-bdf"
-		    
-		  Case "gsf"
-		    Return "application/x-font-ghostscript"
-		    
-		  Case "psf"
-		    Return "application/x-font-linux-psf"
-		    
-		  Case "otf"
-		    Return "application/x-font-otf"
-		    
-		  Case "pcf"
-		    Return "application/x-font-pcf"
-		    
-		  Case "snf"
-		    Return "application/x-font-snf"
-		    
-		  Case "ttf", "ttc"
-		    Return "application/x-font-ttf"
-		    
-		  Case "pfa", "pfb", "pfm", "afm"
-		    Return "application/x-font-type1"
-		    
-		  Case "woff"
-		    Return "application/x-font-woff"
-		    
-		  Case "spl"
-		    Return "application/x-futuresplash"
-		    
-		  Case "gnumeric"
-		    Return "application/x-gnumeric"
-		    
-		  Case "gtar"
-		    Return "application/x-gtar"
-		    
-		  Case "hdf"
-		    Return "application/x-hdf"
-		    
-		  Case "jnlp"
-		    Return "application/x-java-jnlp-file"
-		    
-		  Case "latex"
-		    Return "application/x-latex"
-		    
-		  Case "prc", "mobi"
-		    Return "application/x-mobipocket-ebook"
-		    
-		  Case "m3u8"
-		    Return "application/x-mpegurl"
-		    
-		  Case "application"
-		    Return "application/x-ms-application"
-		    
-		  Case "wmd"
-		    Return "application/x-ms-wmd"
-		    
-		  Case "wmz"
-		    Return "application/x-ms-wmz"
-		    
-		  Case "xbap"
-		    Return "application/x-ms-xbap"
-		    
-		  Case "mdb"
-		    Return "application/x-msaccess"
-		    
-		  Case "obd"
-		    Return "application/x-msbinder"
-		    
-		  Case "crd"
-		    Return "application/x-mscardfile"
-		    
-		  Case "clp"
-		    Return "application/x-msclip"
-		    
-		  Case "exe", "dll", "com", "bat", "msi"
-		    Return "application/x-msdownload"
-		    
-		  Case "mvb", "m13", "m14"
-		    Return "application/x-msmediaview"
-		    
-		  Case "wmf"
-		    Return "application/x-msmetafile"
-		    
-		  Case "mny"
-		    Return "application/x-msmoney"
-		    
-		  Case "pub"
-		    Return "application/x-mspublisher"
-		    
-		  Case "scd"
-		    Return "application/x-msschedule"
-		    
-		  Case "trm"
-		    Return "application/x-msterminal"
-		    
-		  Case "wri"
-		    Return "application/x-mswrite"
-		    
-		  Case "nc", "cdf"
-		    Return "application/x-netcdf"
-		    
-		  Case "p12", "pfx"
-		    Return "application/x-pkcs12"
-		    
-		  Case "p7b", "spc"
-		    Return "application/x-pkcs7-certificates"
-		    
-		  Case "p7r"
-		    Return "application/x-pkcs7-certreqresp"
-		    
-		  Case "rar"
-		    Return "application/x-rar-compressed"
-		    
-		  Case "sh"
-		    Return "application/x-sh"
-		    
-		  Case "shar"
-		    Return "application/x-shar"
-		    
-		  Case "swf"
-		    Return "application/x-shockwave-flash"
-		    
-		  Case "xap"
-		    Return "application/x-silverlight-app"
-		    
-		  Case "sit"
-		    Return "application/x-stuffit"
-		    
-		  Case "sitx"
-		    Return "application/x-stuffitx"
-		    
-		  Case "sv4cpio"
-		    Return "application/x-sv4cpio"
-		    
-		  Case "sv4crc"
-		    Return "application/x-sv4crc"
-		    
-		  Case "tar"
-		    Return "application/x-tar"
-		    
-		  Case "tcl"
-		    Return "application/x-tcl"
-		    
-		  Case "tex"
-		    Return "application/x-tex"
-		    
-		  Case "tfm"
-		    Return "application/x-tex-tfm"
-		    
-		  Case "texinfo", "texi"
-		    Return "application/x-texinfo"
-		    
-		  Case "ustar"
-		    Return "application/x-ustar"
-		    
-		  Case "src"
-		    Return "application/x-wais-source"
-		    
-		  Case "der", "crt"
-		    Return "application/x-x509-ca-cert"
-		    
-		  Case "fig"
-		    Return "application/x-xfig"
-		    
-		  Case "xpi"
-		    Return "application/x-xpinstall"
-		    
-		  Case "xdf"
-		    Return "application/xcap-diff+xml"
-		    
-		  Case "xenc"
-		    Return "application/xenc+xml"
-		    
-		  Case "xhtml", "xht"
-		    Return "application/xhtml+xml; charset=utf-8"
-		    
-		  Case "xml", "xsl"
-		    Return "application/xml"
-		    
-		  Case "dtd"
-		    Return "application/xml-dtd"
-		    
-		  Case "xop"
-		    Return "application/xop+xml"
-		    
-		  Case "xslt"
-		    Return "application/xslt+xml"
-		    
-		  Case "xspf"
-		    Return "application/xspf+xml"
-		    
-		  Case "mxml", "xhvml", "xvml", "xvm"
-		    Return "application/xv+xml"
-		    
-		  Case "yang"
-		    Return "application/yang"
-		    
-		  Case "yin"
-		    Return "application/yin+xml"
-		    
-		  Case "zip"
-		    Return "application/zip"
-		    
-		  Case "adp"
-		    Return "audio/adpcm"
-		    
-		  Case "au", "snd"
-		    Return "audio/basic"
-		    
-		  Case "mid", "midi", "kar", "rmi"
-		    Return "audio/midi"
-		    
-		  Case "mp4a"
-		    Return "audio/mp4"
-		    
-		  Case "m4a", "m4p"
-		    Return "audio/mp4a-latm"
-		    
-		  Case "mpga", "mp2", "mp2a", "mp3", "m2a", "m3a"
-		    Return "audio/mpeg"
-		    
-		  Case "oga", "ogg", "spx"
-		    Return "audio/ogg"
-		    
-		  Case "uva", "uvva"
-		    Return "audio/vnd.dece.audio"
-		    
-		  Case "eol"
-		    Return "audio/vnd.digital-winds"
-		    
-		  Case "dra"
-		    Return "audio/vnd.dra"
-		    
-		  Case "dts"
-		    Return "audio/vnd.dts"
-		    
-		  Case "dtshd"
-		    Return "audio/vnd.dts.hd"
-		    
-		  Case "lvp"
-		    Return "audio/vnd.lucent.voice"
-		    
-		  Case "pya"
-		    Return "audio/vnd.ms-playready.media.pya"
-		    
-		  Case "ecelp4800"
-		    Return "audio/vnd.nuera.ecelp4800"
-		    
-		  Case "ecelp7470"
-		    Return "audio/vnd.nuera.ecelp7470"
-		    
-		  Case "ecelp9600"
-		    Return "audio/vnd.nuera.ecelp9600"
-		    
-		  Case "rip"
-		    Return "audio/vnd.rip"
-		    
-		  Case "weba"
-		    Return "audio/webm"
-		    
-		  Case "aac"
-		    Return "audio/x-aac"
-		    
-		  Case "aif", "aiff", "aifc"
-		    Return "audio/x-aiff"
-		    
-		  Case "m3u"
-		    Return "audio/x-mpegurl"
-		    
-		  Case "wax"
-		    Return "audio/x-ms-wax"
-		    
-		  Case "wma"
-		    Return "audio/x-ms-wma"
-		    
-		  Case "ram", "ra"
-		    Return "audio/x-pn-realaudio"
-		    
-		  Case "rmp"
-		    Return "audio/x-pn-realaudio-plugin"
-		    
-		  Case "wav"
-		    Return "audio/x-wav"
-		    
-		  Case "cdx"
-		    Return "chemical/x-cdx"
-		    
-		  Case "cif"
-		    Return "chemical/x-cif"
-		    
-		  Case "cmdf"
-		    Return "chemical/x-cmdf"
-		    
-		  Case "cml"
-		    Return "chemical/x-cml"
-		    
-		  Case "csml"
-		    Return "chemical/x-csml"
-		    
-		  Case "xyz"
-		    Return "chemical/x-xyz"
-		    
-		  Case "bmp"
-		    Return "image/bmp"
-		    
-		  Case "cgm"
-		    Return "image/cgm"
-		    
-		  Case "g3"
-		    Return "image/g3fax"
-		    
-		  Case "gif"
-		    Return "image/gif"
-		    
-		  Case "ief"
-		    Return "image/ief"
-		    
-		  Case "jp2"
-		    Return "image/jp2"
-		    
-		  Case "jpeg", "jpg", "jpe"
-		    Return "image/jpeg"
-		    
-		  Case "ktx"
-		    Return "image/ktx"
-		    
-		  Case "pict", "pic", "pct"
-		    Return "image/pict"
-		    
-		  Case "png"
-		    Return "image/png"
-		    
-		  Case "btif"
-		    Return "image/prs.btif"
-		    
-		  Case "svg", "svgz"
-		    Return "image/svg+xml"
-		    
-		  Case "tiff", "tif"
-		    Return "image/tiff"
-		    
-		  Case "psd"
-		    Return "image/vnd.adobe.photoshop"
-		    
-		  Case "uvi", "uvvi", "uvg", "uvvg"
-		    Return "image/vnd.dece.graphic"
-		    
-		  Case "sub"
-		    Return "image/vnd.dvb.subtitle"
-		    
-		  Case "djvu", "djv"
-		    Return "image/vnd.djvu"
-		    
-		  Case "dwg"
-		    Return "image/vnd.dwg"
-		    
-		  Case "dxf"
-		    Return "image/vnd.dxf"
-		    
-		  Case "fbs"
-		    Return "image/vnd.fastbidsheet"
-		    
-		  Case "fpx"
-		    Return "image/vnd.fpx"
-		    
-		  Case "fst"
-		    Return "image/vnd.fst"
-		    
-		  Case "mmr"
-		    Return "image/vnd.fujixerox.edmics-mmr"
-		    
-		  Case "rlc"
-		    Return "image/vnd.fujixerox.edmics-rlc"
-		    
-		  Case "mdi"
-		    Return "image/vnd.ms-modi"
-		    
-		  Case "npx"
-		    Return "image/vnd.net-fpx"
-		    
-		  Case "wbmp"
-		    Return "image/vnd.wap.wbmp"
-		    
-		  Case "xif"
-		    Return "image/vnd.xiff"
-		    
-		  Case "webp"
-		    Return "image/webp"
-		    
-		  Case "ras"
-		    Return "image/x-cmu-raster"
-		    
-		  Case "cmx"
-		    Return "image/x-cmx"
-		    
-		  Case "fh", "fhc", "fh4", "fh5", "fh7"
-		    Return "image/x-freehand"
-		    
-		  Case "ico"
-		    Return "image/x-icon"
-		    
-		  Case "pntg", "pnt", "mac"
-		    Return "image/x-macpaint"
-		    
-		  Case "pcx"
-		    Return "image/x-pcx"
-		    
-		  Case "pic", "pct"
-		    Return "image/x-pict"
-		    
-		  Case "pnm"
-		    Return "image/x-portable-anymap"
-		    
-		  Case "pbm"
-		    Return "image/x-portable-bitmap"
-		    
-		  Case "pgm"
-		    Return "image/x-portable-graymap"
-		    
-		  Case "ppm"
-		    Return "image/x-portable-pixmap"
-		    
-		  Case "qtif", "qti"
-		    Return "image/x-quicktime"
-		    
-		  Case "rgb"
-		    Return "image/x-rgb"
-		    
-		  Case "xbm"
-		    Return "image/x-xbitmap"
-		    
-		  Case "xpm"
-		    Return "image/x-xpixmap"
-		    
-		  Case "xwd"
-		    Return "image/x-xwindowdump"
-		    
-		  Case "eml", "mime"
-		    Return "message/rfc822"
-		    
-		  Case "igs", "iges"
-		    Return "model/iges"
-		    
-		  Case "msh", "mesh", "silo"
-		    Return "model/mesh"
-		    
-		  Case "dae"
-		    Return "model/vnd.collada+xml"
-		    
-		  Case "dwf"
-		    Return "model/vnd.dwf"
-		    
-		  Case "gdl"
-		    Return "model/vnd.gdl"
-		    
-		  Case "gtw"
-		    Return "model/vnd.gtw"
-		    
-		  Case "mts"
-		    Return "model/vnd.mts"
-		    
-		  Case "vtu"
-		    Return "model/vnd.vtu"
-		    
-		  Case "wrl", "vrml"
-		    Return "model/vrml"
-		    
-		  Case "manifest"
-		    Return "text/cache-manifest"
-		    
-		  Case "ics", "ifb"
-		    Return "text/calendar"
-		    
-		  Case "css"
-		    Return "text/css"
-		    
-		  Case "csv"
-		    Return "text/csv"
-		    
-		  Case "html", "htm", "bs"
-		    Return "text/html; charset=utf-8"
-		    
-		  Case "n3"
-		    Return "text/n3"
-		    
-		  Case "txt", "text", "conf", "def", "list", "log", "in"
-		    Return "text/plain"
-		    
-		  Case "dsc"
-		    Return "text/prs.lines.tag"
-		    
-		  Case "rtx"
-		    Return "text/richtext"
-		    
-		  Case "sgml", "sgm"
-		    Return "text/sgml"
-		    
-		  Case "tsv"
-		    Return "text/tab-separated-values"
-		    
-		  Case "t", "tr", "roff", "man", "me", "ms"
-		    Return "text/troff"
-		    
-		  Case "ttl"
-		    Return "text/turtle"
-		    
-		  Case "uri", "uris", "urls"
-		    Return "text/uri-list"
-		    
-		  Case "curl"
-		    Return "text/vnd.curl"
-		    
-		  Case "dcurl"
-		    Return "text/vnd.curl.dcurl"
-		    
-		  Case "scurl"
-		    Return "text/vnd.curl.scurl"
-		    
-		  Case "mcurl"
-		    Return "text/vnd.curl.mcurl"
-		    
-		  Case "fly"
-		    Return "text/vnd.fly"
-		    
-		  Case "flx"
-		    Return "text/vnd.fmi.flexstor"
-		    
-		  Case "gv"
-		    Return "text/vnd.graphviz"
-		    
-		  Case "3dml"
-		    Return "text/vnd.in3d.3dml"
-		    
-		  Case "spot"
-		    Return "text/vnd.in3d.spot"
-		    
-		  Case "jad"
-		    Return "text/vnd.sun.j2me.app-descriptor"
-		    
-		  Case "wml"
-		    Return "text/vnd.wap.wml"
-		    
-		  Case "wmls"
-		    Return "text/vnd.wap.wmlscript"
-		    
-		  Case "s", "asm"
-		    Return "text/x-asm"
-		    
-		  Case "c", "cc", "cxx", "cpp", "h", "hh", "dic"
-		    Return "text/x-c"
-		    
-		  Case "f", "for", "f77", "f90"
-		    Return "text/x-fortran"
-		    
-		  Case "p", "pas"
-		    Return "text/x-pascal"
-		    
-		  Case "java"
-		    Return "text/x-java-source"
-		    
-		  Case "etx"
-		    Return "text/x-setext"
-		    
-		  Case "uu"
-		    Return "text/x-uuencode"
-		    
-		  Case "vcs"
-		    Return "text/x-vcalendar"
-		    
-		  Case "vcf"
-		    Return "text/x-vcard"
-		    
-		  Case "3gp"
-		    Return "video/3gpp"
-		    
-		  Case "3g2"
-		    Return "video/3gpp2"
-		    
-		  Case "h261"
-		    Return "video/h261"
-		    
-		  Case "h263"
-		    Return "video/h263"
-		    
-		  Case "h264"
-		    Return "video/h264"
-		    
-		  Case "jpgv"
-		    Return "video/jpeg"
-		    
-		  Case "jpm", "jpgm"
-		    Return "video/jpm"
-		    
-		  Case "mj2", "mjp2"
-		    Return "video/mj2"
-		    
-		  Case "ts"
-		    Return "video/mp2t"
-		    
-		  Case "mp4", "mp4v", "mpg4", "m4v"
-		    Return "video/mp4"
-		    
-		  Case "mpeg", "mpg", "mpe", "m1v", "m2v"
-		    Return "video/mpeg"
-		    
-		  Case "ogv"
-		    Return "video/ogg"
-		    
-		  Case "qt", "mov"
-		    Return "video/quicktime"
-		    
-		  Case "uvh", "uvvh"
-		    Return "video/vnd.dece.hd"
-		    
-		  Case "uvm", "uvvm"
-		    Return "video/vnd.dece.mobile"
-		    
-		  Case "uvp", "uvvp"
-		    Return "video/vnd.dece.pd"
-		    
-		  Case "uvs", "uvvs"
-		    Return "video/vnd.dece.sd"
-		    
-		  Case "uvv", "uvvv"
-		    Return "video/vnd.dece.video"
-		    
-		  Case "fvt"
-		    Return "video/vnd.fvt"
-		    
-		  Case "mxu", "m4u"
-		    Return "video/vnd.mpegurl"
-		    
-		  Case "pyv"
-		    Return "video/vnd.ms-playready.media.pyv"
-		    
-		  Case "uvu", "uvvu"
-		    Return "video/vnd.uvvu.mp4"
-		    
-		  Case "viv"
-		    Return "video/vnd.vivo"
-		    
-		  Case "dv", "dif"
-		    Return "video/x-dv"
-		    
-		  Case "webm"
-		    Return "video/webm"
-		    
-		  Case "f4v"
-		    Return "video/x-f4v"
-		    
-		  Case "fli"
-		    Return "video/x-fli"
-		    
-		  Case "flv"
-		    Return "video/x-flv"
-		    
-		  Case "m4v"
-		    Return "video/x-m4v"
-		    
-		  Case "rbp", "rbbas", "rbvcp"
-		    Return "application/x-REALbasic-Project"
-		    
-		  Case "asf", "asx"
-		    Return "video/x-ms-asf"
-		    
-		  Case "wm"
-		    Return "video/x-ms-wm"
-		    
-		  Case "wmv"
-		    Return "video/x-ms-wmv"
-		    
-		  Case "wmx"
-		    Return "video/x-ms-wmx"
-		    
-		  Case "wvx"
-		    Return "video/x-ms-wvx"
-		    
-		  Case "avi"
-		    Return "video/x-msvideo"
-		    
-		  Case "movie"
-		    Return "video/x-sgi-movie"
-		    
-		  Case "ice"
-		    Return "x-conference/x-cooltalk"
-		    
-		  Else
-		    ' This returns the default mime type
-		    Return "application/octet-stream"
-		    'Return "text/plain"
-		    
-		  End Select
 		End Function
 	#tag EndMethod
 
@@ -2472,7 +372,788 @@ Protected Module HTTP
 		#tag Getter
 			Get
 			  If mMIMETypes = Nil Then
-			    mMIMETypes = New Dictionary
+			    mMIMETypes = New Dictionary( _
+			    "ez":"application/andrew-inset", _
+			    "aw":"application/applixware", _
+			    "atom":"application/atom+xml", _
+			    "atomcat":"application/atomcat+xml", _
+			    "atomsvc":"application/atomsvc+xml", _
+			    "ccxml":"application/ccxml+xml", _
+			    "cdmia":"application/cdmi-capability", _
+			    "cdmic":"application/cdmi-container", _
+			    "cdmid":"application/cdmi-domain", _
+			    "cdmio":"application/cdmi-object", _
+			    "cdmiq":"application/cdmi-queue", _
+			    "cu":"application/cu-seeme", _
+			    "davmount":"application/davmount+xml", _
+			    "dssc":"application/dssc+der", _
+			    "xdssc":"application/dssc+xml", _
+			    "ecma":"application/ecmascript", _
+			    "emma":"application/emma+xml", _
+			    "epub":"application/epub+zip", _
+			    "exi":"application/exi", _
+			    "pfr":"application/font-tdpfr", _
+			    "stk":"application/hyperstudio", _
+			    "ipfix":"application/ipfix", _
+			    "jar":"application/java-archive", _
+			    "ser":"application/java-serialized-object", _
+			    "class":"application/java-vm", _
+			    "js":"application/javascript", _
+			    "json":"application/json", _
+			    "lostxml":"application/lost+xml", _
+			    "hqx":"application/mac-binhex40", _
+			    "cpt":"application/mac-compactpro", _
+			    "mads":"application/mads+xml", _
+			    "mrc":"application/marc", _
+			    "mrcx":"application/marcxml+xml", _
+			    "ma":"application/mathematica", _
+			    "nb":"application/mathematica", _
+			    "mb":"application/mathematica", _
+			    "mathml":"application/mathml+xml", _
+			    "mbox":"application/mbox", _
+			    "mscml":"application/mediaservercontrol+xml", _
+			    "meta4":"application/metalink4+xml", _
+			    "mets":"application/mets+xml", _
+			    "mods":"application/mods+xml", _
+			    "m21":"application/mp21", _
+			    "mp21":"application/mp21", _
+			    "mp4s":"application/mp4", _
+			    "doc":"application/msword", _
+			    "dot":"application/msword", _
+			    "mxf":"application/mxf", _
+			    "asc":"application/pgp-signature", _
+			    "sig":"application/pgp-signature", _
+			    "prf":"application/pics-rules", _
+			    "p10":"application/pkcs10", _
+			    "p7m":"application/pkcs7-mime", _
+			    "p7c":"application/pkcs7-mime", _
+			    "p7s":"application/pkcs7-signature", _
+			    "p8":"application/pkcs8", _
+			    "ac":"application/pkix-attr-cert", _
+			    "cer":"application/pkix-cert", _
+			    "crl":"application/pkix-crl", _
+			    "pkipath":"application/pkix-pkipath", _
+			    "pki":"application/pkixcmp", _
+			    "pls":"application/pls+xml", _
+			    "ai":"application/postscript", _
+			    "eps":"application/postscript", _
+			    "ps":"application/postscript", _
+			    "cww":"application/prs.cww", _
+			    "pskcxml":"application/pskc+xml", _
+			    "rdf":"application/rdf+xml", _
+			    "rif":"application/reginfo+xml", _
+			    "rnc":"application/relax-ng-compact-syntax", _
+			    "rl":"application/resource-lists+xml", _
+			    "rld":"application/resource-lists-diff+xml", _
+			    "rs":"application/rls-services+xml", _
+			    "rsd":"application/rsd+xml", _
+			    "rss":"application/rss+xml", _
+			    "rtf":"application/rtf", _
+			    "sbml":"application/sbml+xml", _
+			    "scq":"application/scvp-cv-request", _
+			    "scs":"application/scvp-cv-response", _
+			    "spq":"application/scvp-vp-request", _
+			    "spp":"application/scvp-vp-response", _
+			    "sdp":"application/sdp", _
+			    "setpay":"application/set-payment-initiation", _
+			    "setreg":"application/set-registration-initiation", _
+			    "shf":"application/shf+xml", _
+			    "smi":"application/smil+xml", _
+			    "smil":"application/smil+xml", _
+			    "rq":"application/sparql-query", _
+			    "srx":"application/sparql-results+xml", _
+			    "gram":"application/srgs", _
+			    "grxml":"application/srgs+xml", _
+			    "sru":"application/sru+xml", _
+			    "ssml":"application/ssml+xml", _
+			    "tei":"application/tei+xml", _
+			    "teicorpus":"application/tei+xml", _
+			    "tfi":"application/thraud+xml", _
+			    "tsd":"application/timestamped-data", _
+			    "plb":"application/vnd.3gpp.pic-bw-large", _
+			    "psb":"application/vnd.3gpp.pic-bw-small", _
+			    "pvb":"application/vnd.3gpp.pic-bw-var", _
+			    "tcap":"application/vnd.3gpp2.tcap", _
+			    "pwn":"application/vnd.3m.post-it-notes", _
+			    "aso":"application/vnd.accpac.simply.aso", _
+			    "imp":"application/vnd.accpac.simply.imp", _
+			    "acu":"application/vnd.acucobol", _
+			    "atc":"application/vnd.acucorp", _
+			    "acutc":"application/vnd.acucorp", _
+			    "air":"application/vnd.adobe.air-application-installer-package+zip", _
+			    "fxp":"application/vnd.adobe.fxp", _
+			    "fxpl":"application/vnd.adobe.fxp", _
+			    "xdp":"application/vnd.adobe.xdp+xml", _
+			    "xfdf":"application/vnd.adobe.xfdf", _
+			    "ahead":"application/vnd.ahead.space", _
+			    "azf":"application/vnd.airzip.filesecure.azf", _
+			    "azs":"application/vnd.airzip.filesecure.azs", _
+			    "azw":"application/vnd.amazon.ebook", _
+			    "acc":"application/vnd.americandynamics.acc", _
+			    "ami":"application/vnd.amiga.ami", _
+			    "apk":"application/vnd.android.package-archive", _
+			    "cii":"application/vnd.anser-web-certificate-issue-initiation", _
+			    "fti":"application/vnd.anser-web-funds-transfer-initiation", _
+			    "atx":"application/vnd.antix.game-component", _
+			    "mpkg":"application/vnd.apple.installer+xml", _
+			    "m3u8":"application/vnd.apple.mpegurl", _
+			    "swi":"application/vnd.aristanetworks.swi", _
+			    "aep":"application/vnd.audiograph", _
+			    "mpm":"application/vnd.blueice.multipass", _
+			    "bmi":"application/vnd.bmi", _
+			    "rep":"application/vnd.businessobjects", _
+			    "cdxml":"application/vnd.chemdraw+xml", _
+			    "mmd":"application/vnd.chipnuts.karaoke-mmd", _
+			    "cdy":"application/vnd.cinderella", _
+			    "cla":"application/vnd.claymore", _
+			    "rp9":"application/vnd.cloanto.rp9", _
+			    "c4g":"application/vnd.clonk.c4group", _
+			    "c4d":"application/vnd.clonk.c4group", _
+			    "c4f":"application/vnd.clonk.c4group", _
+			    "c4p":"application/vnd.clonk.c4group", _
+			    "c4u":"application/vnd.clonk.c4group", _
+			    "c11amc":"application/vnd.cluetrust.cartomobile-config", _
+			    "c11amz":"application/vnd.cluetrust.cartomobile-config-pkg", _
+			    "csp":"application/vnd.commonspace", _
+			    "cdbcmsg":"application/vnd.contact.cmsg", _
+			    "cmc":"application/vnd.cosmocaller", _
+			    "clkx":"application/vnd.crick.clicker", _
+			    "clkk":"application/vnd.crick.clicker.keyboard", _
+			    "clkp":"application/vnd.crick.clicker.palette", _
+			    "clkt":"application/vnd.crick.clicker.template", _
+			    "clkw":"application/vnd.crick.clicker.wordbank", _
+			    "wbs":"application/vnd.criticaltools.wbs+xml", _
+			    "pml":"application/vnd.ctc-posml", _
+			    "ppd":"application/vnd.cups-ppd", _
+			    "car":"application/vnd.curl.car", _
+			    "pcurl":"application/vnd.curl.pcurl", _
+			    "rdz":"application/vnd.data-vision.rdz", _
+			    "uvf":"application/vnd.dece.data", _
+			    "uvvf":"application/vnd.dece.data", _
+			    "uvd":"application/vnd.dece.data", _
+			    "uvvd":"application/vnd.dece.data", _
+			    "uvt":"application/vnd.dece.ttml+xml", _
+			    "uvvt":"application/vnd.dece.ttml+xml", _
+			    "uvx":"application/vnd.dece.unspecified", _
+			    "uvvx":"application/vnd.dece.unspecified", _
+			    "fe_launch":"application/vnd.denovo.fcselayout-link", _
+			    "dna":"application/vnd.dna", _
+			    "mlp":"application/vnd.dolby.mlp", _
+			    "dpg":"application/vnd.dpgraph", _
+			    "dfac":"application/vnd.dreamfactory", _
+			    "ait":"application/vnd.dvb.ait", _
+			    "svc":"application/vnd.dvb.service", _
+			    "geo":"application/vnd.dynageo", _
+			    "mag":"application/vnd.ecowin.chart", _
+			    "nml":"application/vnd.enliven", _
+			    "esf":"application/vnd.epson.esf", _
+			    "msf":"application/vnd.epson.msf", _
+			    "qam":"application/vnd.epson.quickanime", _
+			    "slt":"application/vnd.epson.salt", _
+			    "ssf":"application/vnd.epson.ssf", _
+			    "es3":"application/vnd.eszigno3+xml", _
+			    "et3":"application/vnd.eszigno3+xml", _
+			    "ez2":"application/vnd.ezpix-album", _
+			    "ez3":"application/vnd.ezpix-package", _
+			    "fdf":"application/vnd.fdf", _
+			    "mseed":"application/vnd.fdsn.mseed", _
+			    "seed":"application/vnd.fdsn.seed", _
+			    "dataless":"application/vnd.fdsn.seed", _
+			    "gph":"application/vnd.flographit", _
+			    "ftc":"application/vnd.fluxtime.clip", _
+			    "fm":"application/vnd.framemaker", _
+			    "frame":"application/vnd.framemaker", _
+			    "maker":"application/vnd.framemaker", _
+			    "book":"application/vnd.framemaker", _
+			    "fnc":"application/vnd.frogans.fnc", _
+			    "ltf":"application/vnd.frogans.ltf", _
+			    "fsc":"application/vnd.fsc.weblaunch", _
+			    "oas":"application/vnd.fujitsu.oasys", _
+			    "oa2":"application/vnd.fujitsu.oasys2", _
+			    "oa3":"application/vnd.fujitsu.oasys3", _
+			    "fg5":"application/vnd.fujitsu.oasysgp", _
+			    "bh2":"application/vnd.fujitsu.oasysprs", _
+			    "ddd":"application/vnd.fujixerox.ddd", _
+			    "xdw":"application/vnd.fujixerox.docuworks", _
+			    "xbd":"application/vnd.fujixerox.docuworks.binder", _
+			    "fzs":"application/vnd.fuzzysheet", _
+			    "txd":"application/vnd.genomatix.tuxedo", _
+			    "ggb":"application/vnd.geogebra.file", _
+			    "ggt":"application/vnd.geogebra.tool", _
+			    "gex":"application/vnd.geometry-explorer", _
+			    "gre":"application/vnd.geometry-explorer", _
+			    "gxt":"application/vnd.geonext", _
+			    "g2w":"application/vnd.geoplan", _
+			    "g3w":"application/vnd.geospace", _
+			    "gmx":"application/vnd.gmx", _
+			    "kml":"application/vnd.google-earth.kml+xml", _
+			    "kmz":"application/vnd.google-earth.kmz", _
+			    "gqf":"application/vnd.grafeq", _
+			    "gqs":"application/vnd.grafeq", _
+			    "gac":"application/vnd.groove-account", _
+			    "ghf":"application/vnd.groove-help", _
+			    "gim":"application/vnd.groove-identity-message", _
+			    "grv":"application/vnd.groove-injector", _
+			    "gtm":"application/vnd.groove-tool-message", _
+			    "tpl":"application/vnd.groove-tool-template", _
+			    "vcg":"application/vnd.groove-vcard", _
+			    "hal":"application/vnd.hal+xml", _
+			    "zmm":"application/vnd.handheld-entertainment+xml", _
+			    "hbci":"application/vnd.hbci", _
+			    "les":"application/vnd.hhe.lesson-player", _
+			    "hpgl":"application/vnd.hp-hpgl", _
+			    "hpid":"application/vnd.hp-hpid", _
+			    "hps":"application/vnd.hp-hps", _
+			    "jlt":"application/vnd.hp-jlyt", _
+			    "pcl":"application/vnd.hp-pcl", _
+			    "pclxl":"application/vnd.hp-pclxl", _
+			    "sfd-hdstx":"application/vnd.hydrostatix.sof-data", _
+			    "x3d":"application/vnd.hzn-3d-crossword", _
+			    "mpy":"application/vnd.ibm.minipay", _
+			    "afp":"application/vnd.ibm.modcap", _
+			    "listafp":"application/vnd.ibm.modcap", _
+			    "list3820":"application/vnd.ibm.modcap", _
+			    "irm":"application/vnd.ibm.rights-management", _
+			    "sc":"application/vnd.ibm.secure-container", _
+			    "icc":"application/vnd.iccprofile", _
+			    "icm":"application/vnd.iccprofile", _
+			    "igl":"application/vnd.igloader", _
+			    "ivp":"application/vnd.immervision-ivp", _
+			    "ivu":"application/vnd.immervision-ivu", _
+			    "igm":"application/vnd.insors.igm", _
+			    "xpw":"application/vnd.intercon.formnet", _
+			    "xpx":"application/vnd.intercon.formnet", _
+			    "i2g":"application/vnd.intergeo", _
+			    "qbo":"application/vnd.intu.qbo", _
+			    "qfx":"application/vnd.intu.qfx", _
+			    "rcprofile":"application/vnd.ipunplugged.rcprofile", _
+			    "irp":"application/vnd.irepository.package+xml", _
+			    "xpr":"application/vnd.is-xpr", _
+			    "fcs":"application/vnd.isac.fcs", _
+			    "jam":"application/vnd.jam", _
+			    "rms":"application/vnd.jcp.javame.midlet-rms", _
+			    "jisp":"application/vnd.jisp", _
+			    "joda":"application/vnd.joost.joda-archive", _
+			    "ktz":"application/vnd.kahootz", _
+			    "ktr":"application/vnd.kahootz", _
+			    "karbon":"application/vnd.kde.karbon", _
+			    "chrt":"application/vnd.kde.kchart", _
+			    "kfo":"application/vnd.kde.kformula", _
+			    "flw":"application/vnd.kde.kivio", _
+			    "kon":"application/vnd.kde.kontour", _
+			    "kpr":"application/vnd.kde.kpresenter", _
+			    "ksp":"application/vnd.kde.kspread", _
+			    "kwd":"application/vnd.kde.kword", _
+			    "htke":"application/vnd.kenameaapp", _
+			    "kia":"application/vnd.kidspiration", _
+			    "kne":"application/vnd.kinar", _
+			    "skp":"application/vnd.koan", _
+			    "sse":"application/vnd.kodak-descriptor", _
+			    "lasxml":"application/vnd.las.las+xml", _
+			    "lbd":"application/vnd.llamagraphics.life-balance.desktop", _
+			    "lbe":"application/vnd.llamagraphics.life-balance.exchange+xml", _
+			    "123":"application/vnd.lotus-1-2-3", _
+			    "apr":"application/vnd.lotus-approach", _
+			    "pre":"application/vnd.lotus-freelance", _
+			    "nsf":"application/vnd.lotus-notes", _
+			    "org":"application/vnd.lotus-organizer", _
+			    "scm":"application/vnd.lotus-screencam", _
+			    "lwp":"application/vnd.lotus-wordpro", _
+			    "portpkg":"application/vnd.macports.portpkg", _
+			    "mcd":"application/vnd.mcd", _
+			    "mc1":"application/vnd.medcalcdata", _
+			    "cdkey":"application/vnd.mediastation.cdkey", _
+			    "mwf":"application/vnd.mfer", _
+			    "mfm":"application/vnd.mfmp", _
+			    "flo":"application/vnd.micrografx.flo", _
+			    "igx":"application/vnd.micrografx.igx", _
+			    "mif":"application/vnd.mif", _
+			    "daf":"application/vnd.mobius.daf", _
+			    "dis":"application/vnd.mobius.dis", _
+			    "mbk":"application/vnd.mobius.mbk", _
+			    "mqy":"application/vnd.mobius.mqy", _
+			    "msl":"application/vnd.mobius.msl", _
+			    "plc":"application/vnd.mobius.plc", _
+			    "txf":"application/vnd.mobius.txf", _
+			    "mpn":"application/vnd.mophun.application", _
+			    "mpc":"application/vnd.mophun.certificate", _
+			    "xul":"application/vnd.mozilla.xul+xml", _
+			    "cil":"application/vnd.ms-artgalry", _
+			    "cab":"application/vnd.ms-cab-compressed", _
+			    "xls":"application/vnd.ms-excel", _
+			    "xlm":"application/vnd.ms-excel", _
+			    "xla":"application/vnd.ms-excel", _
+			    "xlc":"application/vnd.ms-excel", _
+			    "xlt":"application/vnd.ms-excel", _
+			    "xlw":"application/vnd.ms-excel", _
+			    "xlam":"application/vnd.ms-excel.addin.macroenabled.12", _
+			    "xlsb":"application/vnd.ms-excel.sheet.binary.macroenabled.12", _
+			    "xlsm":"application/vnd.ms-excel.sheet.macroenabled.12", _
+			    "xltm":"application/vnd.ms-excel.template.macroenabled.12", _
+			    "eot":"application/vnd.ms-fontobject", _
+			    "chm":"application/vnd.ms-htmlhelp", _
+			    "ims":"application/vnd.ms-ims", _
+			    "lrm":"application/vnd.ms-lrm", _
+			    "thmx":"application/vnd.ms-officetheme", _
+			    "cat":"application/vnd.ms-pki.seccat", _
+			    "stl":"application/vnd.ms-pki.stl", _
+			    "ppt":"application/vnd.ms-powerpoint", _
+			    "pps":"application/vnd.ms-powerpoint", _
+			    "ppam":"application/vnd.ms-powerpoint.addin.macroenabled.12", _
+			    "pptm":"application/vnd.ms-powerpoint.presentation.macroenabled.12", _
+			    "sldm":"application/vnd.ms-powerpoint.slide.macroenabled.12", _
+			    "ppsm":"application/vnd.ms-powerpoint.slideshow.macroenabled.12", _
+			    "potm":"application/vnd.ms-powerpoint.template.macroenabled.12", _
+			    "mpp":"application/vnd.ms-project", _
+			    "mpt":"application/vnd.ms-project", _
+			    "docm":"application/vnd.ms-word.document.macroenabled.12", _
+			    "dotm":"application/vnd.ms-word.template.macroenabled.12", _
+			    "wps":"application/vnd.ms-works", _
+			    "wks":"application/vnd.ms-works", _
+			    "wcm":"application/vnd.ms-works", _
+			    "wdb":"application/vnd.ms-works", _
+			    "wpl":"application/vnd.ms-wpl", _
+			    "xps":"application/vnd.ms-xpsdocument", _
+			    "mseq":"application/vnd.mseq", _
+			    "mus":"application/vnd.musician", _
+			    "msty":"application/vnd.muvee.style", _
+			    "nlu":"application/vnd.neurolanguage.nlu", _
+			    "nnd":"application/vnd.noblenet-directory", _
+			    "nns":"application/vnd.noblenet-sealer", _
+			    "nnw":"application/vnd.noblenet-web", _
+			    "ngdat":"application/vnd.nokia.n-gage.data", _
+			    "n-gage":"application/vnd.nokia.n-gage.symbian.install", _
+			    "rpst":"application/vnd.nokia.radio-preset", _
+			    "rpss":"application/vnd.nokia.radio-presets", _
+			    "edm":"application/vnd.novadigm.edm", _
+			    "edx":"application/vnd.novadigm.edx", _
+			    "ext":"application/vnd.novadigm.ext", _
+			    "odc":"application/vnd.oasis.opendocument.chart", _
+			    "otc":"application/vnd.oasis.opendocument.chart-template", _
+			    "odb":"application/vnd.oasis.opendocument.database", _
+			    "odf":"application/vnd.oasis.opendocument.formula", _
+			    "odft":"application/vnd.oasis.opendocument.formula-template", _
+			    "odg":"application/vnd.oasis.opendocument.graphics", _
+			    "otg":"application/vnd.oasis.opendocument.graphics-template", _
+			    "odi":"application/vnd.oasis.opendocument.image", _
+			    "oti":"application/vnd.oasis.opendocument.image-template", _
+			    "odp":"application/vnd.oasis.opendocument.presentation", _
+			    "otp":"application/vnd.oasis.opendocument.presentation-template", _
+			    "ods":"application/vnd.oasis.opendocument.spreadsheet", _
+			    "ots":"application/vnd.oasis.opendocument.spreadsheet-template", _
+			    "odt":"application/vnd.oasis.opendocument.text", _
+			    "odm":"application/vnd.oasis.opendocument.text-master", _
+			    "ott":"application/vnd.oasis.opendocument.text-template", _
+			    "oth":"application/vnd.oasis.opendocument.text-web", _
+			    "xo":"application/vnd.olpc-sugar", _
+			    "dd2":"application/vnd.oma.dd2+xml", _
+			    "oxt":"application/vnd.openofficeorg.extension", _
+			    "pptx":"application/vnd.openxmlformats-officedocument.presentationml.presentation", _
+			    "sldx":"application/vnd.openxmlformats-officedocument.presentationml.slide", _
+			    "ppsx":"application/vnd.openxmlformats-officedocument.presentationml.slideshow", _
+			    "potx":"application/vnd.openxmlformats-officedocument.presentationml.template", _
+			    "xlsx":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", _
+			    "xltx":"application/vnd.openxmlformats-officedocument.spreadsheetml.template", _
+			    "docx":"application/vnd.openxmlformats-officedocument.wordprocessingml.document", _
+			    "dotx":"application/vnd.openxmlformats-officedocument.wordprocessingml.template", _
+			    "mgp":"application/vnd.osgeo.mapguide.package", _
+			    "dp":"application/vnd.osgi.dp", _
+			    "pdb":"application/vnd.palm", _
+			    "paw":"application/vnd.pawaafile", _
+			    "str":"application/vnd.pg.format", _
+			    "ei6":"application/vnd.pg.osasli", _
+			    "efif":"application/vnd.picsel", _
+			    "wg":"application/vnd.pmi.widget", _
+			    "plf":"application/vnd.pocketlearn", _
+			    "pbd":"application/vnd.powerbuilder6", _
+			    "box":"application/vnd.previewsystems.box", _
+			    "mgz":"application/vnd.proteus.magazine", _
+			    "qps":"application/vnd.publishare-delta-tree", _
+			    "ptid":"application/vnd.pvi.ptid1", _
+			    "qxd":"application/vnd.quark.quarkxpress", _
+			    "bed":"application/vnd.realvnc.bed", _
+			    "mxl":"application/vnd.recordare.musicxml", _
+			    "musicxml":"application/vnd.recordare.musicxml+xml", _
+			    "cryptonote":"application/vnd.rig.cryptonote", _
+			    "cod":"application/vnd.rim.cod", _
+			    "rm":"application/vnd.rn-realmedia", _
+			    "link66":"application/vnd.route66.link66+xml", _
+			    "st":"application/vnd.sailingtracker.track", _
+			    "see":"application/vnd.seemail", _
+			    "sema":"application/vnd.sema", _
+			    "semd":"application/vnd.semd", _
+			    "semf":"application/vnd.semf", _
+			    "ifm":"application/vnd.shana.informed.formdata", _
+			    "itp":"application/vnd.shana.informed.formtemplate", _
+			    "iif":"application/vnd.shana.informed.interchange", _
+			    "ipk":"application/vnd.shana.informed.package", _
+			    "twd":"application/vnd.simtech-mindmapper", _
+			    "mmf":"application/vnd.smaf", _
+			    "teacher":"application/vnd.smart.teacher", _
+			    "sdkm":"application/vnd.solent.sdkm+xml", _
+			    "dxp":"application/vnd.spotfire.dxp", _
+			    "sfs":"application/vnd.spotfire.sfs", _
+			    "sdc":"application/vnd.stardivision.calc", _
+			    "sda":"application/vnd.stardivision.draw", _
+			    "sdd":"application/vnd.stardivision.impress", _
+			    "smf":"application/vnd.stardivision.math", _
+			    "sdw":"application/vnd.stardivision.writer", _
+			    "sgl":"application/vnd.stardivision.writer-global", _
+			    "sm":"application/vnd.stepmania.stepchart", _
+			    "sxc":"application/vnd.sun.xml.calc", _
+			    "stc":"application/vnd.sun.xml.calc.template", _
+			    "sxd":"application/vnd.sun.xml.draw", _
+			    "std":"application/vnd.sun.xml.draw.template", _
+			    "sxi":"application/vnd.sun.xml.impress", _
+			    "sti":"application/vnd.sun.xml.impress.template", _
+			    "sxm":"application/vnd.sun.xml.math", _
+			    "sxw":"application/vnd.sun.xml.writer", _
+			    "sxg":"application/vnd.sun.xml.writer.global", _
+			    "stw":"application/vnd.sun.xml.writer.template", _
+			    "sus":"application/vnd.sus-calendar", _
+			    "svd":"application/vnd.svd", _
+			    "sis":"application/vnd.symbian.install", _
+			    "xsm":"application/vnd.syncml+xml", _
+			    "bdm":"application/vnd.syncml.dm+wbxml", _
+			    "xdm":"application/vnd.syncml.dm+xml", _
+			    "tao":"application/vnd.tao.intent-module-archive", _
+			    "tmo":"application/vnd.tmobile-livetv", _
+			    "tpt":"application/vnd.trid.tpt", _
+			    "mxs":"application/vnd.triscape.mxs", _
+			    "tra":"application/vnd.trueapp", _
+			    "ufd":"application/vnd.ufdl", _
+			    "utz":"application/vnd.uiq.theme", _
+			    "umj":"application/vnd.umajin", _
+			    "unityweb":"application/vnd.unity", _
+			    "uoml":"application/vnd.uoml+xml", _
+			    "vcx":"application/vnd.vcx", _
+			    "vsd":"application/vnd.visio", _
+			    "vis":"application/vnd.visionary", _
+			    "vsf":"application/vnd.vsf", _
+			    "wbxml":"application/vnd.wap.wbxml", _
+			    "wmlc":"application/vnd.wap.wmlc", _
+			    "wmlsc":"application/vnd.wap.wmlscriptc", _
+			    "wtb":"application/vnd.webturbo", _
+			    "nbp":"application/vnd.wolfram.player", _
+			    "wpd":"application/vnd.wordperfect", _
+			    "wqd":"application/vnd.wqd", _
+			    "stf":"application/vnd.wt.stf", _
+			    "xar":"application/vnd.xara", _
+			    "xfdl":"application/vnd.xfdl", _
+			    "hvd":"application/vnd.yamaha.hv-dic", _
+			    "hvs":"application/vnd.yamaha.hv-script", _
+			    "hvp":"application/vnd.yamaha.hv-voice", _
+			    "osf":"application/vnd.yamaha.openscoreformat", _
+			    "osfpvg":"application/vnd.yamaha.openscoreformat.osfpvg+xml", _
+			    "saf":"application/vnd.yamaha.smaf-audio", _
+			    "spf":"application/vnd.yamaha.smaf-phrase", _
+			    "cmp":"application/vnd.yellowriver-custom-menu", _
+			    "zir":"application/vnd.zul", _
+			    "zaz":"application/vnd.zzazz.deck+xml", _
+			    "vxml":"application/voicexml+xml", _
+			    "wgt":"application/widget", _
+			    "hlp":"application/winhlp", _
+			    "wsdl":"application/wsdl+xml", _
+			    "wspolicy":"application/wspolicy+xml", _
+			    "7z":"application/x-7z-compressed", _
+			    "abw":"application/x-abiword", _
+			    "ace":"application/x-ace-compressed", _
+			    "aab":"application/x-authorware-bin", _
+			    "aam":"application/x-authorware-map", _
+			    "aas":"application/x-authorware-seg", _
+			    "bcpio":"application/x-bcpio", _
+			    "torrent":"application/x-bittorrent", _
+			    "bz":"application/x-bzip", _
+			    "bz2":"application/x-bzip2", _
+			    "vcd":"application/x-cdlink", _
+			    "chat":"application/x-chat", _
+			    "pgn":"application/x-chess-pgn", _
+			    "cpio":"application/x-cpio", _
+			    "csh":"application/x-csh", _
+			    "deb":"application/x-debian-package", _
+			    "dir":"application/x-director", _
+			    "wad":"application/x-doom", _
+			    "ncx":"application/x-dtbncx+xml", _
+			    "dtb":"application/x-dtbook+xml", _
+			    "res":"application/x-dtbresource+xml", _
+			    "dvi":"application/x-dvi", _
+			    "bdf":"application/x-font-bdf", _
+			    "gsf":"application/x-font-ghostscript", _
+			    "psf":"application/x-font-linux-psf", _
+			    "otf":"application/x-font-otf", _
+			    "pcf":"application/x-font-pcf", _
+			    "snf":"application/x-font-snf", _
+			    "ttf":"application/x-font-ttf", _
+			    "pfa":"application/x-font-type1", _
+			    "woff":"application/x-font-woff", _
+			    "spl":"application/x-futuresplash", _
+			    "gnumeric":"application/x-gnumeric", _
+			    "gtar":"application/x-gtar", _
+			    "hdf":"application/x-hdf", _
+			    "jnlp":"application/x-java-jnlp-file", _
+			    "latex":"application/x-latex", _
+			    "prc":"application/x-mobipocket-ebook", _
+			    "mobi":"application/x-mobipocket-ebook", _
+			    "m3u8":"application/x-mpegurl", _
+			    "application":"application/x-ms-application", _
+			    "wmd":"application/x-ms-wmd", _
+			    "wmz":"application/x-ms-wmz", _
+			    "xbap":"application/x-ms-xbap", _
+			    "mdb":"application/x-msaccess", _
+			    "obd":"application/x-msbinder", _
+			    "crd":"application/x-mscardfile", _
+			    "clp":"application/x-msclip", _
+			    "exe":"application/x-msdownload", _
+			    "dll":"application/x-msdownload", _
+			    "com":"application/x-msdownload", _
+			    "bat":"application/x-msdownload", _
+			    "msi":"application/x-msdownload", _
+			    "mvb":"application/x-msmediaview", _
+			    "wmf":"application/x-msmetafile", _
+			    "mny":"application/x-msmoney", _
+			    "pub":"application/x-mspublisher", _
+			    "scd":"application/x-msschedule", _
+			    "trm":"application/x-msterminal", _
+			    "wri":"application/x-mswrite", _
+			    "nc":"application/x-netcdf", _
+			    "p12":"application/x-pkcs12", _
+			    "p7b":"application/x-pkcs7-certificates", _
+			    "p7r":"application/x-pkcs7-certreqresp", _
+			    "rar":"application/x-rar-compressed", _
+			    "sh":"application/x-sh", _
+			    "shar":"application/x-shar", _
+			    "swf":"application/x-shockwave-flash", _
+			    "xap":"application/x-silverlight-app", _
+			    "sit":"application/x-stuffit", _
+			    "sitx":"application/x-stuffitx", _
+			    "sv4cpio":"application/x-sv4cpio", _
+			    "sv4crc":"application/x-sv4crc", _
+			    "tar":"application/x-tar", _
+			    "tcl":"application/x-tcl", _
+			    "tex":"application/x-tex", _
+			    "tfm":"application/x-tex-tfm", _
+			    "texi":"application/x-texinfo", _
+			    "texinfo":"application/x-texinfo", _
+			    "ustar":"application/x-ustar", _
+			    "src":"application/x-wais-source", _
+			    "crt":"application/x-x509-ca-cert", _
+			    "der":"application/x-x509-ca-cert", _
+			    "fig":"application/x-xfig", _
+			    "xpi":"application/x-xpinstall", _
+			    "xdf":"application/xcap-diff+xml", _
+			    "xenc":"application/xenc+xml", _
+			    "xht":"application/xhtml+xml; charset=utf-8", _
+			    "xhtml":"application/xhtml+xml; charset=utf-8", _
+			    "xsl":"application/xml", _
+			    "xml":"application/xml", _
+			    "dtd":"application/xml-dtd", _
+			    "xop":"application/xop+xml", _
+			    "xslt":"application/xslt+xml", _
+			    "xspf":"application/xspf+xml", _
+			    "mxml":"application/xv+xml", _
+			    "yang":"application/yang", _
+			    "yin":"application/yin+xml", _
+			    "zip":"application/zip", _
+			    "adp":"audio/adpcm", _
+			    "snd":"audio/basic", _
+			    "au":"audio/basic", _
+			    "midi":"audio/midi", _
+			    "mid":"audio/midi", _
+			    "mp4a":"audio/mp4", _
+			    "m4p":"audio/mp4a-latm", _
+			    "m4a":"audio/mp4a-latm", _
+			    "mpga":"audio/mpeg", _
+			    "mp2":"audio/mpeg", _
+			    "mp2a":"audio/mpeg", _
+			    "mp3":"audio/mpeg", _
+			    "m2a":"audio/mpeg", _
+			    "m3a":"audio/mpeg", _
+			    "oga":"audio/ogg", _
+			    "ogg":"audio/ogg", _
+			    "spx":"audio/ogg", _
+			    "weba":"audio/webm", _
+			    "aac":"audio/x-aac", _
+			    "aif":"audio/x-aiff", _
+			    "aiff":"audio/x-aiff", _
+			    "aifc":"audio/x-aiff", _
+			    "m3u":"audio/x-mpegurl", _
+			    "wax":"audio/x-ms-wax", _
+			    "wma":"audio/x-ms-wma", _
+			    "ram":"audio/x-pn-realaudio", _
+			    "ra":"audio/x-pn-realaudio", _
+			    "rmp":"audio/x-pn-realaudio-plugin", _
+			    "wav":"audio/x-wav", _
+			    "cdx":"chemical/x-cdx", _
+			    "cif":"chemical/x-cif", _
+			    "cmdf":"chemical/x-cmdf", _
+			    "cml":"chemical/x-cml", _
+			    "csml":"chemical/x-csml", _
+			    "xyz":"chemical/x-xyz", _
+			    "bmp":"image/bmp", _
+			    "cgm":"image/cgm", _
+			    "g3":"image/g3fax", _
+			    "gif":"image/gif", _
+			    "ief":"image/ief", _
+			    "jp2":"image/jp2", _
+			    "jpeg":"image/jpeg", _
+			    "jpg":"image/jpeg", _
+			    "jpe":"image/jpeg", _
+			    "ktx":"image/ktx", _
+			    "pict":"image/pict", _
+			    "pic":"image/pict", _
+			    "pct":"image/pict", _
+			    "png":"image/png", _
+			    "btif":"image/prs.btif", _
+			    "svg":"image/svg+xml", _
+			    "tiff":"image/tiff", _
+			    "tiff":"image/tiff", _
+			    "psd":"image/vnd.adobe.photoshop", _
+			    "uvi":"image/vnd.dece.graphic", _
+			    "sub":"image/vnd.dvb.subtitle", _
+			    "djvu":"image/vnd.djvu", _
+			    "dwg":"image/vnd.dwg", _
+			    "dxf":"image/vnd.dxf", _
+			    "fbs":"image/vnd.fastbidsheet", _
+			    "fpx":"image/vnd.fpx", _
+			    "fst":"image/vnd.fst", _
+			    "mmr":"image/vnd.fujixerox.edmics-mmr", _
+			    "rlc":"image/vnd.fujixerox.edmics-rlc", _
+			    "mdi":"image/vnd.ms-modi", _
+			    "npx":"image/vnd.net-fpx", _
+			    "wbmp":"image/vnd.wap.wbmp", _
+			    "xif":"image/vnd.xiff", _
+			    "webp":"image/webp", _
+			    "ras":"image/x-cmu-raster", _
+			    "cmx":"image/x-cmx", _
+			    "fh":"image/x-freehand", _
+			    "ico":"image/x-icon", _
+			    "pntg":"image/x-macpaint", _
+			    "pnt":"image/x-macpaint", _
+			    "mac":"image/x-macpaint", _
+			    "pcx":"image/x-pcx", _
+			    "pnm":"image/x-portable-anymap", _
+			    "pbm":"image/x-portable-bitmap", _
+			    "pgm":"image/x-portable-graymap", _
+			    "ppm":"image/x-portable-pixmap", _
+			    "qti":"image/x-quicktime", _
+			    "qtif":"image/x-quicktime", _
+			    "rgb":"image/x-rgb", _
+			    "xbm":"image/x-xbitmap", _
+			    "xpm":"image/x-xpixmap", _
+			    "xwd":"image/x-xwindowdump", _
+			    "mime":"message/rfc822", _
+			    "eml":"message/rfc822", _
+			    "igs":"model/iges", _
+			    "msh":"model/mesh", _
+			    "dae":"model/vnd.collada+xml", _
+			    "dwf":"model/vnd.dwf", _
+			    "gdl":"model/vnd.gdl", _
+			    "gtw":"model/vnd.gtw", _
+			    "mts":"model/vnd.mts", _
+			    "vtu":"model/vnd.vtu", _
+			    "vrml":"model/vrml", _
+			    "manifest":"text/cache-manifest", _
+			    "ics":"text/calendar", _
+			    "css":"text/css", _
+			    "csv":"text/csv", _
+			    "html":"text/html; charset=utf-8", _
+			    "htm":"text/html; charset=utf-8", _
+			    "bs":"text/html; charset=utf-8", _
+			    "n3":"text/n3", _
+			    "txt":"text/plain", _
+			    "text":"text/plain", _
+			    "conf":"text/plain", _
+			    "def":"text/plain", _
+			    "list":"text/plain", _
+			    "log":"text/plain", _
+			    "in":"text/plain", _
+			    "md":"text/plain", _
+			    "dsc":"text/prs.lines.tag", _
+			    "rtx":"text/richtext", _
+			    "sgml":"text/sgml", _
+			    "tsv":"text/tab-separated-values", _
+			    "t":"text/troff", _
+			    "tr":"text/troff", _
+			    "roff":"text/troff", _
+			    "ttl":"text/turtle", _
+			    "uri":"text/uri-list", _
+			    "uris":"text/uri-list", _
+			    "urls":"text/uri-list", _
+			    "curl":"text/vnd.curl", _
+			    "dcurl":"text/vnd.curl.dcurl", _
+			    "scurl":"text/vnd.curl.scurl", _
+			    "mcurl":"text/vnd.curl.mcurl", _
+			    "fly":"text/vnd.fly", _
+			    "flx":"text/vnd.fmi.flexstor", _
+			    "gv":"text/vnd.graphviz", _
+			    "3dml":"text/vnd.in3d.3dml", _
+			    "spot":"text/vnd.in3d.spot", _
+			    "jad":"text/vnd.sun.j2me.app-descriptor", _
+			    "wml":"text/vnd.wap.wml", _
+			    "wmls":"text/vnd.wap.wmlscript", _
+			    "asm":"text/x-asm", _
+			    "c":"text/x-c", _
+			    "cc":"text/x-c", _
+			    "cxx":"text/x-c", _
+			    "cpp":"text/x-c", _
+			    "h":"text/x-c", _
+			    "pas":"text/x-pascal", _
+			    "java":"text/x-java-source", _
+			    "etx":"text/x-setext", _
+			    "uu":"text/x-uuencode", _
+			    "vcs":"text/x-vcalendar", _
+			    "vcf":"text/x-vcard", _
+			    "3gp":"video/3gpp", _
+			    "3g2":"video/3gpp2", _
+			    "h261":"video/h261", _
+			    "h263":"video/h263", _
+			    "h264":"video/h264", _
+			    "jpgv":"video/jpeg", _
+			    "jpm":"video/jpm", _
+			    "mj2":"video/mj2", _
+			    "ts":"video/mp2t", _
+			    "mp4":"video/mp4", _
+			    "mp4v":"video/mp4", _
+			    "mpg4":"video/mp4", _
+			    "m4v":"video/mp4", _
+			    "mpeg":"video/mpeg", _
+			    "mpg":"video/mpeg", _
+			    "mpe":"video/mpeg", _
+			    "m1v":"video/mpeg", _
+			    "m2v":"video/mpeg", _
+			    "ogv":"video/ogg", _
+			    "mov":"video/quicktime", _
+			    "qt":"video/quicktime", _
+			    "uvh":"video/vnd.dece.hd", _
+			    "uvm":"video/vnd.dece.mobile", _
+			    "uvp":"video/vnd.dece.pd", _
+			    "uvs":"video/vnd.dece.sd", _
+			    "uvv":"video/vnd.dece.video", _
+			    "fvt":"video/vnd.fvt", _
+			    "mxu":"video/vnd.mpegurl", _
+			    "pyv":"video/vnd.ms-playready.media.pyv", _
+			    "uvu":"video/vnd.uvvu.mp4", _
+			    "viv":"video/vnd.vivo", _
+			    "dif":"video/x-dv", _
+			    "dv":"video/x-dv", _
+			    "webm":"video/webm", _
+			    "f4v":"video/x-f4v", _
+			    "fli":"video/x-fli", _
+			    "flv":"video/x-flv", _
+			    "m4v":"video/x-m4v", _
+			    "rbp":"application/x-REALbasic-Project", _
+			    "rbbas":"application/x-REALbasic-Project", _
+			    "rbvcp":"application/x-REALbasic-Project", _
+			    "rbo":"application/x-REALbasic-Project", _
+			    "asx":"video/x-ms-asf", _
+			    "asf":"video/x-ms-asf", _
+			    "wm":"video/x-ms-wm", _
+			    "wmv":"video/x-ms-wmv", _
+			    "wmx":"video/x-ms-wmx", _
+			    "wvx":"video/x-ms-wvx", _
+			    "avi":"video/x-msvideo", _
+			    "movie":"video/x-sgi-movie", _
+			    "ice":"x-conference/x-cooltalk")
 			  End If
 			  return mMIMETypes
 			End Get
