@@ -5,7 +5,7 @@ Protected Class Response
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
 		  If page.Directory Then
 		    Me.MessageBody = DirectoryIndex(Path, page)
-		    Me.MIMEType = New HTTPParse.ContentType("text/html")
+		    Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
 		  Else
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
@@ -41,7 +41,7 @@ Protected Class Response
 		  Me.MessageBody = ErrorPage(StatusCode, Param)
 		  Me.StatusCode = ErrorCode
 		  Me.Modified = New Date
-		  Me.MIMEType = New HTTPParse.ContentType("text/html")
+		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		End Sub
 	#tag EndMethod
@@ -55,7 +55,7 @@ Protected Class Response
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New HTTPParse.ContentType("text/html")
+		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
 		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		End Sub
 	#tag EndMethod
