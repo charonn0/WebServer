@@ -8,7 +8,7 @@ Protected Class HTTPRequest
 
 	#tag Method, Flags = &h0
 		Sub Constructor(UseSessions As Boolean = False)
-		  'Construct an empty HTTPRequest
+		  'Construct an empty HTTPParse.HTTPRequest
 		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
 		End Sub
 	#tag EndMethod
@@ -24,7 +24,7 @@ Protected Class HTTPRequest
 		  
 		  data = Replace(data, line + CRLF, "")
 		  Dim h As String = NthField(data, CRLF + CRLF, 1)
-		  Me.Headers = New HTTPHeaders(h)
+		  Me.Headers = New HTTPParse.HTTPHeaders(h)
 		  Me.MessageBody = Replace(data, h, "")
 		  
 		  If Me.Headers.HasHeader("Content-Type") Then
@@ -121,7 +121,7 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Cookies() As HTTPCookie
+		Cookies() As HTTPParse.HTTPCookie
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -129,7 +129,7 @@ Protected Class HTTPRequest
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Headers As HTTPHeaders
+		Headers As HTTPParse.HTTPHeaders
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

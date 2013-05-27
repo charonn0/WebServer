@@ -635,7 +635,7 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   175
    End
-   Begin WebFileServer Sock
+   Begin HTTP.WebFileServer Sock
       AuthenticationRealm=   """""Restricted Area"""""
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
@@ -680,7 +680,7 @@ End
 		  Sock.Port = Val(port.Text)
 		  Sock.Document = SharedFile
 		  'Sock.Authenticate = CheckBox2.Value
-		  Dim redirect As New HTTPResponse("/bs", "http://www.boredomsoft.org")
+		  Dim redirect As New HTTPParse.HTTPResponse("/bs", "http://www.boredomsoft.org")
 		  Sock.AddRedirect(redirect)
 		  'Dim f As FolderItem = GetOpenFolderItem("")
 		  'Sock.AddRedirect(New RBScriptDocument("/test", f))
@@ -902,8 +902,8 @@ End
 		    For i As Integer = 0 To UBound(lines)
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
-		        Case WebServer.Log_Request
-		          If Severity < squelch And squelch <> WebServer.Log_Response Then Return
+		        Case HTTP.WebServer.Log_Request
+		          If Severity < squelch And squelch <> HTTP.WebServer.Log_Response Then Return
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
@@ -914,8 +914,8 @@ End
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c0080FF99
 		          
-		        Case WebServer.Log_Response
-		          If Severity < squelch And squelch <> WebServer.Log_Request Then Return
+		        Case HTTP.WebServer.Log_Response
+		          If Severity < squelch And squelch <> HTTP.WebServer.Log_Request Then Return
 		          
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Reply")
@@ -926,7 +926,7 @@ End
 		          End If
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
-		        Case WebServer.Log_Error
+		        Case HTTP.WebServer.Log_Error
 		          If Severity < squelch Then Return
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error!")
@@ -936,17 +936,17 @@ End
 		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(error.Width, error.Height)
 		          End If
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
-		        Case WebServer.Log_Debug
+		        Case HTTP.WebServer.Log_Debug
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Debug")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
-		        Case WebServer.Log_Socket
+		        Case HTTP.WebServer.Log_Socket
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Socket")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
 		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
-		        Case WebServer.Log_Trace
+		        Case HTTP.WebServer.Log_Trace
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Trace"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099
@@ -984,7 +984,7 @@ End
 #tag EndEvents
 #tag Events Sock
 	#tag Event
-		Function Authenticate(ClientRequest As HTTPRequest) As Boolean
+		Function Authenticate(ClientRequest As HTTPParse.HTTPRequest) As Boolean
 		  Return Username.Text  = ClientRequest.AuthUsername And Password.Text = ClientRequest.AuthPassword 'And realmtext.Text = ClientRequest.AuthRealm
 		End Function
 	#tag EndEvent
@@ -995,7 +995,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function TamperResponse(ByRef Response As HTTPResponse) As Boolean
+		Function TamperResponse(ByRef Response As HTTPParse.HTTPResponse) As Boolean
 		  If Response.StatusCode = 200 Then
 		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is granted.")
 		  ElseIf Response.StatusCode = 302 Then

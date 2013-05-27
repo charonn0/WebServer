@@ -1,7 +1,7 @@
 #tag Class
 Protected Class HTTPSession
 	#tag Method, Flags = &h0
-		Sub AddCacheItem(Page As HTTPResponse)
+		Sub AddCacheItem(Page As HTTPParse.HTTPResponse)
 		  If Page = Nil Then Return
 		  If Me.Cacheable Then
 		    Me.PageCache.Value(Page.Path) = Page
@@ -11,7 +11,7 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddRedirect(Page As HTTPResponse)
+		Sub AddRedirect(Page As HTTPParse.HTTPResponse)
 		  // Part of the Redirector interface.
 		  Me.Redirects.Value(Page.Path) = Page
 		  
@@ -23,7 +23,7 @@ Protected Class HTTPSession
 		Private Sub CacheCleaner(Sender As Timer)
 		  #pragma Unused Sender
 		  For Each Path As String In PageCache.Keys
-		    Dim doc As HTTPResponse = PageCache.Value(Path)
+		    Dim doc As HTTPParse.HTTPResponse = PageCache.Value(Path)
 		    Dim d As New Date
 		    If doc.Expires.TotalSeconds < d.TotalSeconds Then
 		      PageCache.Remove(Path)
@@ -56,9 +56,9 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCacheItem(Path As String) As HTTPResponse
+		Function GetCacheItem(Path As String) As HTTPParse.HTTPResponse
 		  // Part of the StoredItem interface.
-		  Dim doc As HTTPResponse
+		  Dim doc As HTTPParse.HTTPResponse
 		  If Me.Cacheable Then
 		    If Me.PageCache.HasKey(Path) Then
 		      doc = Me.PageCache.Value(Path)
@@ -70,9 +70,9 @@ Protected Class HTTPSession
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRedirect(Path As String) As HTTPResponse
+		Function GetRedirect(Path As String) As HTTPParse.HTTPResponse
 		  // Part of the StoredItem interface.
-		  Dim doc As HTTPResponse
+		  Dim doc As HTTPParse.HTTPResponse
 		  If Me.Redirects.HasKey(Path) Then
 		    doc = Me.Redirects.Value(Path)
 		  End If
@@ -112,7 +112,7 @@ Protected Class HTTPSession
 
 
 	#tag Hook, Flags = &h0
-		Event GetCache(Path As String) As HTTPResponse
+		Event GetCache(Path As String) As HTTPParse.HTTPResponse
 	#tag EndHook
 
 

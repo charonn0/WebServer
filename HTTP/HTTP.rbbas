@@ -610,7 +610,7 @@ Protected Module HTTP
 	#tag Method, Flags = &h0
 		Function HTTPReplyString(Code As Integer) As String
 		  'Returns the properly formatted HTTP response line for a given HTTP status code.
-		  'e.g. HTTPResponse(404) = "HTTP/1.1 404 Not Found"
+		  'e.g. HTTPParse.HTTPResponse(404) = "HTTP/1.1 404 Not Found"
 		  
 		  Dim msg As String
 		  

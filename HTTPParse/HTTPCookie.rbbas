@@ -68,7 +68,7 @@ Inherits Pair
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OriginCompare(CompareTo As HTTPCookie) As Boolean
+		Function OriginCompare(CompareTo As HTTPParse.HTTPCookie) As Boolean
 		  If CompareTo.Domain <> Me.Domain Then Return False
 		  If CompareTo.Path <> Me.Path Then Return False
 		  If CompareTo.Port <> Me.Port Then Return False

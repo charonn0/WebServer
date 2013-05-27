@@ -2,7 +2,7 @@
 Protected Class HTTPHeaders
 Inherits InternetHeaders
 	#tag Method, Flags = &h0
-		Function AllCookies() As HTTPCookie()
+		Function AllCookies() As HTTPParse.HTTPCookie()
 		  Return Cookies
 		End Function
 	#tag EndMethod
@@ -21,7 +21,7 @@ Inherits InternetHeaders
 		    v = Right(line, line.Len - (n.Len + 2)).Trim
 		    Select Case n
 		    Case "Set-Cookie"
-		      Cookies.Append(New HTTPCookie(v))
+		      Cookies.Append(New HTTPParse.HTTPCookie(v))
 		    Case "Cookie"
 		      Dim s() As String = Split(v, ";")
 		      For x As Integer = 0 To UBound(s)
@@ -29,13 +29,13 @@ Inherits InternetHeaders
 		        Dim l, r As String
 		        l = NthField(s(x).Trim, "=", 1)
 		        r = NthField(s(x).Trim, "=", 2)
-		        Dim c As New HTTPCookie(l, r)
+		        Dim c As New HTTPParse.HTTPCookie(l, r)
 		        Cookies.Append(c)
 		      Next
 		    Case "Accept"
 		      Dim s() As String = Split(v, ",")
 		      For x As Integer = 0 To UBound(s)
-		        AcceptableTypes.Append(New ContentType(s(x)))
+		        AcceptableTypes.Append(New HTTPParse.ContentType(s(x)))
 		      Next
 		    Else
 		      Me.AppendHeader(n, v)
@@ -45,9 +45,9 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Copy(CopyTo As HTTPHeaders)
+		Sub Copy(CopyTo As HTTPParse.HTTPHeaders)
 		  Dim lines() As String = Me.Source.Split(CRLF)
-		  If CopyTo = Nil Then CopyTo = New HTTPHeaders
+		  If CopyTo = Nil Then CopyTo = New HTTPParse.HTTPHeaders
 		  For i As Integer = 0 To UBound(lines)
 		    Dim line As String = lines(i)
 		    If Instr(line, ": ") <= 1  Or line.Trim = "" Then Continue
@@ -106,7 +106,7 @@ Inherits InternetHeaders
 
 	#tag Method, Flags = &h0
 		Sub SetCookie(Name As String, Assigns Value As String)
-		  Dim c As New HTTPCookie(Name, Value)
+		  Dim c As New HTTPParse.HTTPCookie(Name, Value)
 		  Me.RemoveCookie(c.Name)
 		  Cookies.Append(c)
 		End Sub
@@ -125,7 +125,7 @@ Inherits InternetHeaders
 		Function Source(SetCookies As Boolean = False) As String
 		  Dim data As String = Super.Source
 		  
-		  For Each c As HTTPCookie In Me.Cookies
+		  For Each c As HTTPParse.HTTPCookie In Me.Cookies
 		    If SetCookies Then
 		      data = data + CRLF + "Set-Cookie: " + c.ToString
 		    Else
@@ -135,7 +135,7 @@ Inherits InternetHeaders
 		  
 		  Dim acc As String
 		  For i As Integer = 0 To UBound(AcceptableTypes)
-		    Dim type As ContentType = AcceptableTypes(i)
+		    Dim type As HTTPParse.ContentType = AcceptableTypes(i)
 		    If i > 0 And i < AcceptableTypes.Ubound Then
 		      acc = acc + type.ToString + ", "
 		    ElseIf i = 0 And AcceptableTypes.Ubound > 0 Then
@@ -154,11 +154,11 @@ Inherits InternetHeaders
 
 
 	#tag Property, Flags = &h0
-		AcceptableTypes() As ContentType
+		AcceptableTypes() As HTTPParse.ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected Cookies() As HTTPCookie
+		Protected Cookies() As HTTPParse.HTTPCookie
 	#tag EndProperty
 
 

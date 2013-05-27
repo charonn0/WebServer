@@ -358,7 +358,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Sub ShowCookies(c() As HTTPCookie)
+		Sub ShowCookies(c() As HTTPParse.HTTPCookie)
 		  Listbox1.DeleteAllRows
 		  For i As Integer = 0 To UBound(c)
 		    Listbox1.AddRow("")

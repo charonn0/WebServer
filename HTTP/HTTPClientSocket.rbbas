@@ -2,7 +2,7 @@
 Protected Class HTTPClientSocket
 Inherits TCPSocket
 	#tag Method, Flags = &h0
-		Function ValidateSession(Request As HTTPRequest) As Boolean
+		Function ValidateSession(Request As HTTPParse.HTTPRequest) As Boolean
 		  Log(CurrentMethodName, WebServer.Log_Trace)
 		  Dim s As HTTPSession = GetSession(Request.SessionID)
 		  If s = Nil Then Return False

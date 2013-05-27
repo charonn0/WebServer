@@ -476,10 +476,10 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Function GetCookie(ByVal OldCookie As HTTPCookie = Nil) As HTTPCookie
+		Function GetCookie(ByVal OldCookie As HTTPParse.HTTPCookie = Nil) As HTTPParse.HTTPCookie
 		  Me.Cook = Nil
 		  If OldCookie <> Nil Then
-		    Me.Cook = New HTTPCookie(OldCookie.Name, OldCookie.Value)
+		    Me.Cook = New HTTPParse.HTTPCookie(OldCookie.Name, OldCookie.Value)
 		    CookieName.Text = Me.Cook.Name
 		    CookieValue.Text = Me.Cook.Value
 		    CookieDomain.Text = Self.Cook.Domain
@@ -495,7 +495,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private Cook As HTTPCookie
+		Private Cook As HTTPParse.HTTPCookie
 	#tag EndProperty
 
 
@@ -519,7 +519,7 @@ End
 #tag Events PushButton1
 	#tag Event
 		Sub Action()
-		  Self.Cook = New HTTPCookie(CookieName.Text, CookieValue.Text)
+		  Self.Cook = New HTTPParse.HTTPCookie(CookieName.Text, CookieValue.Text)
 		  Self.Cook.Domain = CookieDomain.Text
 		  Self.Cook.Expires = HTTPDate(CookieExpiry.Text)
 		  Self.Cook.Path = CookiePath.Text

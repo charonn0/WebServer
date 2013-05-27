@@ -29,7 +29,7 @@ Inherits ServerSocket
 
 
 	#tag Method, Flags = &h0
-		Sub AddRedirect(Page As HTTPResponse)
+		Sub AddRedirect(Page As HTTPParse.HTTPResponse)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Add redirect for " + page.Path, Log_Debug)
 		  Redirects.Value(Page.Path) = Page
@@ -54,10 +54,10 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Socket)
 		  Dim data As MemoryBlock = Sender.ReadAll
-		  Dim clientrequest As HTTPRequest
-		  Dim doc As HTTPResponse
+		  Dim clientrequest As HTTPParse.HTTPRequest
+		  Dim doc As HTTPParse.HTTPResponse
 		  Try
-		    clientrequest = New HTTPRequest(data, UseSessions)
+		    clientrequest = New HTTPParse.HTTPRequest(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
 		    If clientrequest.Headers.HasHeader("Connection") Then
 		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
@@ -75,31 +75,31 @@ Inherits ServerSocket
 		    
 		    
 		    
-		    Dim tmp As HTTPRequest = clientrequest
+		    Dim tmp As HTTPParse.HTTPRequest = clientrequest
 		    If TamperRequest(tmp) Then
 		      clientrequest = tmp
 		    End If
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = New HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      doc = New HTTPParse.HTTPResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPResponse(401, clientrequest.Path)
+		        doc = New HTTPParse.HTTPResponse(401, clientrequest.Path)
 		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
 		    End If
 		  Catch err As UnsupportedFormatException
-		    doc = New HTTPResponse(400, "") 'bad request
+		    doc = New HTTPParse.HTTPResponse(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
 		  
 		  If UseSessions Then
-		    Dim cache As HTTPResponse
+		    Dim cache As HTTPParse.HTTPResponse
 		    If clientrequest.CacheDirective <> "" Then
 		      Select Case clientrequest.CacheDirective
 		      Case "no-cache", "max-age=0"
@@ -109,7 +109,7 @@ Inherits ServerSocket
 		    Else
 		      cache = GetCache(Sender, clientRequest.Path)
 		    End If
-		    Dim redir As HTTPResponse = GetRedirect(Sender, clientrequest.Path)
+		    Dim redir As HTTPParse.HTTPResponse = GetRedirect(Sender, clientrequest.Path)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -136,29 +136,29 @@ Inherits ServerSocket
 		    Select Case clientrequest.Method
 		    Case RequestMethod.TRACE
 		      Me.Log("Request is a TRACE", Log_Debug)
-		      doc = New HTTPResponse(200, "")
+		      doc = New HTTPParse.HTTPResponse(200, "")
 		      doc.Headers.SetHeader("Content-Length", Str(Data.Size))
 		      doc.Headers.SetHeader("Content-Type", "message/http")
 		      doc.MessageBody = Data
 		    Case RequestMethod.OPTIONS
 		      Me.Log("Request is a OPTIONS", Log_Debug)
-		      doc = New HTTPResponse(200, "")
+		      doc = New HTTPParse.HTTPResponse(200, "")
 		      doc.MessageBody = ""
 		      doc.Headers.SetHeader("Content-Length", "0")
 		      doc.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		      doc.Headers.SetHeader("Accept-Ranges", "bytes")
 		    Case RequestMethod.GET, RequestMethod.HEAD
 		      Me.Log("Request is a HEAD", Log_Debug)
-		      doc = New HTTPResponse(404, clientrequest.Path)
+		      doc = New HTTPParse.HTTPResponse(404, clientrequest.Path)
 		    Else
 		      If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		        doc = New HTTPResponse(501, clientrequest.MethodName) 'Not implemented
+		        doc = New HTTPParse.HTTPResponse(501, clientrequest.MethodName) 'Not implemented
 		        Me.Log("Request is not implemented", Log_Error)
 		      ElseIf clientrequest.MethodName = "" Then
-		        doc = New HTTPResponse(400, "") 'bad request
+		        doc = New HTTPParse.HTTPResponse(400, "") 'bad request
 		        Me.Log("Request is malformed", Log_Error)
 		      ElseIf clientrequest.MethodName <> "" Then
-		        doc = New HTTPResponse(405, clientrequest.MethodName)
+		        doc = New HTTPParse.HTTPResponse(405, clientrequest.MethodName)
 		        Me.Log("Request is a NOT ALLOWED", Log_Error)
 		      End If
 		    End Select
@@ -167,12 +167,12 @@ Inherits ServerSocket
 		  If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
 		    If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPResponse(304, "")
+		        doc = New HTTPParse.HTTPResponse(304, "")
 		        doc.MessageBody = ""
 		      End If
 		    Else
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPResponse(412, "") 'Precondition failed
+		        doc = New HTTPParse.HTTPResponse(412, "") 'Precondition failed
 		        doc.MessageBody = ""
 		      End If
 		    End If
@@ -187,8 +187,8 @@ Inherits ServerSocket
 		        Return
 		      End If
 		    Next
-		    Dim accepted As ContentType = doc.MIMEType
-		    doc = New HTTPResponse(406, "") 'Not Acceptable
+		    Dim accepted As HTTPParse.ContentType = doc.MIMEType
+		    doc = New HTTPParse.HTTPResponse(406, "") 'Not Acceptable
 		    doc.MIMEType = accepted
 		    Me.Log("Response is not Acceptable", Log_Error)
 		  End If
@@ -199,7 +199,7 @@ Inherits ServerSocket
 		Exception Err
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
-		  Dim errpage As HTTPResponse
+		  Dim errpage As HTTPParse.HTTPResponse
 		  Dim stack As String
 		  #If DebugBuild Then
 		    If UBound(Err.Stack) <= -1 Then
@@ -213,7 +213,7 @@ Inherits ServerSocket
 		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
 		    Me.Log(logtxt , Log_Error)
 		  #endif
-		  errpage = New HTTPResponse(500, stack)
+		  errpage = New HTTPParse.HTTPResponse(500, stack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
@@ -221,7 +221,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetCache(Sender As HTTPClientSocket, Path As String) As HTTPResponse
+		Private Function GetCache(Sender As HTTPClientSocket, Path As String) As HTTPParse.HTTPResponse
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
@@ -237,7 +237,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetRedirect(Sender As HTTPClientSocket, Path As String) As HTTPResponse
+		Private Function GetRedirect(Sender As HTTPClientSocket, Path As String) As HTTPParse.HTTPResponse
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
@@ -309,11 +309,11 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As HTTPClientSocket, ResponseDocument As HTTPResponse)
+		Private Sub SendResponse(Socket As HTTPClientSocket, ResponseDocument As HTTPParse.HTTPResponse)
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Socket.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
-		  Dim tmp As HTTPResponse = ResponseDocument
+		  Dim tmp As HTTPParse.HTTPResponse = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
@@ -406,11 +406,11 @@ Inherits ServerSocket
 
 
 	#tag Hook, Flags = &h0
-		Event Authenticate(ClientRequest As HTTPRequest) As Boolean
+		Event Authenticate(ClientRequest As HTTPParse.HTTPRequest) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event HandleRequest(ClientRequest As HTTPRequest) As HTTPResponse
+		Event HandleRequest(ClientRequest As HTTPParse.HTTPRequest) As HTTPParse.HTTPResponse
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -418,11 +418,11 @@ Inherits ServerSocket
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperRequest(ByRef HTTPRequest As HTTPRequest) As Boolean
+		Event TamperRequest(ByRef Request As HTTPParse.HTTPRequest) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperResponse(ByRef Response As HTTPResponse) As Boolean
+		Event TamperResponse(ByRef Response As HTTPParse.HTTPResponse) As Boolean
 	#tag EndHook
 
 

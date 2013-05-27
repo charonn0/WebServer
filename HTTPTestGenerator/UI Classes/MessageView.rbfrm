@@ -41,6 +41,7 @@ Begin ContainerControl MessageView
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -67,6 +68,7 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
          TextColor       =   0
@@ -140,7 +142,6 @@ Begin ContainerControl MessageView
          LockTop         =   True
          Scope           =   0
          TabIndex        =   0
-         TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          Top             =   20
@@ -196,6 +197,7 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   0
@@ -235,6 +237,7 @@ Begin ContainerControl MessageView
          Selectable      =   ""
          TabIndex        =   2
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "View as media"
          TextAlign       =   2
          TextColor       =   255
@@ -274,6 +277,7 @@ Begin ContainerControl MessageView
          Selectable      =   ""
          TabIndex        =   2
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   255
@@ -337,7 +341,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mResponse As HTTPResponse
+		Private mResponse As HTTPParse.HTTPResponse
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -365,7 +369,7 @@ End
 			  PagePanel1.Value = 0
 			End Set
 		#tag EndSetter
-		Response As HTTPResponse
+		Response As HTTPParse.HTTPResponse
 	#tag EndComputedProperty
 
 

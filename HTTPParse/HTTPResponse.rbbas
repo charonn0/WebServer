@@ -5,12 +5,12 @@ Protected Class HTTPResponse
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
 		  If page.Directory Then
 		    Me.MessageBody = DirectoryIndex(Path, page)
-		    Me.MIMEType = New ContentType("text/html")
+		    Me.MIMEType = New HTTPParse.ContentType("text/html")
 		  Else
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
 		    bs.Close
-		    Me.MIMEType = New ContentType(page)
+		    Me.MIMEType = New HTTPParse.ContentType(page)
 		  End If
 		  Me.StatusCode = 200
 		  Me.Modified = Page.ModificationDate
@@ -21,7 +21,7 @@ Protected Class HTTPResponse
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(CachedPage As HTTPResponse, Path As String)
+		Sub Constructor(CachedPage As HTTPParse.HTTPResponse, Path As String)
 		  'Use this constructor to create a document from another document
 		  Me.MessageBody = CachedPage.MessageBody
 		  Me.StatusCode = 200
@@ -41,7 +41,7 @@ Protected Class HTTPResponse
 		  Me.MessageBody = ErrorPage(StatusCode, Param)
 		  Me.StatusCode = ErrorCode
 		  Me.Modified = New Date
-		  Me.MIMEType = New ContentType("text/html")
+		  Me.MIMEType = New HTTPParse.ContentType("text/html")
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		End Sub
 	#tag EndMethod
@@ -55,7 +55,7 @@ Protected Class HTTPResponse
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New ContentType("text/html")
+		  Me.MIMEType = New HTTPParse.ContentType("text/html")
 		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		End Sub
 	#tag EndMethod
@@ -70,7 +70,7 @@ Protected Class HTTPResponse
 		  line = NthField(data, CRLF, 1)
 		  data = Replace(data, line + CRLF, "")
 		  data = Replace(data, Me.MessageBody, "")
-		  Me.Headers = New HTTPHeaders(data)
+		  Me.Headers = New HTTPParse.HTTPHeaders(data)
 		  Me.Method = HTTP.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
@@ -151,7 +151,7 @@ Protected Class HTTPResponse
 		    Wend
 		    
 		    MessageBody = ReplaceAll(MessageBody, "%INDEXCOUNT%", Format(i - 1, "###,###,##0"))
-		    MessageBody = MessageBody + ReplaceAll(pageend, "%DAEMON%", WebServer.DaemonVersion)
+		    MessageBody = MessageBody + ReplaceAll(pageend, "%DAEMON%", HTTP.WebServer.DaemonVersion)
 		  Else
 		    MessageBody = "Not a Directory"
 		    
@@ -211,7 +211,7 @@ Protected Class HTTPResponse
 		    page = ReplaceAll(page, "%DOCUMENT%", "An HTTP error of the type specified above has occurred. No further information is available.")
 		  End Select
 		  
-		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + WebServer.DaemonVersion + "</em><br />")
+		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + HTTP.WebServer.DaemonVersion + "</em><br />")
 		  
 		  If page.LenB < 512 Then
 		    page = page + "<!--"
@@ -308,7 +308,7 @@ Protected Class HTTPResponse
 		#tag Getter
 			Get
 			  If mHeaders = Nil Then
-			    mHeaders = New HTTPHeaders
+			    mHeaders = New HTTPParse.HTTPHeaders
 			    Dim now As New Date
 			    mHeaders.AppendHeader("Date", HTTPDate(now))
 			    If Me.MessageBody.LenB > 0 Then
@@ -319,7 +319,7 @@ Protected Class HTTPResponse
 			    'headers.AppendHeader("Accept-Ranges", "bytes")
 			    headers.AppendHeader("Connection", "Close")
 			  End If
-			  mheaders.SetHeader("Server", WebServer.DaemonVersion)
+			  mheaders.SetHeader("Server", HTTP.WebServer.DaemonVersion)
 			  return mHeaders
 			End Get
 		#tag EndGetter
@@ -328,7 +328,7 @@ Protected Class HTTPResponse
 			  mHeaders = value
 			End Set
 		#tag EndSetter
-		Headers As HTTPHeaders
+		Headers As HTTPParse.HTTPHeaders
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -376,7 +376,7 @@ Protected Class HTTPResponse
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mHeaders As HTTPHeaders
+		Private mHeaders As HTTPParse.HTTPHeaders
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -384,7 +384,7 @@ Protected Class HTTPResponse
 			Get
 			  If mMIMEType = Nil Then
 			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path, "/", CountFields(Me.Path, "/")))
-			    mMIMEType = New ContentType(f)
+			    mMIMEType = New HTTPParse.ContentType(f)
 			  End If
 			  return mMIMEType
 			End Get
@@ -394,7 +394,7 @@ Protected Class HTTPResponse
 			  mMIMEType = value
 			End Set
 		#tag EndSetter
-		MIMEType As ContentType
+		MIMEType As HTTPParse.ContentType
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -402,7 +402,7 @@ Protected Class HTTPResponse
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMIMEType As ContentType
+		Private mMIMEType As HTTPParse.ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
