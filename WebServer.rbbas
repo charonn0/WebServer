@@ -178,7 +178,6 @@ Inherits ServerSocket
 		    End If
 		  End If
 		  
-		  
 		  If EnforceContentType Then
 		    Me.Log("Checking Accepts", Log_Debug)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -198,7 +197,6 @@ Inherits ServerSocket
 		  
 		  
 		Exception Err
-		  Me.Log("EXCEPTION", Log_Error)
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
 		  Dim errpage As HTTPResponse
@@ -211,6 +209,9 @@ Inherits ServerSocket
 		    End If
 		    stack = "<b>Exception<b>: " + Introspection.GetType(Err).FullName + "<br />Error Number: " + Str(Err.ErrorNumber) + "<br />Message: " + Err.Message _
 		    + "<br />Stack follows:<blockquote>" + stack + "</blockquote>" + EndOfLine
+		    Dim logtxt As String = "Exception: " + Introspection.GetType(Err).FullName + EndOfLine + "Error Number: " + Str(Err.ErrorNumber) + EndOfLine + "Message: " + Err.Message _
+		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
+		    Me.Log(logtxt , Log_Error)
 		  #endif
 		  errpage = New HTTPResponse(500, stack)
 		  

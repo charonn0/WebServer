@@ -20,6 +20,7 @@ Folder=HTTPTestGenerator;HTTPTestGenerator;&hD3A7FF;&h0;false
 Folder=Windows;HTTPTestGenerator/Windows;&h73D627FF;&hD3A7FF;false
 Folder=UI Classes;HTTPTestGenerator/UI Classes;&h12A8DFFF;&hD3A7FF;false
 Folder=Icons;HTTPTestGenerator/Icons;&h6473B7FF;&hD3A7FF;false
+Picture=error;HTTPTestGenerator/Icons/error.png;&h758437FF;&h6473B7FF;false;1;&h0
 Picture=traceIcon;HTTPTestGenerator/Icons/traceIcon.PNG;&h2182AFFF;&h6473B7FF;false;1;&h0
 Picture=socketIcon;HTTPTestGenerator/Icons/socketIcon.png;&h714A37FF;&h6473B7FF;false;0;&h0
 Picture=debugIcon;HTTPTestGenerator/Icons/debugIcon.png;&h4FB19FFF;&h6473B7FF;false;0;&h0

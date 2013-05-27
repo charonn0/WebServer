@@ -928,7 +928,13 @@ End
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
 		        Case WebServer.Log_Error
 		          If Severity < squelch Then Return
-		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error")
+		          If i = 0 Then
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error!")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = error
+		          Else
+		            Listbox1.AddRow(lines(i), " ", " ")
+		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(error.Width, error.Height)
+		          End If
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
 		        Case WebServer.Log_Debug
 		          If Severity < squelch Then Return

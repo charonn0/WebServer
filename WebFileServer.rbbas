@@ -10,7 +10,7 @@ Inherits WebServer
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
 		      '404 Not found
-		      Me.Log("Page not found", Log_Debug)
+		      'Me.Log("Page not found", Log_Debug)
 		      doc = New HTTPResponse(404, ClientRequest.Path)
 		      
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
@@ -24,7 +24,7 @@ Inherits WebServer
 		      doc = New HTTPResponse("/", Location)
 		    Else
 		      '200 OK
-		      Me.Log("Found page", Log_Debug)
+		      'Me.Log("Found page", Log_Debug)
 		      doc = New HTTPResponse(item, ClientRequest.Path)
 		    End If
 		  End Select
@@ -37,6 +37,7 @@ Inherits WebServer
 
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
+		  Dim origpath As String = Path.Trim
 		  Me.Log(CurrentMethodName + "(" + Path + ")", WebServer.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  
@@ -48,11 +49,11 @@ Inherits WebServer
 		  Dim item As FolderItem = GetTrueFolderItem(Path, FolderItem.PathTypeAbsolute)
 		  
 		  If item <> Nil And item.Exists Then
-		    Me.Log(CurrentMethodName + "Found: " + item.AbsolutePath + ")", Log_Debug)
+		    Me.Log(CurrentMethodName + " Found: '" + origpath + "' at '" + item.AbsolutePath + "'", Log_Debug)
 		    Return item
 		  End If
 		  
-		  Me.Log(CurrentMethodName + "miss!: " + Path + ")", WebServer.Log_Debug)
+		  Me.Log(CurrentMethodName + " File not found: '" + origpath + "'", WebServer.Log_Error)
 		End Function
 	#tag EndMethod
 
