@@ -125,8 +125,8 @@ Protected Class URI
 		    URL = URL + ":" + Format(Port, "#####")
 		  End If
 		  
-		  If Join(ServerFile, "/") <> "" Then
-		    URL = URL + Join(ServerFile, "/")
+		  If ServerFile <> "" Then
+		    URL = URL + ServerFile
 		  Else
 		    If Protocol <> "mailto" Then URL = URL + "/"
 		  End If
@@ -185,11 +185,11 @@ Protected Class URI
 		    URL = URL.Replace(FQDN, "")
 		    
 		    If InStr(URL, "?") > 0 Then
-		      ServerFile = Split(NthField(URL, "?", 1), "/")  //    /foo/bar.php
-		      URL = URL.Replace(Join(ServerFile, "/") + "?", "")
+		      ServerFile = NthField(URL, "?", 1)  //    /foo/bar.php
+		      URL = URL.Replace(ServerFile + "?", "")
 		      Arguments = Split(URL, "&")
 		    ElseIf URL.Trim <> "" Then
-		      ServerFile.Append(URL)
+		      ServerFile = URL
 		    End If
 		  Else
 		    Protocol = "mailto"
@@ -286,11 +286,11 @@ Protected Class URI
 		    End If
 		    
 		    If InStr(URL, "?") > 0 Then
-		      tmp.ServerFile = Split(NthField(URL, "?", 1), "/")  //    /foo/bar.php
-		      URL = URL.Replace(Join(tmp.ServerFile, "/") + "?", "")
+		      tmp.ServerFile = NthField(URL, "?", 1)  //    /foo/bar.php
+		      URL = URL.Replace(tmp.ServerFile + "?", "")
 		      tmp.Arguments = Split(URL, "&")
 		    ElseIf URL.Trim <> "" Then
-		      tmp.ServerFile.Append(URL)
+		      tmp.ServerFile = URL
 		    End If
 		  Else
 		    tmp.Protocol = "mailto"
@@ -522,7 +522,7 @@ Protected Class URI
 			/  (top directory or default page, same as empty string)
 			"" (empty string)
 		#tag EndNote
-		ServerFile() As String
+		ServerFile As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
