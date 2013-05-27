@@ -2787,7 +2787,7 @@ Protected Module HTTP
 		  Case "csv"
 		    Return "text/csv"
 		    
-		  Case "html", "htm"
+		  Case "html", "htm", "bs"
 		    Return "text/html; charset=utf-8"
 		    
 		  Case "n3"

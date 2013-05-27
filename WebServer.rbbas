@@ -38,10 +38,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub ClientErrorHandler(Sender As HTTPClientSocket)
-		  Dim logID As String = "(NO_SESSION)"
-		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
-		  Me.Log(CurrentMethodName + logID, Log_Trace)
-		  Me.Log(SocketErrorMessage(Sender.LastErrorCode) + logID, Log_Socket)
+		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
 		End Sub
 	#tag EndMethod
 
@@ -477,7 +474,7 @@ Inherits ServerSocket
 		#tag Getter
 			Get
 			  Me.Log(CurrentMethodName, Log_Trace)
-			  If mSessions = Nil Then 
+			  If mSessions = Nil Then
 			    mSessions = New Dictionary
 			    SessionTimer = New Timer
 			    AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler

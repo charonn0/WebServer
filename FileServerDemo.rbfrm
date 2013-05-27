@@ -966,7 +966,7 @@ End
 		Sub Action()
 		  If Sock.UseSessions <> Me.Value Then
 		    If Sock.IsListening Then
-		      If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then 
+		      If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then
 		        Return
 		      End If
 		    End If
