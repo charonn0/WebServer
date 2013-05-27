@@ -8,7 +8,6 @@ Class=WebFileServer;WebFileServer.rbbas;&h385397FF;&h0;false
 Folder=HTTP Helpers;HTTP Helpers;&h6F0277FF;&h0;false
 Class=HTTPClientSocket;HTTP Helpers/HTTPClientSocket.rbbas;&h15192FFF;&h6F0277FF;false
 Class=ContentType;HTTP Helpers/ContentType.rbbas;&h4F5187FF;&h6F0277FF;false
-Module=PlatformSpecific;HTTP Helpers/PlatformSpecific.rbbas;&h5FB97FFF;&h6F0277FF;false
 Class=HTTPSession;HTTP Helpers/HTTPSession.rbbas;&h593CA7FF;&h6F0277FF;false
 Class=MultipartForm;HTTP Helpers/MultipartForm.rbbas;&h35AE97FF;&h6F0277FF;false
 Class=HTTPRequest;HTTP Helpers/HTTPRequest.rbbas;&h16010FFF;&h6F0277FF;false
