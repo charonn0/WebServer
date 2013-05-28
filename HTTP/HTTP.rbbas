@@ -7,10 +7,7 @@ Protected Module HTTP
 		  #If GZipAvailable Then'
 		    Dim size As Single = MessageBody.LenB
 		    If size > 2^26 Then Return MessageBody 'if bigger than 64MB, don't try compressing it.
-		    System.DebugLog(App.ExecutableFile.Name + ": About to GZip data. Size: " + FormatBytes(size))
 		    MessageBody = GZip.Compress(MessageBody)
-		    size = MessageBody.LenB * 100 / size
-		    System.DebugLog(App.ExecutableFile.Name + ": GZip done. New size: " + FormatBytes(MessageBody.LenB) + " (" + Format(size, "##0.0##\%") + " of original.)")
 		    If GZip.Error <> 0 Then
 		      Raise New RuntimeException
 		    End If

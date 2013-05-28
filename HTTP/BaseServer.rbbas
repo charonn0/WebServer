@@ -328,12 +328,14 @@ Inherits ServerSocket
 		  
 		  If Not ResponseDocument.FromCache Then
 		    #If GZIPAvailable Then
-		      Me.Log("Running gzip", Log_Debug)
 		      ResponseDocument.Headers.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
 		      Try
+		        Dim size As Integer = ResponseDocument.MessageBody.LenB
 		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "Compressed with GZip " + GZip.Version))
 		        ResponseDocument.MessageBody = gz
+		        size = gz.LenB * 100 / size
+		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
 		      Catch Error
 		        'Just send the uncompressed data
 		        ResponseDocument.Headers.SetHeader("Content-Encoding", "Identity")
