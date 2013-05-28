@@ -21,10 +21,9 @@ Protected Module HTTP
 		      Raise New RuntimeException
 		    End If
 		    Dim mb As New MemoryBlock(MessageBody.LenB + 8)
-		    'magic
-		    mb.Byte(0) = &h1F
-		    mb.Byte(1) = &h8B
-		    mb.Byte(2) = &h08
+		    mb.Byte(0) = &h1F 'magic
+		    mb.Byte(1) = &h8B 'magic
+		    mb.Byte(2) = &h08 'use deflate
 		    mb.StringValue(8, MessageBody.LenB) = MessageBody
 		    Return mb
 		  #Else
@@ -325,7 +324,7 @@ Protected Module HTTP
 	#tag Method, Flags = &h0
 		Function MIMEstring(FileName As String) As String
 		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
-		  If MIMETypes.HasKey(ext) Then 
+		  If MIMETypes.HasKey(ext) Then
 		    Return MIMETypes.Value(ext)
 		  End If
 		  Return "application/octet-stream"
