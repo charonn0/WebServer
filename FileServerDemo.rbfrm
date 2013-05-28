@@ -579,6 +579,7 @@ Begin Window FileServerDemo
       Selectable      =   False
       TabIndex        =   18
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ":"
       TextAlign       =   0
       TextColor       =   &h000000
@@ -592,6 +593,7 @@ Begin Window FileServerDemo
       Width           =   8
    End
    Begin Timer LogTimer
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   551
@@ -599,8 +601,11 @@ Begin Window FileServerDemo
       Mode            =   2
       Period          =   1
       Scope           =   0
+      TabIndex        =   16
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   439
+      Visible         =   True
       Width           =   32
    End
    Begin CheckBox UseSessions
@@ -639,6 +644,7 @@ Begin Window FileServerDemo
       AuthenticationRealm=   """""Restricted Area"""""
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
+      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -650,9 +656,12 @@ Begin Window FileServerDemo
       Port            =   0
       Scope           =   0
       SessionTimeout  =   600
+      TabIndex        =   18
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   439
       UseSessions     =   True
+      Visible         =   True
       Width           =   32
    End
 End
@@ -680,7 +689,7 @@ End
 		  Sock.Port = Val(port.Text)
 		  Sock.Document = SharedFile
 		  'Sock.Authenticate = CheckBox2.Value
-		  Dim redirect As New HTTPParse.Response("/bs", "http://www.boredomsoft.org")
+		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
 		  Sock.AddRedirect(redirect)
 		  'Dim f As FolderItem = GetOpenFolderItem("")
 		  'Sock.AddRedirect(New RBScriptDocument("/test", f))

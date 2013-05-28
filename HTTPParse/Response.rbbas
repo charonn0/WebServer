@@ -1,66 +1,6 @@
 #tag Class
 Protected Class Response
 	#tag Method, Flags = &h0
-		Sub Constructor(page As FolderItem, Path As String)
-		  'Use this constructor to create a Document from a FolderItem (file or directory)
-		  If page.Directory Then
-		    Me.MessageBody = DirectoryIndex(Path, page)
-		    Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
-		  Else
-		    Dim bs As BinaryStream = BinaryStream.Open(page)
-		    Me.MessageBody = bs.Read(bs.Length)
-		    bs.Close
-		    Me.MIMEType = New HTTPParse.ContentType(page)
-		  End If
-		  Me.StatusCode = 200
-		  Me.Modified = Page.ModificationDate
-		  Me.Path = Path
-		  Me.Expires = New Date
-		  Me.Expires.TotalSeconds = Me.Expires.TotalSeconds + 60
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(CachedPage As HTTPParse.Response, Path As String)
-		  'Use this constructor to create a document from another document
-		  Me.MessageBody = CachedPage.MessageBody
-		  Me.StatusCode = 200
-		  Me.Modified = CachedPage.Modified
-		  Me.Path = Path
-		  Me.MIMEType = CachedPage.MIMEType
-		  mHeaders = CachedPage.Headers
-		  Me.Expires = CachedPage.Expires
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(ErrorCode As Integer, Param As String)
-		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
-		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
-		  Me.StatusCode = ErrorCode
-		  Me.MessageBody = ErrorPage(StatusCode, Param)
-		  Me.StatusCode = ErrorCode
-		  Me.Modified = New Date
-		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
-		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, RedirectURL As String)
-		  'Use this constructor to create a 302 redirect Document
-		  Me.StatusCode = 302
-		  Me.Modified = New Date
-		  Me.Path = Path
-		  Headers.AppendHeader("Location", RedirectURL)
-		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
-		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
-		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Data As String, AuthRealm As String, RequireDigestAuth As Boolean)
 		  Dim body As Integer = InStr(data, CRLF + CRLF)
 		  Me.MessageBody = Right(data, data.Len - body)
@@ -261,27 +201,16 @@ Protected Class Response
 	#tag Method, Flags = &h0
 		Function ToString() As String
 		  Dim data As String = Me.MessageBody
-		  
-		  
-		  If TamperMessageBody(data) Then
-		    Me.MessageBody = data
-		  End If
-		  
 		  #If GZIPAvailable Then
 		    If Me.GZipped Then
 		      data = GZipPage(data)
 		    End If
 		  #endif
 		  
-		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + Me.MessageBody
+		  Return HTTPReplyString(Me.StatusCode) + CRLF + Me.Headers.Source(True) + CRLF + CRLF + data
 		  
 		End Function
 	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event TamperMessageBody(ByRef Data As String) As Boolean
-	#tag EndHook
 
 
 	#tag Property, Flags = &h0

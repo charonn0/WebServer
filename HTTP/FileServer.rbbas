@@ -11,21 +11,21 @@ Inherits HTTP.BaseServer
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = New HTTPParse.Response(404, ClientRequest.Path)
+		      doc = New HTTPParse.ErrorResponse(404, ClientRequest.Path)
 		      
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = New HTTPParse.Response(403, ClientRequest.Path)
+		      doc = New HTTPParse.ErrorResponse(403, ClientRequest.Path)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
-		      doc = New HTTPParse.Response("/", Location)
+		      doc = New HTTPParse.VirtualResponse("/", Location)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
-		      doc = New HTTPParse.Response(item, ClientRequest.Path)
+		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path)
 		    End If
 		  End Select
 		  If doc <> Nil Then doc.Method = ClientRequest.Method

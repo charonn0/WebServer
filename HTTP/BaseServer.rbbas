@@ -81,20 +81,20 @@ Inherits ServerSocket
 		    End If
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = New HTTPParse.Response(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      doc = New HTTPParse.ErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPParse.Response(401, clientrequest.Path)
+		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path)
 		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
 		    End If
 		  Catch err As UnsupportedFormatException
-		    doc = New HTTPParse.Response(400, "") 'bad request
+		    doc = New HTTPParse.ErrorResponse(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
 		  
@@ -136,29 +136,29 @@ Inherits ServerSocket
 		    Select Case clientrequest.Method
 		    Case RequestMethod.TRACE
 		      Me.Log("Request is a TRACE", Log_Debug)
-		      doc = New HTTPParse.Response(200, "")
+		      doc = New HTTPParse.ErrorResponse(200, "")
 		      doc.Headers.SetHeader("Content-Length", Str(Data.Size))
 		      doc.Headers.SetHeader("Content-Type", "message/http")
 		      doc.MessageBody = Data
 		    Case RequestMethod.OPTIONS
 		      Me.Log("Request is a OPTIONS", Log_Debug)
-		      doc = New HTTPParse.Response(200, "")
+		      doc = New HTTPParse.ErrorResponse(200, "")
 		      doc.MessageBody = ""
 		      doc.Headers.SetHeader("Content-Length", "0")
 		      doc.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		      doc.Headers.SetHeader("Accept-Ranges", "bytes")
 		    Case RequestMethod.GET, RequestMethod.HEAD
 		      Me.Log("Request is a HEAD", Log_Debug)
-		      doc = New HTTPParse.Response(404, clientrequest.Path)
+		      doc = New HTTPParse.ErrorResponse(404, clientrequest.Path)
 		    Else
 		      If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		        doc = New HTTPParse.Response(501, clientrequest.MethodName) 'Not implemented
+		        doc = New HTTPParse.ErrorResponse(501, clientrequest.MethodName) 'Not implemented
 		        Me.Log("Request is not implemented", Log_Error)
 		      ElseIf clientrequest.MethodName = "" Then
-		        doc = New HTTPParse.Response(400, "") 'bad request
+		        doc = New HTTPParse.ErrorResponse(400, "") 'bad request
 		        Me.Log("Request is malformed", Log_Error)
 		      ElseIf clientrequest.MethodName <> "" Then
-		        doc = New HTTPParse.Response(405, clientrequest.MethodName)
+		        doc = New HTTPParse.ErrorResponse(405, clientrequest.MethodName)
 		        Me.Log("Request is a NOT ALLOWED", Log_Error)
 		      End If
 		    End Select
@@ -167,12 +167,12 @@ Inherits ServerSocket
 		  If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
 		    If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.Response(304, "")
+		        doc = New HTTPParse.ErrorResponse(304, "")
 		        doc.MessageBody = ""
 		      End If
 		    Else
 		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.Response(412, "") 'Precondition failed
+		        doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
 		        doc.MessageBody = ""
 		      End If
 		    End If
@@ -188,7 +188,7 @@ Inherits ServerSocket
 		      End If
 		    Next
 		    Dim accepted As HTTPParse.ContentType = doc.MIMEType
-		    doc = New HTTPParse.Response(406, "") 'Not Acceptable
+		    doc = New HTTPParse.ErrorResponse(406, "") 'Not Acceptable
 		    doc.MIMEType = accepted
 		    Me.Log("Response is not Acceptable", Log_Error)
 		  End If
@@ -213,7 +213,7 @@ Inherits ServerSocket
 		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
 		    Me.Log(logtxt , Log_Error)
 		  #endif
-		  errpage = New HTTPParse.Response(500, stack)
+		  errpage = New HTTPParse.ErrorResponse(500, stack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
@@ -277,7 +277,7 @@ Inherits ServerSocket
 		  Sessions = New Dictionary
 		  Super.Listen
 		  If Not Redirects.HasKey("/robots.txt") Then
-		    Dim doc As New HTTPParse.Response(200, "")
+		    Dim doc As New HTTPParse.ErrorResponse(200, "")
 		    doc.Path = "/robots.txt"
 		    doc.MIMEType = doc.MIMEType.GetType("robots.txt")
 		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
