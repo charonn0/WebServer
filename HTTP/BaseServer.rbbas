@@ -10,14 +10,6 @@ Inherits ServerSocket
 		  AddHandler sock.GetSession, AddressOf Me.GetSessionHandler
 		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
 		  AddHandler sock.Log, AddressOf Me.ClientLogHandler
-		  
-		  If Not Redirects.HasKey("robots.txt") Then
-		    Dim doc As New HTTPParse.Response(200, "")
-		    doc.Path = "/robots.txt"
-		    doc.MessageBody = "UserAgent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		    AddRedirect(doc)
-		  End If
-		  
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -284,6 +276,13 @@ Inherits ServerSocket
 		  Me.Log("Server now listening...", Log_Socket)
 		  Sessions = New Dictionary
 		  Super.Listen
+		  If Not Redirects.HasKey("/robots.txt") Then
+		    Dim doc As New HTTPParse.Response(200, "")
+		    doc.Path = "/robots.txt"
+		    doc.MIMEType = doc.MIMEType.GetType("robots.txt")
+		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
+		    AddRedirect(doc)
+		  End If
 		End Sub
 	#tag EndMethod
 

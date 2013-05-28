@@ -1,11 +1,5 @@
 #tag Module
 Protected Module HTTP
-	#tag Method, Flags = &h1
-		Protected Sub AddMIMEType(FileExtension As String, MIMEName As String)
-		  MIMETypes.Value(FileExtension) = MIMEName
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function GZipPage(MessageBody As String) As String
 		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
@@ -252,92 +246,6 @@ Protected Module HTTP
 		    Return "Unknown Status Code"
 		  End Select
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MIMEIcon(ext As String) As String
-		  'This method is from here: https://github.com/bskrtich/RBHTTPServer
-		  ext = Lowercase(ext)
-		  
-		  Select Case ext
-		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
-		    Return MIMEIcon_Binary
-		    
-		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
-		    Return MIMEIcon_Script
-		    
-		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
-		    Return MIMEIcon_RBP
-		    
-		  Case "back"
-		    Return MIMEIcon_Back
-		    
-		  Case "folder"
-		    Return MIMEIcon_Folder
-		    
-		  Case "txt", "md"
-		    Return MIMEIcon_Text
-		    
-		  Case "htm", "html"
-		    Return MIMEIcon_HTML
-		    
-		  Case "css"
-		    Return MIMEIcon_CSS
-		    
-		  Case "xml", "xsl"
-		    Return MIMEIcon_XML
-		    
-		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
-		    Return MIMEIcon_Image
-		    
-		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
-		    Return MIMEIcon_Movie
-		    
-		  Case "ttf", "otf", "pfb", "pfm"
-		    Return MIMEIcon_Font
-		    
-		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
-		    Return MIMEIcon_Compressed
-		    
-		  Case "wav"
-		    Return MIMEIcon_WAV
-		    
-		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
-		    Return MIMEIcon_Music
-		    
-		  Case "pdf", "ps"
-		    Return MIMEIcon_PDF
-		    
-		  Case "xls", "xlsx"
-		    Return MIMEIcon_XLS
-		    
-		  Case "doc", "docx"
-		    Return MIMEIcon_DOC
-		    
-		  Else ' This returns the default icon
-		    Return MIMEIcon_Unknown
-		    
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MIMEstring(FileName As String) As String
-		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
-		  If MIMETypes.HasKey(ext) Then
-		    Return MIMETypes.Value(ext)
-		  End If
-		  Return "application/octet-stream"
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub RemoveMIMEType(FileExtension As String)
-		  If MIMETypes.HasKey(FileExtension) Then
-		    MIMETypes.Remove(FileExtension)
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
