@@ -1166,8 +1166,8 @@ End
 		  Me.Request.Headers = New HTTPParse.Headers(heads.Source)
 		  
 		  If AutoHost.Value Then
-		    If Me.Request.Headers.HasHeader("Host") Then
-		      Me.Request.Headers.SetHeader("Host", theURL.FQDN)
+		    If Me.Request.HasHeader("Host") Then
+		      Me.Request.SetHeader("Host", theURL.FQDN)
 		    Else
 		      Me.Request.Headers.AppendHeader("Host", theURL.FQDN)
 		    End If
@@ -1178,28 +1178,28 @@ End
 		  Else
 		    ua = "BSHTTPGen\1.0"
 		  End If
-		  If Me.Request.Headers.HasHeader("User-Agent") Then
-		    Me.Request.Headers.SetHeader("User-Agent", ua)
+		  If Me.Request.HasHeader("User-Agent") Then
+		    Me.Request.SetHeader("User-Agent", ua)
 		  Else
 		    Me.Request.Headers.AppendHeader("User-Agent", ua)
 		  End If
 		  If Me.Request.ProtocolVersion >= 1.1 Then
-		    If Me.Request.Headers.HasHeader("Connection") Then
-		      Me.Request.Headers.SetHeader("close", ua)
+		    If Me.Request.HasHeader("Connection") Then
+		      Me.Request.SetHeader("close", ua)
 		    Else
 		      Me.Request.Headers.AppendHeader("Connection", "close")
 		    End If
 		  End If
 		  
 		  If Me.Request.Headers.AcceptableTypes.Ubound <= -1 Then
-		    Me.Request.Headers.SetHeader("Accept", "*/*")
+		    Me.Request.SetHeader("Accept", "*/*")
 		  End If
 		  
 		  Me.Request.MessageBody = MessageBody.Text
 		  
 		  
 		  If gziprequest.Value Then
-		    Me.Request.Headers.SetHeader("Accept-Encoding", "gzip")
+		    Me.Request.SetHeader("Accept-Encoding", "gzip")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1235,9 +1235,9 @@ End
 		    
 		    ResponseHeaders.AddRow(n, v)
 		  Next
-		  CookiesButton.Visible = UBound(Response.Headers.AllCookies) > -1
+		  CookiesButton.Visible = Response.Headers.CookieCount > 0
 		  CookiesButton.Invalidate(True)
-		  CookiesButton.HelpTag = Str(UBound(Response.Headers.AllCookies) + 1) + " cookies"
+		  CookiesButton.HelpTag = Str(Response.Headers.CookieCount) + " cookies"
 		  ResponseHeaderView.Enabled = True
 		  
 		  If Sock.IsConnected Then
@@ -1288,7 +1288,11 @@ End
 #tag Events CookiesButton
 	#tag Event
 		Sub Action()
-		  CookieViewer.ShowCookies(Response.Headers.AllCookies)
+		  Dim allcookies() As HTTPParse.Cookie
+		  For i As Integer = 0 To Response.Headers.CookieCount - 1
+		    allcookies.Append(Response.Headers.Cookie(i))
+		  Next
+		  CookieViewer.ShowCookies(AllCookies)
 		End Sub
 	#tag EndEvent
 	#tag Event

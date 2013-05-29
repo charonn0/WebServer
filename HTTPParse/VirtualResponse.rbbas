@@ -9,7 +9,7 @@ Inherits HTTPParse.Response
 		  Me.Modified = CachedPage.Modified
 		  Me.Path = Path
 		  Me.MIMEType = CachedPage.MIMEType
-		  Headers = CachedPage.Headers
+		  Me.Headers = CachedPage.Headers
 		  Me.Expires = CachedPage.Expires
 		End Sub
 	#tag EndMethod
@@ -24,7 +24,7 @@ Inherits HTTPParse.Response
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
 		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
-		  'Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
+		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		End Sub
 	#tag EndMethod
 

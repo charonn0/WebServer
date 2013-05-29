@@ -1006,11 +1006,11 @@ End
 	#tag Event
 		Function TamperResponse(ByRef Response As HTTPParse.Response) As Boolean
 		  If Response.StatusCode = 200 Then
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is granted.")
+		    Response.SetHeader("X-Judgement-Render", "Your request is granted.")
 		  ElseIf Response.StatusCode = 302 Then
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is pending.")
+		    Response.SetHeader("X-Judgement-Render", "Your request is pending.")
 		  Else
-		    Response.Headers.SetHeader("X-Judgement-Render", "Your request is denied.")
+		    Response.SetHeader("X-Judgement-Render", "Your request is denied.")
 		  End If
 		  Return True
 		  

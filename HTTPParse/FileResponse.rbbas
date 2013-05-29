@@ -13,6 +13,7 @@ Inherits HTTPParse.Response
 		    bs.Close
 		    Me.MIMEType = New HTTPParse.ContentType(page)
 		  End If
+		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		  Me.StatusCode = 200
 		  Me.Modified = Page.ModificationDate
 		  Me.Path = Path

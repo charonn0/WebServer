@@ -59,8 +59,8 @@ Inherits ServerSocket
 		  Try
 		    clientrequest = New HTTPParse.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
-		    If clientrequest.Headers.HasHeader("Connection") Then
-		      'Me.KeepAlive = (clientrequest.Headers.GetHeader("Connection") = "keep-alive")
+		    If clientrequest.HasHeader("Connection") Then
+		      'Me.KeepAlive = (clientrequest.GetHeader("Connection") = "keep-alive")
 		    End If
 		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
@@ -69,7 +69,7 @@ Inherits ServerSocket
 		        Dim s As HTTP.Session = NewSession()
 		        clientrequest.SessionID = s.SessionID
 		        Sender.SessionID = s.SessionID
-		        clientrequest.Headers.SetCookie("SessionID") = s.SessionID
+		        clientrequest.SetCookie("SessionID") = s.SessionID
 		      End If
 		    End If
 		    
@@ -88,7 +88,7 @@ Inherits ServerSocket
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
 		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path)
-		        doc.Headers.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
+		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
@@ -137,16 +137,16 @@ Inherits ServerSocket
 		    Case RequestMethod.TRACE
 		      Me.Log("Request is a TRACE", Log_Debug)
 		      doc = New HTTPParse.ErrorResponse(200, "")
-		      doc.Headers.SetHeader("Content-Length", Str(Data.Size))
-		      doc.Headers.SetHeader("Content-Type", "message/http")
+		      doc.SetHeader("Content-Length", Str(Data.Size))
+		      doc.SetHeader("Content-Type", "message/http")
 		      doc.MessageBody = Data
 		    Case RequestMethod.OPTIONS
 		      Me.Log("Request is a OPTIONS", Log_Debug)
 		      doc = New HTTPParse.ErrorResponse(200, "")
 		      doc.MessageBody = ""
-		      doc.Headers.SetHeader("Content-Length", "0")
-		      doc.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
-		      doc.Headers.SetHeader("Accept-Ranges", "bytes")
+		      doc.SetHeader("Content-Length", "0")
+		      doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
+		      doc.SetHeader("Accept-Ranges", "bytes")
 		    Case RequestMethod.GET, RequestMethod.HEAD
 		      Me.Log("Request is a HEAD", Log_Debug)
 		      doc = New HTTPParse.ErrorResponse(404, clientrequest.Path)
@@ -328,7 +328,7 @@ Inherits ServerSocket
 		  
 		  If Not ResponseDocument.FromCache Then
 		    #If GZIPAvailable Then
-		      ResponseDocument.Headers.SetHeader("Content-Encoding", "gzip")
+		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
 		      Try
 		        Dim size As Integer = ResponseDocument.MessageBody.LenB
@@ -338,24 +338,23 @@ Inherits ServerSocket
 		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
 		      Catch Error
 		        'Just send the uncompressed data
-		        ResponseDocument.Headers.SetHeader("Content-Encoding", "Identity")
 		      End Try
-		      ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    #else
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "No compression.")
 		    #endif
 		  End If
 		  If Me.KeepAlive Then
-		    ResponseDocument.Headers.SetHeader("Connection", "keep-alive")
+		    ResponseDocument.SetHeader("Connection", "keep-alive")
 		  Else
-		    ResponseDocument.Headers.SetHeader("Connection", "close")
+		    ResponseDocument.SetHeader("Connection", "close")
 		  End If
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
-		    ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    ResponseDocument.MessageBody = ""
 		  End If
 		  If ResponseDocument.StatusCode = 405 Then 'Method not allowed
-		    ResponseDocument.Headers.SetHeader("Allow", "GET, HEAD, POST, TRACE")
+		    ResponseDocument.SetHeader("Allow", "GET, HEAD, POST, TRACE")
 		  End If
 		  
 		  If UseSessions Then
@@ -363,19 +362,19 @@ Inherits ServerSocket
 		    If session <> Nil Then session.ExtendSession
 		    If session.NewSession Then
 		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
-		      ResponseDocument.Headers.SetCookie("SessionID") = session.SessionID
-		    ElseIf ResponseDocument.Headers.HasCookie("SessionID") Then
+		      ResponseDocument.SetCookie("SessionID") = session.SessionID
+		    ElseIf ResponseDocument.HasCookie("SessionID") Then
 		      Me.Log("Clear session cookie", Log_Debug)
-		      ResponseDocument.Headers.RemoveCookie("SessionID")
+		      ResponseDocument.RemoveCookie("SessionID")
 		    End If
 		  End If
 		  Me.Log("Sending data", Log_Socket)
-		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
+		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.ToString(True), Log_Response)
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
 		  Me.Log("Send complete", Log_Socket)
-		  If ResponseDocument.Headers.GetHeader("Connection") = "close" Then Socket.Close
+		  If ResponseDocument.GetHeader("Connection") = "close" Then Socket.Close
 		  
 		  
 		  
@@ -531,9 +530,6 @@ Inherits ServerSocket
 		UseSessions As Boolean
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant

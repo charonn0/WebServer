@@ -1,12 +1,6 @@
 #tag Class
 Protected Class Headers
 Inherits InternetHeaders
-	#tag Method, Flags = &h0
-		Function AllCookies() As HTTPParse.Cookie()
-		  Return Cookies
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1000
 		Sub Constructor(Data As String)
 		  // Calling the overridden superclass constructor.
@@ -45,80 +39,29 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Copy(CopyTo As HTTPParse.Headers)
-		  Dim lines() As String = Me.Source.Split(CRLF)
-		  If CopyTo = Nil Then CopyTo = New HTTPParse.Headers
-		  For i As Integer = 0 To UBound(lines)
-		    Dim line As String = lines(i)
-		    If Instr(line, ": ") <= 1  Or line.Trim = "" Then Continue
-		    CopyTo.AppendHeader(NthField(line, ": ", 1), NthField(line, ": ", 2))
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetCookie(Name As String) As String
-		  For i As Integer = UBound(Me.Cookies) DownTo 0
-		    If Me.Cookies(i).Name = Name Then
-		      Return Me.Cookies(i).Value
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetHeader(Headername As String) As String
-		  For i As Integer = 0 To Me.Count - 1
-		    If Me.Name(i) = headername Then
-		      Return Me.Value(i)
-		    End If
-		  Next
-		  
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HasCookie(CookieName As String) As Boolean
-		  For i As Integer = 0 To Cookies.Ubound
-		    If Cookies(i).Name = CookieName Then Return True
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HasHeader(HeaderName As String) As Boolean
-		  For i As Integer = 0 To Me.Count - 1
-		    If Me.Name(i) = HeaderName Then Return True
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemoveCookie(Name As String)
-		  For i As Integer = UBound(Me.Cookies) DownTo 0
-		    If Me.Cookies(i).Name = Name Then
-		      Me.Cookies.Remove(i)
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetCookie(Name As String, Assigns Value As String)
-		  Dim c As New HTTPParse.Cookie(Name, Value)
-		  Me.RemoveCookie(c.Name)
-		  Cookies.Append(c)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetHeader(Name As String, Value As String)
-		  If Me.HasHeader(Name) Then
-		    Me.Delete(Name)
+		Sub Cookie(Index As Integer = -1, Assigns NewCookie As HTTPParse.Cookie)
+		  #pragma BreakOnExceptions Off
+		  If NewCookie = Nil Then
+		    Cookies.Remove(Index)
+		  Else
+		    Cookies(Index) = NewCookie
 		  End If
-		  Me.AppendHeader(Name, Value)
+		  
+		Exception OutOfBoundsException
+		  If NewCookie <> Nil Then Cookies.Append(NewCookie)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Cookie(Index As Integer) As HTTPParse.Cookie
+		  Return Cookies(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CookieCount() As Integer
+		  Return UBound(Cookies) + 1
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

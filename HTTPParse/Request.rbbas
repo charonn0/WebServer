@@ -1,8 +1,9 @@
 #tag Class
 Protected Class Request
+Inherits HTTPParse.HTTPMessage
 	#tag Method, Flags = &h0
 		Function CacheDirective() As String
-		  Return Me.Headers.GetHeader("Cache-Control")
+		  Return Me.GetHeader("Cache-Control")
 		End Function
 	#tag EndMethod
 
@@ -27,21 +28,21 @@ Protected Class Request
 		  Me.Headers = New HTTPParse.Headers(h)
 		  Me.MessageBody = Replace(data, h, "")
 		  
-		  If Me.Headers.HasHeader("Content-Type") Then
-		    Dim type As String = Me.Headers.GetHeader("Content-Type")
+		  If Me.HasHeader("Content-Type") Then
+		    Dim type As String = Me.GetHeader("Content-Type")
 		    If InStr(type, "multipart/form-data") > 0 Then
 		      Dim boundary As String = NthField(type, "boundary=", 2).Trim
 		      Me.MultiPart = MultipartForm.FromData(Me.MessageBody, boundary)
 		    End If
 		  End If
 		  
-		  If Me.Headers.Hascookie("SessionID") Then
-		    Me.SessionID = Me.Headers.GetCookie("SessionID")
+		  If Me.Hascookie("SessionID") Then
+		    Me.SessionID = Me.GetCookie("SessionID")
 		  End If
 		  
 		  
 		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
-		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
+		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
 		  Me.Path = URLDecode(NthField(line, " ", 2).Trim)
 		  Dim tmp As String = NthField(Me.Path, "?", 2)
@@ -50,34 +51,14 @@ Protected Class Request
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
 		  Me.Expiry = New Date
 		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 60
-		  If Me.Headers.HasHeader("Authorization") Then
-		    Dim pw As String = Me.Headers.GetHeader("Authorization")
+		  If Me.HasHeader("Authorization") Then
+		    Dim pw As String = Me.GetHeader("Authorization")
 		    pw = pw.Replace("Basic ", "")
 		    pw = DecodeBase64(pw)
 		    Me.AuthPassword = NthField(pw, ":", 2)
 		    Me.AuthUsername = NthField(pw, ":", 1)
 		  End If
 		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MethodName() As String
-		  If Me.Method <> RequestMethod.InvalidMethod Then
-		    Return HTTPMethodName(Me.Method)
-		  Else
-		    Return mTrueMethodName
-		  End If
-		  
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub MethodName(Assigns Name As String)
-		  Me.Method = HTTPMethod(Name)
-		  mTrueMethodName = Name
-		  
 		End Sub
 	#tag EndMethod
 
@@ -89,14 +70,11 @@ Protected Class Request
 		  End If
 		  Dim data As String = MethodName + " " + URLEncode(Path) + URLEncode(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
-		    Me.Headers.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
+		    Me.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
 		    Me.MessageBody = Me.MultiPart.ToString
-		    Me.Headers.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
+		    Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		  End If
-		  If Headers.Count > 0 Then
-		    data = data + Headers.Source + CRLF
-		  End If
-		  data = data + CRLF + MessageBody.Trim
+		  data = data + CRLF + Super.ToString
 		  
 		  Return data
 		  
@@ -110,14 +88,6 @@ Protected Class Request
 
 	#tag Property, Flags = &h0
 		AuthPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		AuthRealm As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		AuthUsername As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -135,12 +105,12 @@ Protected Class Request
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Headers.HasHeader("If-Modified-Since") Then
-			    Return HTTPDate(Headers.GetHeader("If-Modified-Since"))
+			  If HasHeader("If-Modified-Since") Then
+			    Return HTTPDate(GetHeader("If-Modified-Since"))
 			  End If
 			  
-			  If Headers.HasHeader("If-Unmodified-Since") Then
-			    Return HTTPDate(Headers.GetHeader("If-Unmodified-Since"))
+			  If HasHeader("If-Unmodified-Since") Then
+			    Return HTTPDate(GetHeader("If-Unmodified-Since"))
 			  End If
 			  
 			  Exception
@@ -151,89 +121,8 @@ Protected Class Request
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
-		MessageBody As String
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  return mMethod
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mMethod = value
-			  
-			  Select Case Me.Method
-			  Case RequestMethod.GET
-			    mTrueMethodName = "GET"
-			    
-			  Case RequestMethod.DELETE
-			    mTrueMethodName = "DELETE"
-			    
-			  Case RequestMethod.HEAD
-			    mTrueMethodName = "HEAD"
-			    
-			  Case RequestMethod.POST
-			    mTrueMethodName = "POST"
-			    
-			  Case RequestMethod.PUT
-			    mTrueMethodName = "PUT"
-			    
-			  Case RequestMethod.TRACE
-			    mTrueMethodName = "TRACE"
-			    
-			  Case RequestMethod.OPTIONS
-			    mTrueMethodName = "OPTIONS"
-			    
-			  End Select
-			  
-			  
-			End Set
-		#tag EndSetter
-		Method As RequestMethod
-	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mMethod As RequestMethod
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSessionID As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTrueMethodName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		MultiPart As MultipartForm
 	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Path As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		ProtocolVersion As Single
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mSessionID = "" Then
-			    If Headers.HasCookie("SessionID") Then mSessionID = Headers.GetCookie("SessionID")
-			  End If
-			  return mSessionID
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mSessionID = value
-			End Set
-		#tag EndSetter
-		SessionID As String
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -241,19 +130,24 @@ Protected Class Request
 			Name="AuthPassword"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AuthSecure"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -273,7 +167,7 @@ Protected Class Request
 			Name="MessageBody"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -285,18 +179,19 @@ Protected Class Request
 			Name="Path"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"
 			Group="Behavior"
 			Type="Single"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -1075,7 +1075,10 @@ Protected Module HTTP
 	#tag EndProperty
 
 
-	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
 	#tag EndConstant
 
 
