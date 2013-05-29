@@ -21,6 +21,7 @@ Inherits ServerSocket
 		  End Select
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
 		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
+		  AddHandler sock.SendComplete, AddressOf Me.SendCompleteHandler
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -337,6 +338,14 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SendCompleteHandler(Sender As SSLSocket, UserAborted As Boolean)
+		  #pragma Unused UserAborted
+		  Me.Log("Send complete", Log_Socket)
+		  Sender.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + GetSession(Socket).SessionID + ")"
@@ -394,19 +403,6 @@ Inherits ServerSocket
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
-		  Me.Log("Send complete", Log_Socket)
-		  If ResponseDocument.GetHeader("Connection") = "close" And Me.ConnectionType = ConnectionTypes.Insecure Then Socket.Close
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
 		End Sub
 	#tag EndMethod
 
@@ -587,6 +583,11 @@ Inherits ServerSocket
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="CertificatePassword"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="EnforceContentType"
 			Visible=true
 			Group="Behavior"
@@ -646,6 +647,7 @@ Inherits ServerSocket
 			Name="SessionTimeout"
 			Visible=true
 			Group="Behavior"
+			InitialValue="600"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
