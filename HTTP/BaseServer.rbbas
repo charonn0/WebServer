@@ -55,13 +55,6 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientLogHandler(Sender As TCPSocket, Message As String, Level As Integer)
-		  #pragma Unused Sender
-		  Me.Log(Message, Level)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As TCPSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Socket)
