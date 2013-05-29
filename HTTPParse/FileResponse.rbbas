@@ -38,6 +38,12 @@ Inherits HTTPParse.Response
 			InheritedFrom="HTTPParse.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="AuthUsername"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="FromCache"
 			Group="Behavior"
 			Type="Boolean"
@@ -88,6 +94,12 @@ Inherits HTTPParse.Response
 			Group="Behavior"
 			Type="Single"
 			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SessionID"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="StatusCode"

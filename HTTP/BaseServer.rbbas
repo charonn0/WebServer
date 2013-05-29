@@ -292,7 +292,7 @@ Inherits ServerSocket
 		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
 		    Else
 		      Dim s As HTTP.Session = Me.GetSession("New_Session")
-		      Sockets.Value(s) = s.SessionID
+		      Sockets.Value(Socket) = s.SessionID
 		      Return s
 		    End If
 		  End If
@@ -430,11 +430,12 @@ Inherits ServerSocket
 		    End If
 		  Next
 		  
-		  For Each Socket As TCPSocket In Me.Sockets.Keys
+		  For Each Socket As SSLSocket In Me.Sockets.Keys
 		    If Not Sessions.HasKey(Me.Sockets.Value(Socket)) Or Not Socket.IsConnected Then
 		      Me.Sockets.Remove(Socket)
 		    End If
 		  Next
+		  
 		  
 		End Sub
 	#tag EndMethod

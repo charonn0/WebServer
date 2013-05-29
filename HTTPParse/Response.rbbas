@@ -28,13 +28,13 @@ Inherits HTTPParse.HTTPMessage
 		  Me.StatusMessage = HTTPCodeToMessage(Me.StatusCode)
 		  Me.AuthRealm = AuthRealm
 		  Me.AuthSecure = RequireDigestAuth
-		  If Me.GetHeader("Content-Encoding") = "gzip" Then
-		    Me.GZipped = True
-		    #If GZIPAvailable Then
-		      Dim size As Integer = Val(GetHeader("Content-Length"))
-		      Me.MessageBody = GZip.Uncompress(Me.MessageBody, size^2)
-		    #endif
-		  End If
+		  'If Me.GetHeader("Content-Encoding") = "gzip" Then
+		  'Me.GZipped = True
+		  '#If GZIPAvailable Then
+		  'Me.MessageBody = GunZipPage(Me.MessageBody)
+		  'Break
+		  '#endif
+		  'End If
 		End Sub
 	#tag EndMethod
 
@@ -255,6 +255,7 @@ Inherits HTTPParse.HTTPMessage
 			Name="StatusMessage"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -74,7 +74,7 @@ Inherits HTTPParse.HTTPMessage
 		    Me.MessageBody = Me.MultiPart.ToString
 		    Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		  End If
-		  data = data + CRLF + Super.ToString
+		  data = data + Super.ToString
 		  
 		  Return data
 		  
@@ -130,6 +130,7 @@ Inherits HTTPParse.HTTPMessage
 			Name="AuthPassword"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"

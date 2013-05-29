@@ -340,6 +340,7 @@ Protected Class HTTPMessage
 			Name="AuthRealm"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthSecure"
@@ -350,6 +351,7 @@ Protected Class HTTPMessage
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -369,6 +371,7 @@ Protected Class HTTPMessage
 			Name="MessageBody"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -380,6 +383,7 @@ Protected Class HTTPMessage
 			Name="Path"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"
@@ -390,6 +394,7 @@ Protected Class HTTPMessage
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

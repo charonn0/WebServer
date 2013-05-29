@@ -414,38 +414,6 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   162
    End
-   Begin ComboBox nic1
-      AutoComplete    =   False
-      AutoDeactivate  =   True
-      Bold            =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialValue    =   "None\r\nBasic\r\nHash"
-      Italic          =   ""
-      Left            =   416
-      ListIndex       =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   0
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0
-      TextUnit        =   0
-      Top             =   415
-      Underline       =   ""
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   68
-   End
    Begin PushButton PushButton4
       AutoDeactivate  =   True
       Bold            =   ""
@@ -618,7 +586,7 @@ Begin Window FileServerDemo
       MinimumSocketsAvailable=   2
       Port            =   0
       Scope           =   1
-      SessionTimeout  =   ""
+      SessionTimeout  =   60
       TabPanelIndex   =   0
       Top             =   477
       UseSessions     =   True
@@ -868,18 +836,6 @@ End
 	#tag Event
 		Sub TextChange()
 		  Sock.AuthenticationRealm = Me.Text
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events nic1
-	#tag Event
-		Sub Open()
-		  'Me.ListIndex = Sock.AuthType
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Change()
-		  'Sock.AuthType = Me.ListIndex
 		End Sub
 	#tag EndEvent
 #tag EndEvents

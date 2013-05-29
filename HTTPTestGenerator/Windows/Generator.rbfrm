@@ -43,7 +43,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -62,7 +61,6 @@ Begin Window Generator
          HasBackColor    =   False
          Height          =   384
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "GroupBox3"
          Left            =   622
          LockBottom      =   ""
@@ -145,7 +143,6 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   255
@@ -222,7 +219,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -233,18 +229,14 @@ Begin Window Generator
    End
    Begin TCPSocket Sock
       Address         =   ""
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   501
       LockedInPosition=   False
       Port            =   0
       Scope           =   0
-      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   -1
-      Visible         =   True
       Width           =   32
    End
    Begin TextArea OutputLog
@@ -314,7 +306,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Code:"
       TextAlign       =   2
       TextColor       =   0
@@ -349,7 +340,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Message:"
       TextAlign       =   2
       TextColor       =   0
@@ -384,7 +374,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -419,7 +408,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   16711680
@@ -454,7 +442,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Remote IP:"
       TextAlign       =   2
       TextColor       =   0
@@ -489,7 +476,6 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -521,7 +507,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -817,7 +802,6 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
          TextColor       =   0
@@ -1017,7 +1001,6 @@ Begin Window Generator
       End
    End
    Begin Timer DataReceivedTimer
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   -3
@@ -1025,11 +1008,8 @@ Begin Window Generator
       Mode            =   0
       Period          =   1000
       Scope           =   0
-      TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   597
-      Visible         =   True
       Width           =   32
    End
    Begin Listbox ResponseHeaders
@@ -1132,7 +1112,7 @@ Begin Window Generator
       LockRight       =   ""
       LockTop         =   True
       Scope           =   0
-      State           =   0
+      State           =   1
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1141,7 +1121,7 @@ Begin Window Generator
       TextUnit        =   0
       Top             =   -53
       Underline       =   ""
-      Value           =   False
+      Value           =   True
       Visible         =   True
       Width           =   126
    End
@@ -1166,11 +1146,7 @@ End
 		  Me.Request.Headers = New HTTPParse.Headers(heads.Source)
 		  
 		  If AutoHost.Value Then
-		    If Me.Request.HasHeader("Host") Then
-		      Me.Request.SetHeader("Host", theURL.FQDN)
-		    Else
-		      Me.Request.Headers.AppendHeader("Host", theURL.FQDN)
-		    End If
+		    Me.Request.SetHeader("Host", theURL.FQDN)
 		  End If
 		  Dim ua As String
 		  If UAString.HasText Then
@@ -1178,17 +1154,10 @@ End
 		  Else
 		    ua = "BSHTTPGen\1.0"
 		  End If
-		  If Me.Request.HasHeader("User-Agent") Then
-		    Me.Request.SetHeader("User-Agent", ua)
-		  Else
-		    Me.Request.Headers.AppendHeader("User-Agent", ua)
-		  End If
+		  Me.Request.SetHeader("User-Agent", ua)
+		  
 		  If Me.Request.ProtocolVersion >= 1.1 Then
-		    If Me.Request.HasHeader("Connection") Then
-		      Me.Request.SetHeader("close", ua)
-		    Else
-		      Me.Request.Headers.AppendHeader("Connection", "close")
-		    End If
+		    Me.Request.SetHeader("Connection", "close")
 		  End If
 		  
 		  If Me.Request.Headers.AcceptableTypes.Ubound <= -1 Then
@@ -1198,21 +1167,15 @@ End
 		  Me.Request.MessageBody = MessageBody.Text
 		  
 		  
-		  If gziprequest.Value Then
-		    Me.Request.SetHeader("Accept-Encoding", "gzip")
-		  End If
+		  'If gziprequest.Value Then
+		  'Me.Request.SetHeader("Accept-Encoding", "gzip")
+		  'End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1000
 		Sub Update(Raw As String)
 		  Response = New HTTPParse.Response(Raw, "", False)
-		  'Dim response, h(), data As String
-		  'response = NthField(Raw, CRLF, 1)
-		  'Raw = Replace(Raw, response + CRLF, "")
-		  'h = Split(NthField(Raw, CRLF + CRLF, 1), CRLF)
-		  'data = NthField(Raw, CRLF + CRLF, 2)
-		  
 		  Code.Text = Str(Response.StatusCode)'NthField(response, " ", 2)
 		  Select Case Response.StatusCode
 		  Case 200
@@ -1248,7 +1211,11 @@ End
 		    IPAddress1.TextColor = &c80808000
 		    IPAddress.TextColor = &c80808000
 		  End If
-		  
+		  '#If HTTP.GZIPAvailable Then
+		  'If Response.GetHeader("Content-Encoding") = "gzip" Then
+		  'Me.Response.MessageBody = GZip.Uncompress(Me.Response.MessageBody, Me.Response.MessageBody.LenB^2)
+		  'End If
+		  '#endif
 		  MessageView1.Response = Me.Response
 		End Sub
 	#tag EndMethod
