@@ -1082,6 +1082,12 @@ Protected Module HTTP
 	#tag EndConstant
 
 
+	#tag Enum, Name = ConnectionTypes, Flags = &h0
+		SSLv3
+		  TLSv1
+		Insecure
+	#tag EndEnum
+
 	#tag Enum, Name = RequestMethod, Flags = &h0
 		GET
 		  HEAD

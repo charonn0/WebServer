@@ -4,12 +4,23 @@ Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  'Me.Log("Add socket " + Str(Me.ActiveConnections.UBound + 1), Log_Socket)
-		  Dim sock As New ClientSocket
+		  Dim sock As New SSLSocket
+		  If Me.ConnectionType <> ConnectionTypes.Insecure Then
+		    sock.CertificatePassword = Me.CertificatePassword
+		    sock.CertificateFile = Me.CertificateFile
+		    sock.Secure = True
+		  End If
+		  
+		  Select Case Me.ConnectionType
+		  Case ConnectionTypes.SSLv3
+		    Sock.ConnectionType = SSLSocket.SSLv3
+		  Case ConnectionTypes.TLSv1
+		    Sock.ConnectionType = SSLSocket.TLSv1
+		  Case ConnectionTypes.Insecure
+		    sock.Secure = False
+		  End Select
 		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
-		  AddHandler sock.GetSession, AddressOf Me.GetSessionHandler
 		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
-		  AddHandler sock.Log, AddressOf Me.ClientLogHandler
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -37,20 +48,20 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientErrorHandler(Sender As ClientSocket)
+		Private Sub ClientErrorHandler(Sender As TCPSocket)
 		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientLogHandler(Sender As ClientSocket, Message As String, Level As Integer)
+		Private Sub ClientLogHandler(Sender As TCPSocket, Message As String, Level As Integer)
 		  #pragma Unused Sender
 		  Me.Log(Message, Level)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DataAvailable(Sender As ClientSocket)
+		Private Sub DataAvailable(Sender As TCPSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Socket)
 		  Dim data As MemoryBlock = Sender.ReadAll
@@ -64,13 +75,16 @@ Inherits ServerSocket
 		    End If
 		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
-		      If Not Sender.ValidateSession(clientrequest) Then
-		        Me.Log("No valid session", Log_Debug)
-		        Dim s As HTTP.Session = NewSession()
-		        clientrequest.SessionID = s.SessionID
-		        Sender.SessionID = s.SessionID
-		        clientrequest.SetCookie("SessionID") = s.SessionID
+		      Dim ID As String = clientrequest.GetCookie("SessionID")
+		      Dim s As HTTP.Session
+		      If ID = "" Then
+		        s = GetSession(Sender)
+		      Else
+		        s = GetSession(ID)
+		        Sockets.Value(Sender) = s.SessionID
 		      End If
+		      clientrequest.SessionID = s.SessionID
+		      
 		    End If
 		    
 		    
@@ -107,9 +121,9 @@ Inherits ServerSocket
 		        cache = Nil
 		      End Select
 		    Else
-		      cache = GetCache(Sender, clientRequest.Path)
+		      cache = GetCache(GetSession(Sender), clientRequest.Path)
 		    End If
-		    Dim redir As HTTPParse.Response = GetRedirect(Sender, clientrequest.Path)
+		    Dim redir As HTTPParse.Response = GetRedirect(GetSession(Sender), clientrequest.Path)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -122,9 +136,8 @@ Inherits ServerSocket
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		    ElseIf doc = Nil Then
 		      doc = HandleRequest(clientrequest)
-		      If UseSessions And GetSessionHandler(Sender, clientrequest.SessionID) <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		        Dim session As HTTP.Session = GetSessionHandler(Sender, clientrequest.SessionID)
-		        Session.AddCacheItem(doc)
+		      If UseSessions And GetSession(clientrequest.SessionID) <> Nil And clientrequest.CacheDirective <> "no-store" Then
+		        GetSession(clientrequest.SessionID).AddCacheItem(doc)
 		      End If
 		    End If
 		  End If
@@ -221,15 +234,14 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetCache(Sender As ClientSocket, Path As String) As HTTPParse.Response
+		Private Function GetCache(Sender As HTTP.Session, Path As String) As HTTPParse.Response
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions Then
-		    Dim session As HTTP.Session = GetSessionHandler(Sender, Sender.SessionID)
-		    If session.GetCacheItem(Path) <> Nil Then
+		    If GetSession(Sender.SessionID).GetCacheItem(Path) <> Nil Then
 		      Me.Log("(hit!) Get cache item: " + Path, Log_Debug)
-		      Return session.GetCacheItem(Path)
+		      Return GetSession(Sender.SessionID).GetCacheItem(Path)
 		    End If
 		  End If
 		  Me.Log("(miss!) Get cache item: " + Path, Log_Debug)
@@ -237,15 +249,14 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetRedirect(Sender As ClientSocket, Path As String) As HTTPParse.Response
+		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTPParse.Response
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions THen
-		    Dim session As HTTP.Session = GetSessionHandler(Sender, Sender.SessionID)
-		    If session.GetRedirect(Path) <> Nil Then
+		    If GetSession(Sender.SessionID).GetRedirect(Path) <> Nil Then
 		      Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
-		      Return session.GetRedirect(Path)
+		      Return GetSession(Sender.SessionID).GetRedirect(Path)
 		    End If
 		  End If
 		  
@@ -258,15 +269,33 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetSessionHandler(Sender As ClientSocket, ID As String) As HTTP.Session
-		  Me.Log(CurrentMethodName + "(" + ID + ")", Log_Trace)
-		  #pragma Unused Sender
-		  If Not UseSessions Then Return Nil
-		  If Sessions.HasKey(ID) Then
-		    Me.Log("(hit!) Get session: " + ID, Log_Debug)
-		    Return Sessions.Value(ID)
+		Private Function GetSession(SessionID As String) As HTTP.Session
+		  If UseSessions Then
+		    If Me.Sessions.HasKey(SessionID) Then
+		      Me.Log("Session found: " + SessionID, Log_Debug)
+		      Return Me.Sessions.Value(SessionID)
+		    Else
+		      Dim s As New HTTP.Session
+		      s.NewSession = True
+		      Sessions.Value(s.SessionID) = s
+		      Me.Log("Session created: " + s.SessionID, Log_Debug)
+		      Return s
+		    End If
 		  End If
-		  Me.Log("(miss!) Get session: " + ID, Log_Debug)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetSession(Socket As TCPSocket) As HTTP.Session
+		  If UseSessions Then
+		    If Me.Sockets.HasKey(Socket) Then
+		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
+		    Else
+		      Dim s As HTTP.Session = Me.GetSession("New_Session")
+		      Sockets.Value(s) = s.SessionID
+		      Return s
+		    End If
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -283,6 +312,11 @@ Inherits ServerSocket
 		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
 		    AddRedirect(doc)
 		  End If
+		  Sessions = New Dictionary
+		  SessionTimer = New Timer
+		  AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler
+		  SessionTimer.Period = 5000
+		  SessionTimer.Mode = Timer.ModeMultiple
 		End Sub
 	#tag EndMethod
 
@@ -290,19 +324,6 @@ Inherits ServerSocket
 		Sub Log(Message As String, Type As Integer)
 		  RaiseEvent Log(Message.Trim + EndofLine, Type)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function NewSession() As HTTP.Session
-		  Me.Log(CurrentMethodName, Log_Trace)
-		  If UseSessions Then
-		    Dim s As New HTTP.Session
-		    s.NewSession = True
-		    Sessions.Value(s.SessionID) = s
-		    Me.Log("Session created: " + s.SessionID, Log_Debug)
-		    Return s
-		  End If
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -316,9 +337,9 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As ClientSocket, ResponseDocument As HTTPParse.Response)
+		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
-		  If UseSessions Then logID = "(" + Socket.SessionID + ")"
+		  If UseSessions Then logID = "(" + GetSession(Socket).SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  Dim tmp As HTTPParse.Response = ResponseDocument
 		  If TamperResponse(tmp) Then
@@ -358,11 +379,11 @@ Inherits ServerSocket
 		  End If
 		  
 		  If UseSessions Then
-		    Dim session As HTTP.Session = GetSessionHandler(Socket, Socket.SessionID)
-		    If session <> Nil Then session.ExtendSession
-		    If session.NewSession Then
-		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
-		      ResponseDocument.SetCookie("SessionID") = session.SessionID
+		    GetSession(Socket).ExtendSession
+		    If GetSession(Socket).NewSession Then
+		      Me.Log("Set session cookie: " + GetSession(Socket).SessionID, Log_Debug)
+		      ResponseDocument.SetCookie("SessionID") = GetSession(Socket).SessionID
+		      GetSession(Socket).NewSession = False
 		    ElseIf ResponseDocument.HasCookie("SessionID") Then
 		      Me.Log("Clear session cookie", Log_Debug)
 		      ResponseDocument.RemoveCookie("SessionID")
@@ -374,7 +395,7 @@ Inherits ServerSocket
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush
 		  Me.Log("Send complete", Log_Socket)
-		  If ResponseDocument.GetHeader("Connection") = "close" Then Socket.Close
+		  If ResponseDocument.GetHeader("Connection") = "close" And Me.ConnectionType = ConnectionTypes.Insecure Then Socket.Close
 		  
 		  
 		  
@@ -400,7 +421,6 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub TimeOutHandler(Sender As Timer)
 		  #pragma Unused Sender
-		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim d As New Date
 		  For Each Id As String In Sessions.Keys
 		    Dim session As HTTP.Session = Me.Sessions.Value(Id)
@@ -409,6 +429,13 @@ Inherits ServerSocket
 		      Me.Sessions.Remove(Id)
 		    End If
 		  Next
+		  
+		  For Each Socket As TCPSocket In Me.Sockets.Keys
+		    If Not Sessions.HasKey(Me.Sockets.Value(Socket)) Or Not Socket.IsConnected Then
+		      Me.Sockets.Remove(Socket)
+		    End If
+		  Next
+		  
 		End Sub
 	#tag EndMethod
 
@@ -443,6 +470,18 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		CertificateFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		CertificatePassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ConnectionType As ConnectionTypes = ConnectionTypes.Insecure
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		EnforceContentType As Boolean = True
 	#tag EndProperty
 
@@ -455,11 +494,7 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSessions As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUseSessions As Boolean = True
+		Private mSockets As Dictionary
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -479,30 +514,16 @@ Inherits ServerSocket
 		Protected Redirects As Dictionary
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Me.Log(CurrentMethodName, Log_Trace)
-			  If mSessions = Nil Then
-			    mSessions = New Dictionary
-			    SessionTimer = New Timer
-			    AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler
-			    SessionTimer.Period = 5000
-			    SessionTimer.Mode = Timer.ModeMultiple
-			  End If
-			  return mSessions
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Me.Log(CurrentMethodName, Log_Trace)
-			  mSessions = value
-			End Set
-		#tag EndSetter
+	#tag Property, Flags = &h1
 		Protected Sessions As Dictionary
-	#tag EndComputedProperty
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		#tag Note
+			The number of seconds of inactivity after which the session is deemed inactive. The default is 10 minutes (600 seconds.)
+			Actual timeout periods have a resolution of ±5 seconds. Setting this value to <=5 will result in all sessions being
+			timedout at the next run of the TimeOutTimer action event.
+		#tag EndNote
 		SessionTimeout As Integer = 600
 	#tag EndProperty
 
@@ -510,25 +531,24 @@ Inherits ServerSocket
 		Private SessionTimer As Timer
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Me.Log(CurrentMethodName, Log_Trace)
-			  return mUseSessions
+			  If mSockets = Nil Then mSockets = New Dictionary
+			  return mSockets
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Me.Log(CurrentMethodName, Log_Trace)
-			  mUseSessions = value
-			  If IsListening Then
-			    StopListening
-			    Listen
-			  End If
+			  mSockets = value
 			End Set
 		#tag EndSetter
-		UseSessions As Boolean
+		Protected Sockets As Dictionary
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		UseSessions As Boolean = True
+	#tag EndProperty
 
 
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
@@ -553,18 +573,21 @@ Inherits ServerSocket
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="AuthenticationRealm"
+			Visible=true
 			Group="Behavior"
-			InitialValue="""""Restricted Area"""""
+			InitialValue="Restricted Area"
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRequired"
+			Visible=true
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EnforceContentType"
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
@@ -577,6 +600,7 @@ Inherits ServerSocket
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="KeepAlive"
+			Visible=true
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
@@ -619,8 +643,8 @@ Inherits ServerSocket
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionTimeout"
+			Visible=true
 			Group="Behavior"
-			InitialValue="600"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -638,6 +662,7 @@ Inherits ServerSocket
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseSessions"
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
