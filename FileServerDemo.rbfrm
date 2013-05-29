@@ -204,7 +204,7 @@ Begin Window FileServerDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   ""
-      Left            =   611
+      Left            =   657
       ListIndex       =   0
       LockBottom      =   True
       LockedInPosition=   False
@@ -218,42 +218,11 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   403
+      Top             =   408
       Underline       =   ""
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   88
-   End
-   Begin PushButton PushButton3
-      AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
-      Caption         =   "Set Logfile"
-      Default         =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   ""
-      Left            =   699
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   0
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0
-      TextUnit        =   0
-      Top             =   403
-      Underline       =   ""
-      Visible         =   True
-      Width           =   80
+      Width           =   116
    End
    Begin CheckBox CheckBox3
       AutoDeactivate  =   True
@@ -579,7 +548,6 @@ Begin Window FileServerDemo
       Selectable      =   False
       TabIndex        =   18
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ":"
       TextAlign       =   0
       TextColor       =   &h000000
@@ -593,19 +561,15 @@ Begin Window FileServerDemo
       Width           =   8
    End
    Begin Timer LogTimer
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
-      Left            =   551
+      Left            =   741
       LockedInPosition=   False
       Mode            =   2
       Period          =   1
       Scope           =   0
-      TabIndex        =   16
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   439
-      Visible         =   True
+      Top             =   477
       Width           =   32
    End
    Begin CheckBox UseSessions
@@ -641,28 +605,88 @@ Begin Window FileServerDemo
       Width           =   175
    End
    Begin HTTP.FileServer Sock
-      AuthenticationRealm=   """""Restricted Area"""""
+      AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
-      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
       KeepAlive       =   ""
-      Left            =   507
+      Left            =   699
       LockedInPosition=   False
       MaximumSocketsConnected=   10
       MinimumSocketsAvailable=   2
       Port            =   0
+      Scope           =   1
+      SessionTimeout  =   ""
+      TabPanelIndex   =   0
+      Top             =   477
+      UseSessions     =   True
+      Width           =   32
+   End
+   Begin ComboBox SecurityLevel
+      AutoComplete    =   False
+      AutoDeactivate  =   True
+      Bold            =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialValue    =   "TLS\r\nSSL"
+      Italic          =   ""
+      Left            =   589
+      ListIndex       =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
       Scope           =   0
-      SessionTimeout  =   600
-      TabIndex        =   18
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   439
-      UseSessions     =   True
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   412
+      Underline       =   ""
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   32
+      Width           =   49
+   End
+   Begin CheckBox CheckBox4
+      AutoDeactivate  =   True
+      Bold            =   ""
+      Caption         =   "Security:"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   503
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   0
+      State           =   0
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   416
+      Underline       =   ""
+      Value           =   False
+      Visible         =   True
+      Width           =   74
    End
 End
 #tag EndWindow
@@ -688,14 +712,18 @@ End
 		  End If
 		  Sock.Port = Val(port.Text)
 		  Sock.Document = SharedFile
-		  'Sock.Authenticate = CheckBox2.Value
 		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
 		  Sock.AddRedirect(redirect)
-		  'Dim f As FolderItem = GetOpenFolderItem("")
-		  'Sock.AddRedirect(New RBScriptDocument("/test", f))
 		  Sock.UseSessions = UseSessions.Value
+		  'Sock.ConnectionType = ConnectionTypes.TLSv1
+		  'Sock.CertificateFile = SpecialFolder.Desktop.Child("TestCert.RBCert")
+		  'Sock.CertificatePassword = "CertDemo"
 		  sock.Listen
-		  ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
+		  If Sock.ConnectionType = ConnectionTypes.Insecure Then
+		    ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
+		  Else
+		    ShowURL("https://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -793,20 +821,6 @@ End
 		  Me.RowTag(2) = -2
 		  Me.AddRow("Trace")
 		  Me.RowTag(3) = -3
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PushButton3
-	#tag Event
-		Sub Action()
-		  'Dim f As FolderItem = GetSaveFolderItem("", "QnDHTTPServer.log")
-		  'If f <> Nil Then
-		  'Dim bs As BinaryStream
-		  'bs = BinaryStream.Create(f, True)
-		  'Sock.Logstream = bs
-		  'Else
-		  'Sock.Logstream = Nil
-		  'End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1015,5 +1029,44 @@ End
 		  Return True
 		  
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBox4
+	#tag Event
+		Sub Open()
+		  'Me.Value = Sock.Authenticate
+		  'Username.Enabled = Me.Value
+		  'Password.Enabled = Me.Value
+		  'realmtext.Enabled = Me.Value
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  If Sock.IsListening Then
+		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Interface Security") = 6 Then Return
+		  End If
+		  Sock.StopListening
+		  If Me.Value Then
+		    Dim f As FolderItem = Sock.CertificateFile
+		    If f = Nil Then f = SpecialFolder.Temporary.Child("cert.rbcert." + Str(Microseconds))
+		    Dim s As String = CertificateEntry.GetCert(f, "")
+		    If s <> "" And f.Exists Then
+		      Sock.CertificateFile = f
+		      Sock.CertificatePassword = s
+		      If SecurityLevel.Text = "TLS" Then
+		        Sock.ConnectionType = ConnectionTypes.TLSv1
+		      Else
+		        Sock.ConnectionType = ConnectionTypes.SSLv3
+		      End If
+		    Else
+		      Sock.ConnectionType = ConnectionTypes.Insecure
+		      Me.State = CheckBox.CheckedStates.Unchecked
+		    End If
+		  Else
+		    Sock.ConnectionType = ConnectionTypes.Insecure
+		  End If
+		  Sock.Listen
+		End Sub
 	#tag EndEvent
 #tag EndEvents

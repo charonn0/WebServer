@@ -70,25 +70,30 @@ Inherits HTTP.BaseServer
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="AuthenticationRealm"
+			Visible=true
 			Group="Behavior"
-			InitialValue="""""Restricted Area"""""
+			InitialValue="Restricted Area"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="WebServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRequired"
+			Visible=true
 			Group="Behavior"
 			Type="Boolean"
 			InheritedFrom="WebServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DirectoryBrowsing"
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EnforceContentType"
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
@@ -103,6 +108,7 @@ Inherits HTTP.BaseServer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="KeepAlive"
+			Visible=true
 			Group="Behavior"
 			Type="Boolean"
 			InheritedFrom="WebServer"
@@ -146,8 +152,8 @@ Inherits HTTP.BaseServer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionTimeout"
+			Visible=true
 			Group="Behavior"
-			InitialValue="600"
 			Type="Integer"
 			InheritedFrom="WebServer"
 		#tag EndViewProperty
@@ -166,6 +172,7 @@ Inherits HTTP.BaseServer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseSessions"
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
