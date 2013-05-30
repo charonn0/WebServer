@@ -40,6 +40,18 @@ Protected Module HTTPParse
 		End Function
 	#tag EndMethod
 
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function FindClose Lib "Kernel32" (FindHandle As Integer) As Boolean
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function FindFirstFile Lib "Kernel32" Alias "FindFirstFileW" (FileName As WString, ByRef FindData As WIN32_FIND_DATA) As Integer
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function FindNextFile Lib "Kernel32" Alias "FindNextFileW" (FindHandle As Integer, ByRef FindData As WIN32_FIND_DATA) As Boolean
+	#tag EndExternalMethod
+
 	#tag Method, Flags = &h0
 		Function FormatBytes(bytes As UInt64, precision As Integer = 2) As String
 		  'Converts raw byte counts into SI formatted strings. 1KB = 1024 bytes.
@@ -91,6 +103,10 @@ Protected Module HTTPParse
 		  
 		End Function
 	#tag EndMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function GetLastError Lib "Kernel32" () As Integer
+	#tag EndExternalMethod
 
 	#tag Method, Flags = &h0
 		Function HTTPDate(d As Date) As String
@@ -781,6 +797,25 @@ Protected Module HTTPParse
 	#tag ExternalMethod, Flags = &h1
 		Protected Soft Declare Sub uuid_unparse_upper Lib "libuuid" (mb As Ptr, uu As Ptr)
 	#tag EndExternalMethod
+
+
+	#tag Structure, Name = FILETIME, Flags = &h0
+		HighDateTime As Integer
+		LowDateTime As Integer
+	#tag EndStructure
+
+	#tag Structure, Name = WIN32_FIND_DATA, Flags = &h0
+		Attribs As Integer
+		  CreationTime As FILETIME
+		  LastAccess As FILETIME
+		  LastWrite As FILETIME
+		  sizeHigh As Integer
+		  sizeLow As Integer
+		  Reserved1 As Integer
+		  Reserved2 As Integer
+		  FileName As WString*260
+		AlternateName As String*14
+	#tag EndStructure
 
 
 	#tag ViewBehavior

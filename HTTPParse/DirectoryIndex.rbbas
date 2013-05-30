@@ -34,23 +34,42 @@ Protected Class DirectoryIndex
 		  Dim sizes() As UInt64
 		  Dim pagedata As String = IndexPage
 		  
-		  For i As Integer = 1 To Me.Target.Count
-		    Dim item As FolderItem = Me.Target.Item(i)
-		    items.Append(item)
-		    sorter.Append(i - 1)
-		    If sortby > 0 Then
-		      If item.Directory Then
-		        dirtypes.Append("0000AAAA")
-		      Else
-		        Dim type As New ContentType(item)
-		        dirtypes.Append(type.ToString)
+		  #If Not TargetWin32 Then
+		    For i As Integer = 1 To Me.Target.Count
+		      Dim item As FolderItem = Me.Target.Item(i)
+		      items.Append(item)
+		      sorter.Append(i - 1)
+		      If sortby > 0 Then
+		        If item.Directory Then
+		          dirtypes.Append("0000AAAA")
+		        Else
+		          Dim type As New ContentType(item)
+		          dirtypes.Append(type.ToString)
+		        End If
+		        
+		        names.Append(item.Name)
+		        dates.Append(item.ModificationDate.TotalSeconds)
+		        sizes.Append(item.Length)
 		      End If
-		      
-		      names.Append(item.Name)
-		      dates.Append(item.ModificationDate.TotalSeconds)
-		      sizes.Append(item.Length)
-		    End If
-		  Next
+		    Next
+		  #Else
+		    Dim fe As New HTTPParse.FileEnumerator(Me.Target, "*")
+		    Dim info As HTTPParse.WIN32_FIND_DATA = fe.NextItem
+		    While fe.LastError = 0
+		      If info.FileName <> "." And info.FileName <> ".." Then
+		        Dim f As FolderItem = GetFolderItem(Me.Target.AbsolutePath + info.FileName)
+		        If f <> Nil Then
+		          items.Append(f)
+		          names.Append(f.Name)
+		          dates.Append(f.ModificationDate.TotalSeconds)
+		          sizes.Append(f.Length)
+		          sorter.Append(Sizes.Ubound)
+		        End If
+		      End If
+		      App.YieldToNextThread
+		      info = fe.NextItem
+		    Wend
+		  #endif
 		  
 		  If sortby > 0 Then
 		    Select Case SortBy

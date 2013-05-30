@@ -170,12 +170,6 @@ Inherits HTTPParse.HTTPMessage
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="String"
-			InheritedFrom="HTTPParse.HTTPMessage"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ProtocolVersion"
 			Group="Behavior"
 			Type="Single"
