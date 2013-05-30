@@ -7,6 +7,7 @@ Inherits HTTPParse.HTTPMessage
 		  Me.SetHeader("Content-Length", Str(Length))
 		  Me.SetHeader("Server", HTTP.DaemonVersion)
 		  Me.SetHeader("Content-Encoding", "Identity")
+		  Me.MIMEType = Type
 		End Sub
 	#tag EndMethod
 

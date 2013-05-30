@@ -5,11 +5,11 @@ Inherits HTTPParse.Response
 		Sub Constructor(ErrorCode As Integer, Param As String)
 		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
 		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
+		  Me.StatusCode = ErrorCode
 		  Dim data As String = ErrorPage(StatusCode, Param)
 		  Super.Constructor(data.LenB, New HTTPParse.ContentType("text/html"))
 		  Me.StatusCode = ErrorCode
 		  Me.MessageBody = data
-		  Me.StatusCode = ErrorCode
 		  Me.Modified = New Date
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  

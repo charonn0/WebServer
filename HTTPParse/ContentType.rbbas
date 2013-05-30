@@ -16,7 +16,11 @@ Protected Class ContentType
 
 	#tag Method, Flags = &h0
 		Sub Constructor(OfType As FolderItem, Weight As Single = 1.0)
-		  Me.Constructor(GetType(OfType).ToString)
+		  If Not OfType.Directory Then
+		    Me.Constructor(GetType(OfType).ToString)
+		  Else
+		    Me.Constructor("text/html")
+		  End If
 		  Me.Weight = Weight
 		End Sub
 	#tag EndMethod
@@ -63,14 +67,18 @@ Protected Class ContentType
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		 Shared Function GetType(File As FolderItem) As ContentType
-		  Return GetType(File.Name)
+	#tag Method, Flags = &h1
+		Protected Shared Function GetType(File As FolderItem) As ContentType
+		  If File.Directory Then
+		    Return MIMETypes.Value("text/html")
+		  Else
+		    Return GetType(File.Name)
+		  End If
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		 Shared Function GetType(FileName As String) As ContentType
+	#tag Method, Flags = &h1
+		Protected Shared Function GetType(FileName As String) As ContentType
 		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
 		  If MIMETypes.HasKey(ext) Then
 		    Return New ContentType(MIMETypes.Value(ext).StringValue)

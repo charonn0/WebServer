@@ -47,7 +47,8 @@ Protected Class MultipartForm
 		      Dim file As FolderItem = FormElements.Value(key)
 		      data = data + Me.Boundary + CRLF
 		      data = data + "Content-Disposition: form-data; name=""file""; filename=""" + File.Name + """" + CRLF
-		      data = data + "Content-Type: " + ContentType.GetType(File).ToString + CRLF + CRLF
+		      Dim type As New ContentType(file)
+		      data = data + "Content-Type: " + type.ToString + CRLF + CRLF
 		      Dim bs As BinaryStream = BinaryStream.Open(File)
 		      data = data + bs.Read(bs.Length) + CRLF
 		      bs.Close

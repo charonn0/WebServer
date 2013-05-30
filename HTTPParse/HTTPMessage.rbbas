@@ -218,10 +218,14 @@ Protected Class HTTPMessage
 		#tag Getter
 			Get
 			  If mMIMEType = Nil Then
-			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/")))
+			    Dim s As String = NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/"))
+			    Dim f As FolderItem = SpecialFolder.Temporary.Child(s)
 			    mMIMEType = New HTTPParse.ContentType(f)
 			  End If
 			  return mMIMEType
+			  
+			  'Exception
+			  'Return New HTTPParse.ContentType("application/octet-stream")
 			End Get
 		#tag EndGetter
 		#tag Setter

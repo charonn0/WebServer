@@ -165,7 +165,7 @@ Inherits ServerSocket
 		        End If
 		      End Select
 		    End If
-		    
+		    doc.Path = clientrequest.Path
 		    If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
 		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
 		        If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
@@ -302,7 +302,7 @@ Inherits ServerSocket
 		  If Not Redirects.HasKey("/robots.txt") Then
 		    Dim doc As New HTTPParse.ErrorResponse(200, "")
 		    doc.Path = "/robots.txt"
-		    doc.MIMEType = doc.MIMEType.GetType("robots.txt")
+		    doc.MIMEType = New HTTPParse.ContentType("text/html")
 		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
 		    AddRedirect(doc)
 		  End If
@@ -359,7 +359,7 @@ Inherits ServerSocket
 		      Dim gz As String
 		      Try
 		        Dim size As Integer = ResponseDocument.MessageBody.LenB
-		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "Compressed with GZip " + GZip.Version))
+		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
 		        ResponseDocument.MessageBody = gz
 		        size = gz.LenB * 100 / size
 		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
