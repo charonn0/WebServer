@@ -342,7 +342,7 @@ Inherits ServerSocket
 		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
 		  Dim session As HTTP.Session
-		  If UseSessions Then 
+		  If UseSessions Then
 		    session = GetSession(Socket)
 		    logID = "(" + Session.SessionID + ")"
 		  End If
@@ -571,7 +571,7 @@ Inherits ServerSocket
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  If mRedirects = Nil Then 
+			  If mRedirects = Nil Then
 			    mRedirects = New Dictionary
 			    Me.Log("Global redirects dictionary initialized", Log_Trace)
 			  End If
@@ -669,6 +669,7 @@ Inherits ServerSocket
 			Name="CertificatePassword"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EnforceContentType"
@@ -682,12 +683,6 @@ Inherits ServerSocket
 			Visible=true
 			Group="ID"
 			InheritedFrom="ServerSocket"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="KeepAlive"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"

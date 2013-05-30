@@ -26,40 +26,43 @@ Protected Class DirectoryIndex
 		      sortby = Sort_Type
 		    End Select
 		  End If
-		  
 		  Dim sorter() As Integer
-		  For i As Integer = 0 To Me.Target.Count - 1
-		    sorter.Append(i)
-		  Next
 		  
 		  Dim items() As FolderItem
 		  Dim names(), dirtypes() As String
 		  Dim dates() As Double
 		  Dim sizes() As UInt64
 		  Dim pagedata As String = IndexPage
+		  
 		  For i As Integer = 1 To Me.Target.Count
 		    Dim item As FolderItem = Me.Target.Item(i)
-		    If item.Directory Then
-		      dirtypes.Append("0000AAAA")
-		    Else
-		      dirtypes.Append(HTTPParse.ContentType.GetType(item).ToString)
-		    End If
-		    names.Append(item.Name)
 		    items.Append(item)
-		    dates.Append(item.ModificationDate.TotalSeconds)
-		    sizes.Append(item.Length)
+		    sorter.Append(i - 1)
+		    If sortby > 0 Then
+		      If item.Directory Then
+		        dirtypes.Append("0000AAAA")
+		      Else
+		        dirtypes.Append(HTTPParse.ContentType.GetType(item).ToString)
+		      End If
+		      
+		      names.Append(item.Name)
+		      dates.Append(item.ModificationDate.TotalSeconds)
+		      sizes.Append(item.Length)
+		    End If
 		  Next
 		  
-		  Select Case SortBy
-		  Case Sort_Alpha
-		    names.SortWith(sorter)
-		  Case Sort_Type
-		    dirtypes.SortWith(sorter)
-		  Case Sort_Date
-		    dates.SortWith(sorter)
-		  Case Sort_Size
-		    sizes.SortWith(sorter)
-		  End Select
+		  If sortby > 0 Then
+		    Select Case SortBy
+		    Case Sort_Alpha
+		      names.SortWith(sorter)
+		    Case Sort_Type
+		      dirtypes.SortWith(sorter)
+		    Case Sort_Date
+		      dates.SortWith(sorter)
+		    Case Sort_Size
+		      sizes.SortWith(sorter)
+		    End Select
+		  End If
 		  Dim lines() As String
 		  
 		  For i As Integer = 0 To UBound(sorter)

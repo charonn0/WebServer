@@ -31,7 +31,7 @@ Inherits HTTP.BaseServer
 		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path.ServerFile + args)
 		    End If
 		  End Select
-		  If doc <> Nil Then 
+		  If doc <> Nil Then
 		    doc.Method = ClientRequest.Method
 		    Me.Log(doc.StatusMessage, Log_Debug)
 		  Else
@@ -121,6 +121,12 @@ Inherits HTTP.BaseServer
 			Group="Behavior"
 			Type="Boolean"
 			InheritedFrom="WebServer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CertificatePassword"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTP.BaseServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DirectoryBrowsing"

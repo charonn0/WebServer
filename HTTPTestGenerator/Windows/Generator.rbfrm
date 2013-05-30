@@ -1295,7 +1295,6 @@ End
 		  
 		  Me.Write(Request.ToString)
 		  URL.AddItem(URL.Text)
-		  
 		End Sub
 	#tag EndEvent
 	#tag Event
