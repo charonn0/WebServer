@@ -385,7 +385,10 @@ Inherits ServerSocket
 		    Session.ExtendSession
 		    If Session.NewSession Then
 		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
-		      ResponseDocument.SetCookie("SessionID") = Session.SessionID
+		      Dim c As New HTTPParse.Cookie("SessionID=" + Session.SessionID)
+		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
+		      ResponseDocument.Headers.Cookie(-1) = c
+		      'ResponseDocument.Headers.Cookie
 		      Session.NewSession = False
 		    ElseIf ResponseDocument.HasCookie("SessionID") Then
 		      Me.Log("Clear session cookie", Log_Debug)

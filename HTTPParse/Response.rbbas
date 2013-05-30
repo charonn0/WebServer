@@ -130,30 +130,8 @@ Inherits HTTPParse.HTTPMessage
 		Method As RequestMethod
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mMIMEType = Nil Then
-			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/")))
-			    mMIMEType = New HTTPParse.ContentType(f)
-			  End If
-			  return mMIMEType
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mMIMEType = value
-			End Set
-		#tag EndSetter
-		MIMEType As HTTPParse.ContentType
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mMethod As RequestMethod
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMIMEType As HTTPParse.ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -227,12 +205,6 @@ Inherits HTTPParse.HTTPMessage
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="String"
-			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"

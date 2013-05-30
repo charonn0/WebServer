@@ -181,6 +181,7 @@ Protected Class HTTPMessage
 		Function ToString(HeadersOnly As Boolean = False) As String
 		  Dim data As String
 		  If Not HeadersOnly Then data = Me.MessageBody
+		  SetHeader("Content-Type", Me.MIMEType.ToString)
 		  If Headers.Count > 0 Then
 		    If Me IsA HTTPParse.Request Then
 		      data = Me.Headers.Source + CRLF + CRLF + data
@@ -211,6 +212,28 @@ Protected Class HTTPMessage
 
 	#tag Property, Flags = &h21
 		Private mHeaders As HTTPParse.Headers
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mMIMEType = Nil Then
+			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/")))
+			    mMIMEType = New HTTPParse.ContentType(f)
+			  End If
+			  return mMIMEType
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mMIMEType = value
+			End Set
+		#tag EndSetter
+		MIMEType As HTTPParse.ContentType
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mMIMEType As HTTPParse.ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -298,12 +321,6 @@ Protected Class HTTPMessage
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"

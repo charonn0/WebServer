@@ -7,7 +7,7 @@ Inherits HTTPParse.Response
 		  If page.Directory Then
 		    Dim data As New HTTPParse.DirectoryIndex(page, path)
 		    Me.MessageBody = data.ToString
-		    Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
+		    Me.MIMEType = New HTTPParse.ContentType("text/html")
 		  Else
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
@@ -82,13 +82,6 @@ Inherits HTTPParse.Response
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"

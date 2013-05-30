@@ -151,13 +151,6 @@ Inherits HTTP.BaseServer
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="KeepAlive"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="WebServer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"

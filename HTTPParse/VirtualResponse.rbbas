@@ -23,7 +23,7 @@ Inherits HTTPParse.Response
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New HTTPParse.ContentType("text/html; charset=utf-8")
+		  Me.MIMEType = New HTTPParse.ContentType("text/html")
 		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		End Sub
 	#tag EndMethod
@@ -87,13 +87,6 @@ Inherits HTTPParse.Response
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ProtocolVersion"

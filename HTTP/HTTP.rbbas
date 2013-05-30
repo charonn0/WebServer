@@ -846,8 +846,8 @@ Protected Module HTTP
 			    "xpi":"application/x-xpinstall", _
 			    "xdf":"application/xcap-diff+xml", _
 			    "xenc":"application/xenc+xml", _
-			    "xht":"application/xhtml+xml; charset=utf-8", _
-			    "xhtml":"application/xhtml+xml; charset=utf-8", _
+			    "xht":"application/xhtml+xml", _
+			    "xhtml":"application/xhtml+xml", _
 			    "xsl":"application/xml", _
 			    "xml":"application/xml", _
 			    "dtd":"application/xml-dtd", _
@@ -960,9 +960,9 @@ Protected Module HTTP
 			    "ics":"text/calendar", _
 			    "css":"text/css", _
 			    "csv":"text/csv", _
-			    "html":"text/html; charset=utf-8", _
-			    "htm":"text/html; charset=utf-8", _
-			    "bs":"text/html; charset=utf-8", _
+			    "html":"text/html", _
+			    "htm":"text/html", _
+			    "bs":"text/html", _
 			    "n3":"text/n3", _
 			    "txt":"text/plain", _
 			    "text":"text/plain", _
