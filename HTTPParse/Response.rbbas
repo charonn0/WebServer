@@ -134,7 +134,7 @@ Inherits HTTPParse.HTTPMessage
 		#tag Getter
 			Get
 			  If mMIMEType = Nil Then
-			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path, "/", CountFields(Me.Path, "/")))
+			    Dim f As FolderItem = SpecialFolder.Temporary.Child(NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/")))
 			    mMIMEType = New HTTPParse.ContentType(f)
 			  End If
 			  return mMIMEType

@@ -39,7 +39,7 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Cookie(Index As Integer = -1, Assigns NewCookie As HTTPParse.Cookie)
+		Sub Cookie(Index As Integer = - 1, Assigns NewCookie As HTTPParse.Cookie)
 		  #pragma BreakOnExceptions Off
 		  If NewCookie = Nil Then
 		    Cookies.Remove(Index)

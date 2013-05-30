@@ -1138,7 +1138,6 @@ End
 		  Me.Request.Path = theURL.ServerFile
 		  If Me.Request.path = "" Then Me.Request.path = "/"
 		  Me.Request.ProtocolVersion = CDbl(NthField(ProtocolVer.Text, "/", 2))
-		  Me.Request.Arguments = TheURL.Arguments
 		  Dim heads As New InternetHeaders
 		  For i As Integer = 0 To RequestHeaders.LastIndex
 		    heads.AppendHeader(RequestHeaders.Cell(i, 0), RequestHeaders.Cell(i, 1))
@@ -1222,7 +1221,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTheURL As URI
+		Private mTheURL As HTTPParse.URI
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1241,12 +1240,12 @@ End
 		#tag Getter
 			Get
 			  If mTheURL = Nil Then
-			    mTheURL = New URI(URL.Text)
+			    mTheURL = New HTTPParse.URI(URL.Text)
 			  End If
 			  return mTheURL
 			End Get
 		#tag EndGetter
-		TheURL As URI
+		TheURL As HTTPParse.URI
 	#tag EndComputedProperty
 
 

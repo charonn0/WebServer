@@ -44,10 +44,7 @@ Inherits HTTPParse.HTTPMessage
 		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
-		  Me.Path = URLDecode(NthField(line, " ", 2).Trim)
-		  Dim tmp As String = NthField(Me.Path, "?", 2)
-		  path = Replace(path, "?" + tmp, "")
-		  Me.Arguments = Split(tmp, "&")
+		  Me.Path = New URI(URLDecode(NthField(line, " ", 2).Trim))
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
 		  Me.Expiry = New Date
 		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 60
@@ -65,10 +62,10 @@ Inherits HTTPParse.HTTPMessage
 	#tag Method, Flags = &h0
 		Function ToString() As String
 		  Dim args As String
-		  If Me.Arguments.Ubound > -1 Then
-		    args = "?" + Join(Me.Arguments, "&")
+		  If Me.Path.Arguments.Ubound > -1 Then
+		    args = "?" + Join(Me.Path.Arguments, "&")
 		  End If
-		  Dim data As String = MethodName + " " + URLEncode(Path) + URLEncode(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
+		  Dim data As String = MethodName + " " + URLEncode(Path.ServerFile) + URLEncode(args) + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
 		    Me.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
 		    Me.MessageBody = Me.MultiPart.ToString
@@ -81,10 +78,6 @@ Inherits HTTPParse.HTTPMessage
 		End Function
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h0
-		Arguments() As String
-	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		AuthPassword As String

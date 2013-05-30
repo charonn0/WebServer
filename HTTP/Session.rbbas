@@ -3,8 +3,9 @@ Protected Class Session
 	#tag Method, Flags = &h0
 		Sub AddCacheItem(Page As HTTPParse.Response)
 		  If Page = Nil Then Return
+		  If Page.Path = Nil Then Return
 		  If Me.Cacheable Then
-		    Me.PageCache.Value(Page.Path) = Page
+		    Me.PageCache.Value(Page.Path.ServerFile) = Page
 		  End If
 		  
 		End Sub
@@ -13,7 +14,7 @@ Protected Class Session
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTPParse.Response)
 		  // Part of the Redirector interface.
-		  Me.Redirects.Value(Page.Path) = Page
+		  Me.Redirects.Value(Page.Path.ServerFile) = Page
 		  
 		  
 		End Sub
@@ -66,6 +67,7 @@ Protected Class Session
 		  End If
 		  
 		  Return doc
+		  
 		End Function
 	#tag EndMethod
 

@@ -43,8 +43,8 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTPParse.Response)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Add redirect for " + page.Path, Log_Debug)
-		  Redirects.Value(Page.Path) = Page
+		  Me.Log("Add redirect for " + page.Path.ServerFile, Log_Debug)
+		  Redirects.Value(page.Path.ServerFile) = Page
 		End Sub
 	#tag EndMethod
 
@@ -95,110 +95,109 @@ Inherits ServerSocket
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path)
+		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path.ServerFile)
 		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
 		    End If
+		    If UseSessions Then
+		      Dim cache As HTTPParse.Response
+		      If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
+		        Select Case clientrequest.CacheDirective
+		        Case "no-cache", "max-age=0"
+		          Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
+		          cache = Nil
+		        End Select
+		      Else
+		        cache = GetCache(Session, clientRequest.Path.ServerFile)
+		      End If
+		      Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.ServerFile)
+		      If redir <> Nil Then
+		        doc = redir
+		        Me.Log("Using redirect.", Log_Debug)
+		      ElseIf cache <> Nil Then
+		        'Cache hit
+		        doc = Cache
+		        doc.FromCache = True
+		        Me.Log("Page from cache", Log_Debug)
+		        Cache.Expires = New Date
+		        Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
+		      ElseIf doc = Nil Then
+		        doc = HandleRequest(clientrequest)
+		        If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
+		          Session.AddCacheItem(doc)
+		        End If
+		      End If
+		    End If
+		    If doc = Nil Then
+		      Me.Log("Running HandleRequest event", Log_Debug)
+		      doc = HandleRequest(clientrequest)
+		    End If
+		    If doc = Nil Then
+		      Select Case clientrequest.Method
+		      Case RequestMethod.TRACE
+		        Me.Log("Request is a TRACE", Log_Debug)
+		        doc = New HTTPParse.ErrorResponse(200, "")
+		        doc.SetHeader("Content-Length", Str(Data.Size))
+		        doc.SetHeader("Content-Type", "message/http")
+		        doc.MessageBody = Data
+		      Case RequestMethod.OPTIONS
+		        Me.Log("Request is a OPTIONS", Log_Debug)
+		        doc = New HTTPParse.ErrorResponse(200, "")
+		        doc.MessageBody = ""
+		        doc.SetHeader("Content-Length", "0")
+		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
+		        doc.SetHeader("Accept-Ranges", "bytes")
+		      Case RequestMethod.GET, RequestMethod.HEAD
+		        Me.Log("Request is a HEAD", Log_Debug)
+		        doc = New HTTPParse.ErrorResponse(404, clientrequest.Path.ServerFile)
+		      Else
+		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
+		          doc = New HTTPParse.ErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		          Me.Log("Request is not implemented", Log_Error)
+		        ElseIf clientrequest.MethodName = "" Then
+		          doc = New HTTPParse.ErrorResponse(400, "") 'bad request
+		          Me.Log("Request is malformed", Log_Error)
+		        ElseIf clientrequest.MethodName <> "" Then
+		          doc = New HTTPParse.ErrorResponse(405, clientrequest.MethodName)
+		          Me.Log("Request is a NOT ALLOWED", Log_Error)
+		        End If
+		      End Select
+		    End If
+		    
+		    If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
+		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
+		        If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
+		          doc = New HTTPParse.ErrorResponse(304, "")
+		          doc.MessageBody = ""
+		        End If
+		      Else
+		        If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
+		          doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
+		          doc.MessageBody = ""
+		        End If
+		      End If
+		    End If
+		    
+		    If EnforceContentType Then
+		      Me.Log("Checking Accepts", Log_Debug)
+		      For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
+		        If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
+		          Me.Log("Response is a Acceptable", Log_Debug)
+		          SendResponse(Sender, doc)
+		          Return
+		        End If
+		      Next
+		      Dim accepted As HTTPParse.ContentType = doc.MIMEType
+		      doc = New HTTPParse.ErrorResponse(406, "") 'Not Acceptable
+		      doc.MIMEType = accepted
+		      Me.Log("Response is not Acceptable", Log_Error)
+		    End If
 		  Catch err As UnsupportedFormatException
 		    doc = New HTTPParse.ErrorResponse(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
-		  
-		  If UseSessions Then
-		    Dim cache As HTTPParse.Response
-		    If clientrequest.CacheDirective <> "" Then
-		      Select Case clientrequest.CacheDirective
-		      Case "no-cache", "max-age=0"
-		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
-		        cache = Nil
-		      End Select
-		    Else
-		      cache = GetCache(Session, clientRequest.Path)
-		    End If
-		    Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path)
-		    If redir <> Nil Then
-		      doc = redir
-		      Me.Log("Using redirect.", Log_Debug)
-		    ElseIf cache <> Nil Then
-		      'Cache hit
-		      doc = Cache
-		      doc.FromCache = True
-		      Me.Log("Page from cache", Log_Debug)
-		      Cache.Expires = New Date
-		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
-		    ElseIf doc = Nil Then
-		      doc = HandleRequest(clientrequest)
-		      If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		        Session.AddCacheItem(doc)
-		      End If
-		    End If
-		  End If
-		  If doc = Nil Then
-		    Me.Log("Running HandleRequest event", Log_Debug)
-		    doc = HandleRequest(clientrequest)
-		  End If
-		  If doc = Nil Then
-		    Select Case clientrequest.Method
-		    Case RequestMethod.TRACE
-		      Me.Log("Request is a TRACE", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(200, "")
-		      doc.SetHeader("Content-Length", Str(Data.Size))
-		      doc.SetHeader("Content-Type", "message/http")
-		      doc.MessageBody = Data
-		    Case RequestMethod.OPTIONS
-		      Me.Log("Request is a OPTIONS", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(200, "")
-		      doc.MessageBody = ""
-		      doc.SetHeader("Content-Length", "0")
-		      doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
-		      doc.SetHeader("Accept-Ranges", "bytes")
-		    Case RequestMethod.GET, RequestMethod.HEAD
-		      Me.Log("Request is a HEAD", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(404, clientrequest.Path)
-		    Else
-		      If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		        doc = New HTTPParse.ErrorResponse(501, clientrequest.MethodName) 'Not implemented
-		        Me.Log("Request is not implemented", Log_Error)
-		      ElseIf clientrequest.MethodName = "" Then
-		        doc = New HTTPParse.ErrorResponse(400, "") 'bad request
-		        Me.Log("Request is malformed", Log_Error)
-		      ElseIf clientrequest.MethodName <> "" Then
-		        doc = New HTTPParse.ErrorResponse(405, clientrequest.MethodName)
-		        Me.Log("Request is a NOT ALLOWED", Log_Error)
-		      End If
-		    End Select
-		  End If
-		  
-		  If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
-		    If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.ErrorResponse(304, "")
-		        doc.MessageBody = ""
-		      End If
-		    Else
-		      If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		        doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
-		        doc.MessageBody = ""
-		      End If
-		    End If
-		  End If
-		  
-		  If EnforceContentType Then
-		    Me.Log("Checking Accepts", Log_Debug)
-		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
-		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
-		        Me.Log("Response is a Acceptable", Log_Debug)
-		        SendResponse(Sender, doc)
-		        Return
-		      End If
-		    Next
-		    Dim accepted As HTTPParse.ContentType = doc.MIMEType
-		    doc = New HTTPParse.ErrorResponse(406, "") 'Not Acceptable
-		    doc.MIMEType = accepted
-		    Me.Log("Response is not Acceptable", Log_Error)
-		  End If
 		  SendResponse(Sender, doc)
 		  
 		  
@@ -369,7 +368,7 @@ Inherits ServerSocket
 		      End Try
 		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    #else
-		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "No compression.")
+		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
 		    #endif
 		  End If
 		  ResponseDocument.SetHeader("Connection", "close")

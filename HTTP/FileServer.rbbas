@@ -5,17 +5,17 @@ Inherits HTTP.BaseServer
 		Function HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTPParse.Response 'The response object
-		  Dim item As FolderItem = FindItem(ClientRequest.Path)
+		  Dim item As FolderItem = FindItem(ClientRequest.Path.ServerFile)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(404, ClientRequest.Path)
+		      doc = New HTTPParse.ErrorResponse(404, ClientRequest.Path.ServerFile)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(403, ClientRequest.Path)
+		      doc = New HTTPParse.ErrorResponse(403, ClientRequest.Path.ServerFile)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
@@ -24,7 +24,11 @@ Inherits HTTP.BaseServer
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
-		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path)
+		      Dim args As String
+		      If UBound(ClientRequest.Path.Arguments) > -1 Then
+		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
+		      End If
+		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path.ServerFile + args)
 		    End If
 		  End Select
 		  If doc <> Nil Then 
