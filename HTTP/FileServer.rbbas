@@ -12,7 +12,6 @@ Inherits HTTP.BaseServer
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
 		      doc = New HTTPParse.ErrorResponse(404, ClientRequest.Path)
-		      
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
@@ -28,7 +27,12 @@ Inherits HTTP.BaseServer
 		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path)
 		    End If
 		  End Select
-		  If doc <> Nil Then doc.Method = ClientRequest.Method
+		  If doc <> Nil Then 
+		    doc.Method = ClientRequest.Method
+		    Me.Log(doc.StatusMessage, Log_Debug)
+		  Else
+		    Me.Log("The document is Nil", Log_Debug)
+		  End If
 		  Return doc
 		  
 		End Function
@@ -41,11 +45,11 @@ Inherits HTTP.BaseServer
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  
-		  If Not Document.Directory And "\" + Document.Name = path Then
-		    Return Document
+		  If Not DocumentRoot.Directory And "\" + DocumentRoot.Name = path Then
+		    Return DocumentRoot
 		  End If
 		  
-		  Path = ReplaceAll(Document.AbsolutePath + Path, "\\", "\")
+		  Path = ReplaceAll(DocumentRoot.AbsolutePath + Path, "\\", "\")
 		  Dim item As FolderItem = GetTrueFolderItem(Path, FolderItem.PathTypeAbsolute)
 		  
 		  If item <> Nil And item.Exists Then
@@ -58,12 +62,42 @@ Inherits HTTP.BaseServer
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		DirectoryBrowsing As Boolean = True
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mDirectoryBrowsing
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDirectoryBrowsing = value
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			End Set
+		#tag EndSetter
+		DirectoryBrowsing As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mDocumentRoot
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDocumentRoot = value
+			  Me.Log(CurrentMethodName + "=" + value.AbsolutePath, Log_Trace)
+			End Set
+		#tag EndSetter
+		DocumentRoot As FolderItem
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mDirectoryBrowsing As Boolean = True
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Document As FolderItem
+	#tag Property, Flags = &h21
+		Private mDocumentRoot As FolderItem
 	#tag EndProperty
 
 

@@ -531,13 +531,13 @@ Begin Window FileServerDemo
    Begin Timer LogTimer
       Height          =   32
       Index           =   -2147483648
-      Left            =   741
+      Left            =   545
       LockedInPosition=   False
       Mode            =   2
       Period          =   1
       Scope           =   0
       TabPanelIndex   =   0
-      Top             =   477
+      Top             =   478
       Width           =   32
    End
    Begin CheckBox UseSessions
@@ -580,7 +580,7 @@ Begin Window FileServerDemo
       Height          =   32
       Index           =   -2147483648
       KeepAlive       =   ""
-      Left            =   699
+      Left            =   503
       LockedInPosition=   False
       MaximumSocketsConnected=   10
       MinimumSocketsAvailable=   2
@@ -588,7 +588,7 @@ Begin Window FileServerDemo
       Scope           =   1
       SessionTimeout  =   60
       TabPanelIndex   =   0
-      Top             =   477
+      Top             =   478
       UseSessions     =   True
       Width           =   32
    End
@@ -656,6 +656,37 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   74
    End
+   Begin PushButton PushButton5
+      AutoDeactivate  =   True
+      Bold            =   ""
+      ButtonStyle     =   0
+      Cancel          =   ""
+      Caption         =   "Clear Log"
+      Default         =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   693
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   0
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   10
+      TextUnit        =   0
+      Top             =   438
+      Underline       =   ""
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
@@ -679,13 +710,10 @@ End
 		    sock.NetworkInterface = System.GetNetworkInterface(0)
 		  End If
 		  Sock.Port = Val(port.Text)
-		  Sock.Document = SharedFile
+		  Sock.DocumentRoot = SharedFile
 		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
 		  Sock.AddRedirect(redirect)
 		  Sock.UseSessions = UseSessions.Value
-		  'Sock.ConnectionType = ConnectionTypes.TLSv1
-		  'Sock.CertificateFile = SpecialFolder.Desktop.Child("TestCert.RBCert")
-		  'Sock.CertificatePassword = "CertDemo"
 		  sock.Listen
 		  If Sock.ConnectionType = ConnectionTypes.Insecure Then
 		    ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
@@ -785,10 +813,11 @@ End
 		  Me.RowTag(0) = 1
 		  Me.AddRow("Debug")
 		  Me.RowTag(1) = -1
-		  Me.AddRow("Socket")
-		  Me.RowTag(2) = -2
 		  Me.AddRow("Trace")
+		  Me.RowTag(2) = -2
+		  Me.AddRow("Socket")
 		  Me.RowTag(3) = -3
+		  Me.ListIndex = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1023,6 +1052,13 @@ End
 		    Sock.ConnectionType = ConnectionTypes.Insecure
 		  End If
 		  Sock.Listen
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PushButton5
+	#tag Event
+		Sub Action()
+		  Listbox1.DeleteAllRows
 		End Sub
 	#tag EndEvent
 #tag EndEvents

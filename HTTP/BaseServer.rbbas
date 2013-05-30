@@ -3,7 +3,7 @@ Protected Class BaseServer
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
-		  Me.Log(CurrentMethodName, Log_Trace)
+		  Me.Log(CurrentMethodName, Log_Socket)
 		  Dim sock As New SSLSocket
 		  If Me.ConnectionType <> ConnectionTypes.Insecure Then
 		    sock.CertificatePassword = Me.CertificatePassword
@@ -57,10 +57,11 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As TCPSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Incoming data", Log_Socket)
+		  Me.Log("Incoming data", Log_Debug)
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTPParse.Request
 		  Dim doc As HTTPParse.Response
+		  Dim session As HTTP.Session
 		  Try
 		    clientrequest = New HTTPParse.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
@@ -70,14 +71,13 @@ Inherits ServerSocket
 		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
 		      Dim ID As String = clientrequest.GetCookie("SessionID")
-		      Dim s As HTTP.Session
 		      If ID = "" Then
-		        s = GetSession(Sender)
+		        Session = GetSession(Sender)
 		      Else
-		        s = GetSession(ID)
-		        Sockets.Value(Sender) = s.SessionID
+		        Session = GetSession(ID)
+		        Sockets.Value(Sender) = Session.SessionID
 		      End If
-		      clientrequest.SessionID = s.SessionID
+		      clientrequest.SessionID = Session.SessionID
 		      
 		    End If
 		    
@@ -115,9 +115,9 @@ Inherits ServerSocket
 		        cache = Nil
 		      End Select
 		    Else
-		      cache = GetCache(GetSession(Sender), clientRequest.Path)
+		      cache = GetCache(Session, clientRequest.Path)
 		    End If
-		    Dim redir As HTTPParse.Response = GetRedirect(GetSession(Sender), clientrequest.Path)
+		    Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -130,8 +130,8 @@ Inherits ServerSocket
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		    ElseIf doc = Nil Then
 		      doc = HandleRequest(clientrequest)
-		      If UseSessions And GetSession(clientrequest.SessionID) <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		        GetSession(clientrequest.SessionID).AddCacheItem(doc)
+		      If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
+		        Session.AddCacheItem(doc)
 		      End If
 		    End If
 		  End If
@@ -233,9 +233,9 @@ Inherits ServerSocket
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions Then
-		    If GetSession(Sender.SessionID).GetCacheItem(Path) <> Nil Then
+		    If Sender.GetCacheItem(Path) <> Nil Then
 		      Me.Log("(hit!) Get cache item: " + Path, Log_Debug)
-		      Return GetSession(Sender.SessionID).GetCacheItem(Path)
+		      Return Sender.GetCacheItem(Path)
 		    End If
 		  End If
 		  Me.Log("(miss!) Get cache item: " + Path, Log_Debug)
@@ -248,9 +248,9 @@ Inherits ServerSocket
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions THen
-		    If GetSession(Sender.SessionID).GetRedirect(Path) <> Nil Then
+		    If Sender.GetRedirect(Path) <> Nil Then
 		      Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
-		      Return GetSession(Sender.SessionID).GetRedirect(Path)
+		      Return Sender.GetRedirect(Path)
 		    End If
 		  End If
 		  
@@ -298,6 +298,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Server now listening...", Log_Socket)
 		  Sessions = New Dictionary
+		  Sockets = New Dictionary
 		  Super.Listen
 		  If Not Redirects.HasKey("/robots.txt") Then
 		    Dim doc As New HTTPParse.ErrorResponse(200, "")
@@ -341,7 +342,11 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
-		  If UseSessions Then logID = "(" + GetSession(Socket).SessionID + ")"
+		  Dim session As HTTP.Session
+		  If UseSessions Then 
+		    session = GetSession(Socket)
+		    logID = "(" + Session.SessionID + ")"
+		  End If
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  Dim tmp As HTTPParse.Response = ResponseDocument
 		  If TamperResponse(tmp) Then
@@ -367,11 +372,8 @@ Inherits ServerSocket
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%PAGEGZIPSTATUS%", "No compression.")
 		    #endif
 		  End If
-		  If Me.KeepAlive Then
-		    ResponseDocument.SetHeader("Connection", "keep-alive")
-		  Else
-		    ResponseDocument.SetHeader("Connection", "close")
-		  End If
+		  ResponseDocument.SetHeader("Connection", "close")
+		  
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    ResponseDocument.MessageBody = ""
@@ -381,11 +383,11 @@ Inherits ServerSocket
 		  End If
 		  
 		  If UseSessions Then
-		    GetSession(Socket).ExtendSession
-		    If GetSession(Socket).NewSession Then
-		      Me.Log("Set session cookie: " + GetSession(Socket).SessionID, Log_Debug)
-		      ResponseDocument.SetCookie("SessionID") = GetSession(Socket).SessionID
-		      GetSession(Socket).NewSession = False
+		    Session.ExtendSession
+		    If Session.NewSession Then
+		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
+		      ResponseDocument.SetCookie("SessionID") = Session.SessionID
+		      Session.NewSession = False
 		    ElseIf ResponseDocument.HasCookie("SessionID") Then
 		      Me.Log("Clear session cookie", Log_Debug)
 		      ResponseDocument.RemoveCookie("SessionID")
@@ -451,32 +453,103 @@ Inherits ServerSocket
 	#tag EndHook
 
 
-	#tag Property, Flags = &h0
-		AuthenticationRealm As String = "Restricted Area"
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mAuthenticationRealm
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.Log(CurrentMethodName + "=" + value, Log_Trace)
+			  mAuthenticationRealm = value
+			End Set
+		#tag EndSetter
+		AuthenticationRealm As String
+	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mAuthenticationRequired
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mAuthenticationRequired = value
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			End Set
+		#tag EndSetter
 		AuthenticationRequired As Boolean
-	#tag EndProperty
+	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mCertificateFile
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mCertificateFile = value
+			  Me.Log(CurrentMethodName + "=" + value.AbsolutePath, Log_Trace)
+			End Set
+		#tag EndSetter
 		CertificateFile As FolderItem
-	#tag EndProperty
+	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mCertificatePassword
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mCertificatePassword = value
+			  Me.Log(CurrentMethodName + "=" + value, Log_Trace)
+			End Set
+		#tag EndSetter
 		CertificatePassword As String
-	#tag EndProperty
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		ConnectionType As ConnectionTypes = ConnectionTypes.Insecure
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		EnforceContentType As Boolean = True
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mEnforceContentType
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mEnforceContentType = value
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			End Set
+		#tag EndSetter
+		EnforceContentType As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthenticationRealm As String = """Restricted Area"""
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		KeepAlive As Boolean
+	#tag Property, Flags = &h21
+		Private mAuthenticationRequired As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCertificateFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCertificatePassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEnforceContentType As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -484,14 +557,25 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSockets As Dictionary
+		#tag Note
+			The number of seconds of inactivity after which the session is deemed inactive. The default is 10 minutes (600 seconds.)
+			Actual timeout periods have a resolution of ±5 seconds. Setting this value to <=5 will result in all sessions being
+			timedout at the next run of the TimeOutTimer action event.
+		#tag EndNote
+		Private mSessionTimeout As Integer = 600
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUseSessions As Boolean = True
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  Me.Log(CurrentMethodName, Log_Trace)
-			  If mRedirects = Nil Then mRedirects = New Dictionary
+			  If mRedirects = Nil Then 
+			    mRedirects = New Dictionary
+			    Me.Log("Global redirects dictionary initialized", Log_Trace)
+			  End If
 			  return mRedirects
 			End Get
 		#tag EndGetter
@@ -508,37 +592,44 @@ Inherits ServerSocket
 		Protected Sessions As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		#tag Note
-			The number of seconds of inactivity after which the session is deemed inactive. The default is 10 minutes (600 seconds.)
-			Actual timeout periods have a resolution of ±5 seconds. Setting this value to <=5 will result in all sessions being
-			timedout at the next run of the TimeOutTimer action event.
-		#tag EndNote
-		SessionTimeout As Integer = 600
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mSessionTimeout
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSessionTimeout = value
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			End Set
+		#tag EndSetter
+		SessionTimeout As Integer
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private SessionTimer As Timer
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag Property, Flags = &h1
+		Protected Sockets As Dictionary
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mSockets = Nil Then mSockets = New Dictionary
-			  return mSockets
+			  return mUseSessions
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mSockets = value
+			  mUseSessions = value
+			  
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
 			End Set
 		#tag EndSetter
-		Protected Sockets As Dictionary
+		UseSessions As Boolean
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h0
-		UseSessions As Boolean = True
-	#tag EndProperty
 
 
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
@@ -553,10 +644,10 @@ Inherits ServerSocket
 	#tag Constant, Name = Log_Response, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Log_Socket, Type = Double, Dynamic = False, Default = \"-2", Scope = Public
+	#tag Constant, Name = Log_Socket, Type = Double, Dynamic = False, Default = \"-3", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-3", Scope = Public
+	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-2", Scope = Public
 	#tag EndConstant
 
 
