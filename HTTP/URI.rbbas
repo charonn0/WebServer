@@ -3,11 +3,12 @@ Protected Class URI
 Inherits HTTPParse.URI
 	#tag Method, Flags = &h0
 		Function LocalPath() As String
-		  If UBound(Me.ServerFile) > -1 Then
-		    Return Join(Me.ServerFile, "/")
-		  Else
-		    Return "/"
-		  End If
+		  Dim item As String = "/"
+		  For i As Integer = 0 To UBound(Me.ServerFile)
+		    If Me.ServerFile(i).Trim = ""  Then Continue
+		    item = item + Me.ServerFile(i).Trim + "/"
+		  Next
+		  Return item
 		End Function
 	#tag EndMethod
 
@@ -20,8 +21,13 @@ Inherits HTTPParse.URI
 	#tag Method, Flags = &h0
 		Function Parent() As HTTP.URI
 		  Dim parent As New HTTP.URI(Me.ToString)
+		  For i As Integer = 0 To UBound(parent.ServerFile)
+		    If parent.ServerFile(i).Trim = "" Then parent.ServerFile.Remove(i)
+		  Next
 		  If UBound(parent.ServerFile) > -1 Then
-		    Call parent.ServerFile.Pop
+		    While parent.ServerFile.Pop.Trim = ""
+		      App.YieldToNextThread
+		    Wend
 		  End If
 		  Return parent
 		End Function

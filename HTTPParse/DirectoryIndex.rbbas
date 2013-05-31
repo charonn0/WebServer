@@ -123,7 +123,8 @@ Protected Class DirectoryIndex
 		    lines.Append(line)
 		  Next
 		  If RequestPath.LocalPath <> "/" Then
-		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""" + MIMEIcon_Back + """ width=22 height=22 /><a href=""" + RequestPath.Parent.ToString + """>Parent Directory</a>")
+		    Dim s As String = RequestPath.Parent.LocalPath
+		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""" + MIMEIcon_Back + """ width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
 		  Else
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "")
 		  End If
