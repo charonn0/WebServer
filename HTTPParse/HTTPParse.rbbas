@@ -40,18 +40,6 @@ Protected Module HTTPParse
 		End Function
 	#tag EndMethod
 
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function FindClose Lib "Kernel32" (FindHandle As Integer) As Boolean
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function FindFirstFile Lib "Kernel32" Alias "FindFirstFileW" (FileName As WString, ByRef FindData As WIN32_FIND_DATA) As Integer
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function FindNextFile Lib "Kernel32" Alias "FindNextFileW" (FindHandle As Integer, ByRef FindData As WIN32_FIND_DATA) As Boolean
-	#tag EndExternalMethod
-
 	#tag Method, Flags = &h0
 		Function FormatBytes(bytes As UInt64, precision As Integer = 2) As String
 		  'Converts raw byte counts into SI formatted strings. 1KB = 1024 bytes.
@@ -103,10 +91,6 @@ Protected Module HTTPParse
 		  
 		End Function
 	#tag EndMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function GetLastError Lib "Kernel32" () As Integer
-	#tag EndExternalMethod
 
 	#tag Method, Flags = &h0
 		Function HTTPDate(d As Date) As String

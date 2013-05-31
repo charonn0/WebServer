@@ -34,51 +34,24 @@ Protected Class DirectoryIndex
 		  Dim sizes() As UInt64
 		  Dim pagedata As String = IndexPage
 		  
-		  #If Not TargetWin32 Or Not FastAndGlitchy Then
-		    For i As Integer = 1 To Me.Target.Count
-		      Dim item As FolderItem = Me.Target.Item(i)
-		      items.Append(item)
-		      sorter.Append(i - 1)
-		      If sortby > 0 Then
-		        If item.Directory Then
-		          dirtypes.Append("0000AAAA")
-		        Else
-		          Dim type As New ContentType(item)
-		          dirtypes.Append(type.ToString)
-		        End If
-		        
-		        names.Append(item.Name)
-		        dates.Append(item.ModificationDate.TotalSeconds)
-		        sizes.Append(item.Length)
+		  Dim count As Integer = Me.Target.Count
+		  For i As Integer = 1 To Count
+		    Dim item As FolderItem = Me.Target.Item(i)
+		    items.Append(item)
+		    sorter.Append(i - 1)
+		    If sortby > 0 Then
+		      If item.Directory Then
+		        dirtypes.Append("0000AAAA")
+		      Else
+		        Dim type As New ContentType(item)
+		        dirtypes.Append(type.ToString)
 		      End If
-		    Next
-		  #Else
-		    Dim fe As New HTTPParse.FileEnumerator(Me.Target, "*")
-		    Dim info As HTTPParse.WIN32_FIND_DATA = fe.NextItem
-		    While fe.LastError = 0
-		      If info.FileName <> "." And info.FileName <> ".." Then
-		        Dim f As FolderItem = GetFolderItem(Me.Target.AbsolutePath + info.FileName)
-		        If f <> Nil Then
-		          If f.AbsolutePath <> Target.AbsolutePath Then
-		            items.Append(f)
-		            names.Append(f.Name)
-		            dates.Append(f.ModificationDate.TotalSeconds)
-		            sizes.Append(f.Length)
-		            sorter.Append(Sizes.Ubound)
-		            If f.Directory Then
-		              dirtypes.Append("0000AAAA")
-		            Else
-		              Dim type As New ContentType(f)
-		              dirtypes.Append(type.ToString)
-		            End If
-		          End If
-		        End If
-		      End If
-		      App.YieldToNextThread
-		      info = fe.NextItem
-		    Wend
-		  #endif
-		  
+		      
+		      names.Append(item.Name)
+		      dates.Append(item.ModificationDate.TotalSeconds)
+		      sizes.Append(item.Length)
+		    End If
+		  Next
 		  If sortby > 0 Then
 		    Select Case SortBy
 		    Case Sort_Alpha
@@ -179,9 +152,6 @@ Protected Class DirectoryIndex
 		Target As FolderItem
 	#tag EndProperty
 
-
-	#tag Constant, Name = FastAndGlitchy, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = IndexPage, Type = String, Dynamic = False, Default = \"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r<html xmlns\x3D\"http://www.w3.org/1999/xhtml\">\r<head>\r<title>%PAGETITLE%</title>\r</head>\r\r<body link\x3D\"#0000FF\" vlink\x3D\"#004080\" alink\x3D\"#FF0000\">\r<h1>%PAGETITLE%</h1><h2>%ITEMCOUNT%</h2>\r<p>%UPLINK%</p>\r<table width\x3D\"90%\" border\x3D\"0\" cellspacing\x3D\"5\" cellpadding\x3D\"1\">\r%TABLE%\r</table>\r<hr />\r<p style\x3D\"font-size: x-small;\">Powered by: %DAEMONVERSION% <br />\r%TIME% <br /> \r%COMPRESSION%\r</p>\r</body>\r</html>", Scope = Private
 	#tag EndConstant
