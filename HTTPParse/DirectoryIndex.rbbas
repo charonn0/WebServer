@@ -64,6 +64,13 @@ Protected Class DirectoryIndex
 		          dates.Append(f.ModificationDate.TotalSeconds)
 		          sizes.Append(f.Length)
 		          sorter.Append(Sizes.Ubound)
+		          If f.Directory Then
+		            dirtypes.Append("0000AAAA")
+		          Else
+		            Dim type As New ContentType(f)
+		            dirtypes.Append(type.ToString)
+		          End If
+		          
 		        End If
 		      End If
 		      App.YieldToNextThread

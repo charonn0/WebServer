@@ -43,6 +43,7 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -61,6 +62,7 @@ Begin Window Generator
          HasBackColor    =   False
          Height          =   384
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "GroupBox3"
          Left            =   622
          LockBottom      =   ""
@@ -143,6 +145,7 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   255
@@ -219,6 +222,7 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -229,14 +233,18 @@ Begin Window Generator
    End
    Begin TCPSocket Sock
       Address         =   ""
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   501
       LockedInPosition=   False
       Port            =   0
       Scope           =   0
+      TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   -1
+      Visible         =   True
       Width           =   32
    End
    Begin TextArea OutputLog
@@ -306,6 +314,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Status Code:"
       TextAlign       =   2
       TextColor       =   0
@@ -340,6 +349,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Status Message:"
       TextAlign       =   2
       TextColor       =   0
@@ -374,6 +384,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -408,6 +419,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   16711680
@@ -442,6 +454,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Remote IP:"
       TextAlign       =   2
       TextColor       =   0
@@ -476,6 +489,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   255
@@ -507,6 +521,7 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
@@ -802,6 +817,7 @@ Begin Window Generator
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
          TextColor       =   0
@@ -1001,6 +1017,7 @@ Begin Window Generator
       End
    End
    Begin Timer DataReceivedTimer
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   -3
@@ -1008,8 +1025,11 @@ Begin Window Generator
       Mode            =   0
       Period          =   1000
       Scope           =   0
+      TabIndex        =   11
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   597
+      Visible         =   True
       Width           =   32
    End
    Begin Listbox ResponseHeaders
@@ -1135,7 +1155,7 @@ End
 		  Me.Request = New HTTPParse.Request()
 		  Me.Request.Method = HTTPMethod(Me.RequestMethod.Text)
 		  If Me.Request.Method = HTTP.RequestMethod.InvalidMethod Then Me.Request.MethodName = Me.RequestMethod.Text
-		  Me.Request.Path = theURL.ServerFile
+		  Me.Request.Path = theURL.LocalPath
 		  If Me.Request.path = "" Then Me.Request.path = "/"
 		  Me.Request.ProtocolVersion = CDbl(NthField(ProtocolVer.Text, "/", 2))
 		  Dim heads As New InternetHeaders
@@ -1221,7 +1241,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTheURL As HTTPParse.URI
+		Private mTheURL As HTTP.URI
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1240,12 +1260,12 @@ End
 		#tag Getter
 			Get
 			  If mTheURL = Nil Then
-			    mTheURL = New HTTPParse.URI(URL.Text)
+			    mTheURL = New HTTP.URI(URL.Text)
 			  End If
 			  return mTheURL
 			End Get
 		#tag EndGetter
-		TheURL As HTTPParse.URI
+		TheURL As HTTP.URI
 	#tag EndComputedProperty
 
 

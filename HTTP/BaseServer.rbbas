@@ -43,8 +43,8 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTPParse.Response)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Add redirect for " + page.Path.ServerFile, Log_Debug)
-		  Redirects.Value(page.Path.ServerFile) = Page
+		  Me.Log("Add redirect for " + page.Path.LocalPath, Log_Debug)
+		  Redirects.Value(page.Path.LocalPath) = Page
 		End Sub
 	#tag EndMethod
 
@@ -95,7 +95,7 @@ Inherits ServerSocket
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path.ServerFile)
+		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path.LocalPath)
 		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
@@ -110,9 +110,9 @@ Inherits ServerSocket
 		          cache = Nil
 		        End Select
 		      Else
-		        cache = GetCache(Session, clientRequest.Path.ServerFile)
+		        cache = GetCache(Session, clientRequest.Path.LocalPath)
 		      End If
-		      Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.ServerFile)
+		      Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
 		      If redir <> Nil Then
 		        doc = redir
 		        Me.Log("Using redirect.", Log_Debug)
@@ -151,7 +151,7 @@ Inherits ServerSocket
 		        doc.SetHeader("Accept-Ranges", "bytes")
 		      Case RequestMethod.GET, RequestMethod.HEAD
 		        Me.Log("Request is a HEAD", Log_Debug)
-		        doc = New HTTPParse.ErrorResponse(404, clientrequest.Path.ServerFile)
+		        doc = New HTTPParse.ErrorResponse(404, clientrequest.Path.LocalPath)
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
 		          doc = New HTTPParse.ErrorResponse(501, clientrequest.MethodName) 'Not implemented

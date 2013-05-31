@@ -218,7 +218,7 @@ Protected Class HTTPMessage
 		#tag Getter
 			Get
 			  If mMIMEType = Nil Then
-			    Dim s As String = NthField(Me.Path.ServerFile, "/", CountFields(Me.Path.ServerFile, "/"))
+			    Dim s As String = NthField(Me.Path.LocalPath, "/", CountFields(Me.Path.LocalPath, "/"))
 			    Dim f As FolderItem = SpecialFolder.Temporary.Child(s)
 			    mMIMEType = New HTTPParse.ContentType(f)
 			  End If
@@ -253,7 +253,7 @@ Protected Class HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Path As HTTPParse.URI
+		Path As HTTP.URI
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

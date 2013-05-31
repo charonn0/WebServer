@@ -7,6 +7,20 @@ Protected Class URI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		 Shared Function Decode(URL As String) As String
+		  //Quick and dirty stand-in for DecodeURLComponent
+		  Dim ret As String = URL
+		  
+		  For i As Integer = 0 To 255
+		    Dim char As String = "%" + Right("00" + Hex(i), 2)
+		    ret = ReplaceAll(ret, char, Chr(i))
+		  Next
+		  
+		  Return ret
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		 Shared Function DefaultPort(ProtocolName As String) As Integer
 		  Select Case ProtocolName
 		  Case "http"
@@ -55,7 +69,25 @@ Protected Class URI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(CompareTo As HTTPParse.URI) As Integer
+		 Shared Function Encode(URL As String) As String
+		  //Quick and dirty stand-in for EncodeURLComponent
+		  Dim ret As String = URL
+		  
+		  For i As Integer = 0 To 127
+		    Dim char As String = "%" + Right("00" + Hex(i), 2)
+		    ret = ReplaceAll(ret, Chr(i), char)
+		    
+		    If i = 34 Then i = 38
+		    If i = 39 Then i = 126
+		  Next
+		  
+		  
+		  Return ret
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(CompareTo As URI) As Integer
 		  //This method overloads the comparison operator ("=") so that any instance of the URI class can be compared directly into any
 		  //other instance of the URI class. Case-sensitivity is enforced if either instance of the URI class has its CaseSensitive
 		  //property set to True, otherwise letter case is not considered
@@ -65,11 +97,11 @@ Protected Class URI
 		  //  0: CompareTo = Me
 		  //  1: CompareTo > Me -Or- not equal (if CaseSensitive = False)
 		  
-		  If CompareTo = Nil Then Return -1
-		  
+		  #pragma BreakOnExceptions Off
 		  Dim l, r As String
-		  l = CompareTo.ToString
-		  r = Me.ToString
+		  l = CompareTo
+		  r = Me
+		  #pragma BreakOnExceptions Default
 		  
 		  If Me.CaseSensitive Or CompareTo.CaseSensitive Then
 		    Return StrComp(l, r, 1)
@@ -81,7 +113,66 @@ Protected Class URI
 		    End If
 		  End If
 		  
+		Exception Err As NilObjectException
+		  Return -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As FolderItem
+		  //This method overloads the assigment operator ("=") so that any instance of the URI class can be converted directly into a
+		  //(probably) cross-platform URL shortcut file in the user's Temp directory
 		  
+		  Dim URL As String = Me
+		  Dim f As FolderItem = SpecialFolder.Temporary.Child("Shortcut to " + FQDN + ".URL")
+		  Dim tos As TextOutputStream
+		  tos = tos.Create(f)
+		  tos.WriteLine("[InternetShortcut]")
+		  tos.WriteLine("URL=" + URL)
+		  tos.Close
+		  
+		  Return f
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As String
+		  //This method overloads the assigment operator ("=") so that any instance of the URI class can be converted directly into a string
+		  
+		  Dim URL As String
+		  If Protocol = "mailto" Then
+		    URL = "mailto:"
+		  Else
+		    If Protocol <> "" Then URL = Protocol + "://"
+		  End If
+		  
+		  If Username <> "" Then
+		    URL = URL + Username
+		    If Password <> "" Then URL = URL + ":" + Password
+		    URL = URL + "@"
+		  End If
+		  
+		  URL = URL + FQDN
+		  
+		  If Port <> 0 Then //port specified
+		    URL = URL + ":" + Format(Port, "#####")
+		  End If
+		  
+		  If Join(ServerFile, "/") <> "/" Then
+		    URL = URL + Join(ServerFile, "/")
+		  Else
+		    If Protocol <> "mailto" Then URL = URL + "/"
+		  End If
+		  
+		  If UBound(Arguments) > -1 Then
+		    URL = URL + "?" + Join(Arguments, "&")
+		  End If
+		  
+		  If Fragment <> "" Then
+		    URL = URL + "#" + Fragment
+		  End If
+		  
+		  Return URL
 		End Function
 	#tag EndMethod
 
@@ -127,11 +218,11 @@ Protected Class URI
 		    URL = URL.Replace(FQDN, "")
 		    
 		    If InStr(URL, "?") > 0 Then
-		      ServerFile = NthField(URL, "?", 1)  //    /foo/bar.php
-		      URL = URL.Replace(ServerFile + "?", "")
+		      ServerFile = Split(NthField(URL, "?", 1), "/")  //    /foo/bar.php
+		      URL = URL.Replace(Join(ServerFile, "/") + "?", "")
 		      Arguments = Split(URL, "&")
 		    ElseIf URL.Trim <> "" Then
-		      ServerFile = URL
+		      ServerFile.Append(URL)
 		    End If
 		  Else
 		    Protocol = "mailto"
@@ -147,47 +238,6 @@ Protected Class URI
 		    End If
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToString() As String
-		  //This method overloads the assigment operator ("=") so that any instance of the URI class can be converted directly into a string
-		  
-		  Dim URL As String
-		  If Protocol = "mailto" Then
-		    URL = "mailto:"
-		  Else
-		    If Protocol <> "" Then URL = Protocol + "://"
-		  End If
-		  
-		  If Username <> "" Then
-		    URL = URL + Username
-		    If Password <> "" Then URL = URL + ":" + Password
-		    URL = URL + "@"
-		  End If
-		  
-		  URL = URL + FQDN
-		  
-		  If Port <> 0 Then //port specified
-		    URL = URL + ":" + Format(Port, "#####")
-		  End If
-		  
-		  If ServerFile <> "" Then
-		    URL = URL + ServerFile
-		  Else
-		    If Protocol <> "mailto" Then URL = URL + "/"
-		  End If
-		  
-		  If UBound(Arguments) > -1 Then
-		    URL = URL + "?" + Join(Arguments, "&")
-		  End If
-		  
-		  If Fragment <> "" Then
-		    URL = URL + "#" + Fragment
-		  End If
-		  
-		  Return URL
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -214,6 +264,10 @@ Protected Class URI
 		    If InStr(URL, "://") > 0 Then
 		      tmp.Protocol = NthField(URL, "://", 1)
 		      URL = URL.Replace(tmp.Protocol + "://", "")
+		      If tmp.Protocol.Trim = "" Then
+		        ValidationError = 2
+		        Return False
+		      End If
 		    Else
 		      ValidationError = 2
 		      Return False
@@ -269,11 +323,11 @@ Protected Class URI
 		    End If
 		    
 		    If InStr(URL, "?") > 0 Then
-		      tmp.ServerFile = NthField(URL, "?", 1)  //    /foo/bar.php
-		      URL = URL.Replace(tmp.ServerFile + "?", "")
+		      tmp.ServerFile = Split(NthField(URL, "?", 1), "/")  //    /foo/bar.php
+		      URL = URL.Replace(Join(tmp.ServerFile, "/") + "?", "")
 		      tmp.Arguments = Split(URL, "&")
 		    ElseIf URL.Trim <> "" Then
-		      tmp.ServerFile = URL
+		      tmp.ServerFile.Append(URL)
 		    End If
 		  Else
 		    tmp.Protocol = "mailto"
@@ -340,7 +394,7 @@ Protected Class URI
 		The URI class can convert itself into a string and also can convert a string into itself. URIs are therefore easily
 		passed back and forth between being a string and being an instance of the URI class. Instances of the URI class can
 		also be directly compared to one another. When compared, they will be considered equal if converting both into a string
-		produces identical strings. Set the CaseSensitive property to True to make the comparisons sensitive to encoding.
+		produces identical strings. Set the CaseSensitive property to True to make the comparisons sensitive to letter casing.
 		
 		     Dim URL As New URI("") //Create an empty URI
 		     Dim URL2 As New URI("Http://bobbytables:secret123@www.example.net")
@@ -505,7 +559,7 @@ Protected Class URI
 			/  (top directory or default page, same as empty string)
 			"" (empty string)
 		#tag EndNote
-		ServerFile As String
+		ServerFile() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -569,12 +623,6 @@ Protected Class URI
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Protocol"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ServerFile"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
