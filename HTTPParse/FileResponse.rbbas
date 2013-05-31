@@ -12,7 +12,6 @@ Inherits HTTPParse.Response
 		  End If
 		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		  Me.StatusCode = 200
-		  Me.Modified = Page.ModificationDate
 		  Me.Path = Path
 		  Me.Expires = New Date
 		  Me.Expires.TotalSeconds = Me.Expires.TotalSeconds + 60

@@ -51,8 +51,8 @@ Inherits HTTPParse.HTTPMessage
 		  
 		  Me.Path = New URI(NthField(line, " ", 2))
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
-		  Me.Expiry = New Date
-		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 60
+		  Me.Expires = New Date
+		  Me.Expires.TotalSeconds = Me.Expires.TotalSeconds + 60
 		  If Me.HasHeader("Authorization") Then
 		    Dim pw As String = Me.GetHeader("Authorization")
 		    pw = pw.Replace("Basic ", "")
@@ -62,6 +62,21 @@ Inherits HTTPParse.HTTPMessage
 		  End If
 		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsModifiedSince(SinceWhen As Date) As Boolean
+		  If HasHeader("If-Modified-Since") Then
+		    Dim d1 As Date
+		    d1 = HTTPDate(GetHeader("If-Modified-Since"))
+		    Return SinceWhen.TotalSeconds > d1.TotalSeconds
+		    
+		  ElseIf HasHeader("If-Unmodified-Since") Then
+		    Dim d1 As Date
+		    d1 = HTTPDate(GetHeader("If-Unmodified-Since"))
+		    Return SinceWhen.TotalSeconds < d1.TotalSeconds
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -93,30 +108,8 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Expiry As Date
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		Headers As HTTPParse.Headers
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If HasHeader("If-Modified-Since") Then
-			    Return HTTPDate(GetHeader("If-Modified-Since"))
-			  End If
-			  
-			  If HasHeader("If-Unmodified-Since") Then
-			    Return HTTPDate(GetHeader("If-Unmodified-Since"))
-			  End If
-			  
-			  Exception
-			    Return Nil
-			End Get
-		#tag EndGetter
-		IfModifiedSince As Date
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		MultiPart As MultipartForm

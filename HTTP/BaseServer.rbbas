@@ -166,17 +166,13 @@ Inherits ServerSocket
 		      End Select
 		    End If
 		    doc.Path = clientrequest.Path
-		    If clientrequest.IfModifiedSince <> Nil And doc.Modified <> Nil Then
+		    If clientrequest.IsModifiedSince(doc.Expires) Then
 		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		        If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		          doc = New HTTPParse.ErrorResponse(304, "")
-		          doc.MessageBody = ""
-		        End If
+		        doc = New HTTPParse.ErrorResponse(304, "")
+		        doc.MessageBody = ""
 		      Else
-		        If doc.Modified.TotalSeconds < clientrequest.IfModifiedSince.TotalSeconds Then
-		          doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
-		          doc.MessageBody = ""
-		        End If
+		        doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
+		        doc.MessageBody = ""
 		      End If
 		    End If
 		    
@@ -269,6 +265,7 @@ Inherits ServerSocket
 		  
 		  If Me.GlobalRedirects.HasKey(Path) Then
 		    Me.Log("(GLOBAL hit!) Get redirect: " + Path, Log_Debug)
+		    Sender.AddCacheItem(Me.GlobalRedirects.Value(Path))
 		    Return Me.GlobalRedirects.Value(Path)
 		  End If
 		  
@@ -561,30 +558,30 @@ Inherits ServerSocket
 			  If mGlobalRedirects = Nil Then
 			    mGlobalRedirects = New Dictionary
 			    Dim icons As New Dictionary( _
-			    "/_bsdaemonimags/bin.png":MIMEbin, _
-			    "/_bsdaemonimags/script.png":MIMEScript, _
-			    "/_bsdaemonimags/xojo.png":MIMERBP, _
-			    "/_bsdaemonimags/dir.png":MIMEdir, _
-			    "/_bsdaemonimags/txt.png":MIMETxt, _
-			    "/_bsdaemonimags/html.png":MIMEHTML, _
-			    "/_bsdaemonimags/css.png":MIMECSS, _
-			    "/_bsdaemonimags/xml.png":MIMEXML, _
-			    "/_bsdaemonimags/image.png":MIMEImage, _
-			    "/_bsdaemonimags/mov.png":MIMEMov, _
-			    "/_bsdaemonimags/font.png":MIMEFont, _
-			    "/_bsdaemonimags/zip.png":MIMEZip, _
-			    "/_bsdaemonimags/wav.png":MIMEWAV, _
-			    "/_bsdaemonimags/mus.png":MIMEMus, _
-			    "/_bsdaemonimags/pdf.png":MIMEPDF, _
-			    "/_bsdaemonimags/xls.png":MIMEXLS, _
-			    "/_bsdaemonimags/doc.png":MIMEDOC, _
-			    "/_bsdaemonimags/unknown.png":MIMEUnknown, _
-			    "/_bsdaemonimags/upicon.png":upIcon, _
-			    "/_bsdaemonimags/sorticon.png":sortIcon, _
-			    "/_bsdaemonimags/sortup.png":sortupIcon)
+			    "/" + VirtualRoot + "/img/bin.png":MIMEbin, _
+			    "/" + VirtualRoot + "/img/script.png":MIMEScript, _
+			    "/" + VirtualRoot + "/img/xojo.png":MIMERBP, _
+			    "/" + VirtualRoot + "/img/dir.png":MIMEdir, _
+			    "/" + VirtualRoot + "/img/txt.png":MIMETxt, _
+			    "/" + VirtualRoot + "/img/html.png":MIMEHTML, _
+			    "/" + VirtualRoot + "/img/css.png":MIMECSS, _
+			    "/" + VirtualRoot + "/img/xml.png":MIMEXML, _
+			    "/" + VirtualRoot + "/img/image.png":MIMEImage, _
+			    "/" + VirtualRoot + "/img/mov.png":MIMEMov, _
+			    "/" + VirtualRoot + "/img/font.png":MIMEFont, _
+			    "/" + VirtualRoot + "/img/zip.png":MIMEZip, _
+			    "/" + VirtualRoot + "/img/wav.png":MIMEWAV, _
+			    "/" + VirtualRoot + "/img/mus.png":MIMEMus, _
+			    "/" + VirtualRoot + "/img/pdf.png":MIMEPDF, _
+			    "/" + VirtualRoot + "/img/xls.png":MIMEXLS, _
+			    "/" + VirtualRoot + "/img/doc.png":MIMEDOC, _
+			    "/" + VirtualRoot + "/img/unknown.png":MIMEUnknown, _
+			    "/" + VirtualRoot + "/img/upicon.png":upIcon, _
+			    "/" + VirtualRoot + "/img/sorticon.png":sortIcon, _
+			    "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
 			    
 			    For Each img As String In icons.Keys
-			      Dim icon As HTTPParse.FileResponse
+			      Dim icon As HTTPParse.StaticResponse
 			      Dim p As Picture
 			      #If RBVersion >= 2011.4 Then
 			        App.UseGDIPlus = True
@@ -596,7 +593,7 @@ Inherits ServerSocket
 			      p.Graphics.DrawPicture(icons.Value(img), 0, 0)
 			      Dim tmp As FolderItem = GetTemporaryFolderItem
 			      p.Save(tmp, Picture.SaveAsPNG)
-			      icon = New HTTPParse.FileResponse(tmp, img)
+			      icon = New HTTPParse.StaticResponse(tmp, img)
 			      #If GZIPAvailable Then
 			        icon.SetHeader("Content-Encoding", "gzip")
 			        Dim gz As String
@@ -751,6 +748,9 @@ Inherits ServerSocket
 	#tag EndConstant
 
 	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = VirtualRoot, Type = String, Dynamic = False, Default = \"_bsdaemon", Scope = Public
 	#tag EndConstant
 
 

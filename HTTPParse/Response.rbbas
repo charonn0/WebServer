@@ -131,10 +131,6 @@ Inherits HTTPParse.HTTPMessage
 		Private mMethod As RequestMethod
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Modified As Date
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty

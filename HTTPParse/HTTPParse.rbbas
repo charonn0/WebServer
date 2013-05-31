@@ -104,58 +104,58 @@ Protected Module HTTPParse
 		  
 		  Select Case ext
 		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
-		    Return "/_bsdaemonimags/bin.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/bin.png"
 		    
 		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
-		    Return "/_bsdaemonimags/script.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/script.png"
 		    
 		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
-		    Return "/_bsdaemonimags/xojo.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xojo.png"
 		    
 		  Case "folder"
-		    Return "/_bsdaemonimags/dir.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/dir.png"
 		    
 		  Case "txt", "md"
-		    Return "/_bsdaemonimags/txt.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/txt.png"
 		    
 		  Case "htm", "html"
-		    Return "/_bsdaemonimags/html.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/html.png"
 		    
 		  Case "css"
-		    Return "/_bsdaemonimags/css.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/css.png"
 		    
 		  Case "xml", "xsl"
-		    Return "/_bsdaemonimags/xml.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xml.png"
 		    
 		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
-		    Return "/_bsdaemonimags/image.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/image.png"
 		    
 		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
-		    Return "/_bsdaemonimags/mov.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mov.png"
 		    
 		  Case "ttf", "otf", "pfb", "pfm"
-		    Return "/_bsdaemonimags/font.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/font.png"
 		    
 		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
-		    Return "/_bsdaemonimags/zip.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/zip.png"
 		    
 		  Case "wav"
-		    Return "/_bsdaemonimags/wav.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/wav.png"
 		    
 		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
-		    Return "/_bsdaemonimags/mus.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mus.png"
 		    
 		  Case "pdf", "ps"
-		    Return "/_bsdaemonimags/pdf.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/pdf.png"
 		    
 		  Case "xls", "xlsx"
-		    Return "/_bsdaemonimags/xls.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xls.png"
 		    
 		  Case "doc", "docx"
-		    Return "/_bsdaemonimags/doc.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/doc.png"
 		    
 		  Else ' This returns the default icon
-		    Return "/_bsdaemonimags/unknown.png"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/unknown.png"
 		    
 		  End Select
 		End Function

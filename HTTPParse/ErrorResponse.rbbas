@@ -10,7 +10,6 @@ Inherits HTTPParse.Response
 		  Super.Constructor(data.LenB, New HTTPParse.ContentType("text/html"))
 		  Me.StatusCode = ErrorCode
 		  Me.MessageBody = data
-		  Me.Modified = New Date
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  
 		End Sub

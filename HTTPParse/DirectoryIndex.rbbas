@@ -1,6 +1,6 @@
 #tag Class
 Protected Class DirectoryIndex
-Inherits HTTPParse.FileResponse
+Inherits HTTPParse.StaticResponse
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
 		  Me.Target = Target
@@ -138,16 +138,16 @@ Inherits HTTPParse.FileResponse
 		  Next
 		  If RequestPath.LocalPath <> "/" Then
 		    Dim s As String = RequestPath.Parent.LocalPath
-		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""/_bsdaemonimags/upicon.png"" width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
+		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""/" + HTTP.BaseServer.VirtualRoot + "/img/upicon.png"" width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
 		  Else
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "")
 		  End If
 		  Dim head As String = TableHeader
 		  If dir = 1 Then
-		    head = ReplaceAll(head, "%SORTICON%", "/_bsdaemonimags/sorticon.png")
+		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sorticon.png")
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
 		  Else
-		    head = ReplaceAll(head, "%SORTICON%", "/_bsdaemonimags/sortup.png")
+		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sortup.png")
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=1")
 		  End If
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
@@ -225,6 +225,37 @@ Inherits HTTPParse.FileResponse
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="AuthRealm"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AuthSecure"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AuthUsername"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FromCache"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GZipped"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -239,10 +270,42 @@ Inherits HTTPParse.FileResponse
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MessageBody"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProtocolVersion"
+			Group="Behavior"
+			Type="Single"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SessionID"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatusCode"
+			Group="Behavior"
+			Type="Integer"
+			InheritedFrom="HTTPParse.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatusMessage"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
