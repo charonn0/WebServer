@@ -24,8 +24,7 @@ Protected Class FileEnumerator
 		  Dim data As HTTPParse.WIN32_FIND_DATA
 		  
 		  If FindHandle <= 0 Then
-		    Dim path As String = "//?/" + ReplaceAll(RootDirectory.AbsolutePath, "/", "//") + SearchPattern
-		    path = ReplaceAll(path, "\", "//") + Chr(0)
+		    Dim path As String = "//?/" + ReplaceAll(RootDirectory.AbsolutePath, "/", "//") + SearchPattern + Chr(0)
 		    FindHandle = HTTPParse.FindFirstFile(path, data)
 		    mLastError = GetLastError()
 		  ElseIf HTTPParse.FindNextFile(FindHandle, data) Then

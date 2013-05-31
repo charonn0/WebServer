@@ -34,7 +34,7 @@ Protected Class DirectoryIndex
 		  Dim sizes() As UInt64
 		  Dim pagedata As String = IndexPage
 		  
-		  #If Not TargetWin32 Then
+		  #If Not TargetWin32 Or Not FastAndGlitchy Then
 		    For i As Integer = 1 To Me.Target.Count
 		      Dim item As FolderItem = Me.Target.Item(i)
 		      items.Append(item)
@@ -59,18 +59,19 @@ Protected Class DirectoryIndex
 		      If info.FileName <> "." And info.FileName <> ".." Then
 		        Dim f As FolderItem = GetFolderItem(Me.Target.AbsolutePath + info.FileName)
 		        If f <> Nil Then
-		          items.Append(f)
-		          names.Append(f.Name)
-		          dates.Append(f.ModificationDate.TotalSeconds)
-		          sizes.Append(f.Length)
-		          sorter.Append(Sizes.Ubound)
-		          If f.Directory Then
-		            dirtypes.Append("0000AAAA")
-		          Else
-		            Dim type As New ContentType(f)
-		            dirtypes.Append(type.ToString)
+		          If f.AbsolutePath <> Target.AbsolutePath Then
+		            items.Append(f)
+		            names.Append(f.Name)
+		            dates.Append(f.ModificationDate.TotalSeconds)
+		            sizes.Append(f.Length)
+		            sorter.Append(Sizes.Ubound)
+		            If f.Directory Then
+		              dirtypes.Append("0000AAAA")
+		            Else
+		              Dim type As New ContentType(f)
+		              dirtypes.Append(type.ToString)
+		            End If
 		          End If
-		          
 		        End If
 		      End If
 		      App.YieldToNextThread
@@ -143,10 +144,10 @@ Protected Class DirectoryIndex
 		  head = ReplaceAll(head, "%SORTICON%", Sort_Icon)
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
 		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + NthField(serverpath, "?", 1))
-		  If Target.Count = 1 Then
+		  If Ubound(sorter) + 1 = 1 Then
 		    pagedata = Replace(pagedata, "%ITEMCOUNT%", "1 item.")
 		  Else
-		    pagedata = Replace(pagedata, "%ITEMCOUNT%", Format(Target.Count, "###,###,###") + " items.")
+		    pagedata = Replace(pagedata, "%ITEMCOUNT%", Format(Ubound(sorter) + 1, "###,###,###") + " items.")
 		  End If
 		  
 		  pagedata = Replace(pagedata, "%DAEMONVERSION%", HTTP.DaemonVersion)
@@ -178,6 +179,9 @@ Protected Class DirectoryIndex
 		Target As FolderItem
 	#tag EndProperty
 
+
+	#tag Constant, Name = FastAndGlitchy, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = IndexPage, Type = String, Dynamic = False, Default = \"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r<html xmlns\x3D\"http://www.w3.org/1999/xhtml\">\r<head>\r<title>%PAGETITLE%</title>\r</head>\r\r<body link\x3D\"#0000FF\" vlink\x3D\"#004080\" alink\x3D\"#FF0000\">\r<h1>%PAGETITLE%</h1><h2>%ITEMCOUNT%</h2>\r<p>%UPLINK%</p>\r<table width\x3D\"90%\" border\x3D\"0\" cellspacing\x3D\"5\" cellpadding\x3D\"1\">\r%TABLE%\r</table>\r<hr />\r<p style\x3D\"font-size: x-small;\">Powered by: %DAEMONVERSION% <br />\r%TIME% <br /> \r%COMPRESSION%\r</p>\r</body>\r</html>", Scope = Private
 	#tag EndConstant
