@@ -612,6 +612,7 @@ Inherits ServerSocket
 			      #endif
 			      icon.MIMEType = New HTTPParse.ContentType("image/png")
 			      icon.StatusCode = 200
+			      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
 			      mGlobalRedirects.Value(img) = icon
 			    Next
 			  End If

@@ -80,10 +80,6 @@ Inherits HTTPParse.HTTPMessage
 
 
 	#tag Property, Flags = &h0
-		Expires As Date
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		FromCache As Boolean
 	#tag EndProperty
 

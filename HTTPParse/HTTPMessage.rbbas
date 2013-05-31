@@ -206,6 +206,27 @@ Protected Class HTTPMessage
 		AuthUsername As String
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Me.HasHeader("Expires") Then
+			    Dim s As String = Me.GetHeader("Expires")
+			    Return HTTPDate(s)
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value <> Nil Then
+			    Me.SetHeader("Expires", HTTPDate(value))
+			  Else
+			    Me.RemoveHeader("Expires")
+			  End If
+			End Set
+		#tag EndSetter
+		Expires As Date
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h0
 		MessageBody As String
 	#tag EndProperty
