@@ -91,7 +91,7 @@ Protected Class DirectoryIndex
 		    Dim name, href, icon As String
 		    name = item.Name
 		    href = ReplaceAll(RequestPath.LocalPath + "/" + name, "//", "/")
-		    href = URLEncode(href)
+		    
 		    While Name.len > 40
 		      Dim start As Integer
 		      Dim snip As String
@@ -131,7 +131,7 @@ Protected Class DirectoryIndex
 		  Dim head As String = TableHeader
 		  head = ReplaceAll(head, "%SORTICON%", Sort_Icon)
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
-		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + RequestPath.LocalPath)
+		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + URLDecode(RequestPath.LocalPath))
 		  If Ubound(Items) + 1 = 1 Then
 		    pagedata = Replace(pagedata, "%ITEMCOUNT%", "1 item.")
 		  Else

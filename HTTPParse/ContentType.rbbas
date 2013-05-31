@@ -567,8 +567,10 @@ Protected Class ContentType
 			    "dotx":"application/vnd.openxmlformats-officedocument.wordprocessingml.template", _
 			    "mgp":"application/vnd.osgeo.mapguide.package", _
 			    "dp":"application/vnd.osgi.dp", _
+			    "pdf":"application/pdf", _
 			    "pdb":"application/vnd.palm", _
 			    "paw":"application/vnd.pawaafile", _
+			    "gz":"application/gzip", _
 			    "str":"application/vnd.pg.format", _
 			    "ei6":"application/vnd.pg.osasli", _
 			    "efif":"application/vnd.picsel", _
@@ -713,6 +715,7 @@ Protected Class ContentType
 			    "crd":"application/x-mscardfile", _
 			    "clp":"application/x-msclip", _
 			    "exe":"application/x-msdownload", _
+			    "reg":"application/x-msdownload", _
 			    "dll":"application/x-msdownload", _
 			    "com":"application/x-msdownload", _
 			    "bat":"application/x-msdownload", _

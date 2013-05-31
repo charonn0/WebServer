@@ -579,7 +579,6 @@ Begin Window FileServerDemo
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
-      KeepAlive       =   ""
       Left            =   503
       LockedInPosition=   False
       MaximumSocketsConnected=   10
@@ -884,6 +883,13 @@ End
 		    g.ForeColor = Me.RowTag(row)
 		    g.FillRect(0, 0, g.Width, g.Height)
 		  End If
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function MouseDown(x As Integer, y As Integer) As Boolean
+		  #pragma Unused x
+		  #pragma Unused y
 		  Return True
 		End Function
 	#tag EndEvent
