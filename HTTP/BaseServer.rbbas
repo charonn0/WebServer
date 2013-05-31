@@ -101,8 +101,10 @@ Inherits ServerSocket
 		        Me.Log("Authentication Successful", Log_Debug)
 		      End If
 		    End If
+		    
+		    
+		    Dim cache As HTTPParse.Response
 		    If UseSessions Then
-		      Dim cache As HTTPParse.Response
 		      If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
 		        Select Case clientrequest.CacheDirective
 		        Case "no-cache", "max-age=0"
@@ -112,24 +114,25 @@ Inherits ServerSocket
 		      Else
 		        cache = GetCache(Session, clientRequest.Path.LocalPath)
 		      End If
-		      Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
-		      If redir <> Nil Then
-		        doc = redir
-		        Me.Log("Using redirect.", Log_Debug)
-		      ElseIf cache <> Nil Then
-		        'Cache hit
-		        doc = Cache
-		        doc.FromCache = True
-		        Me.Log("Page from cache", Log_Debug)
-		        Cache.Expires = New Date
-		        Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
-		      ElseIf doc = Nil Then
-		        doc = HandleRequest(clientrequest)
-		        If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		          Session.AddCacheItem(doc)
-		        End If
+		    End If
+		    Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
+		    If redir <> Nil Then
+		      doc = redir
+		      Me.Log("Using redirect.", Log_Debug)
+		    ElseIf cache <> Nil Then
+		      'Cache hit
+		      doc = Cache
+		      doc.FromCache = True
+		      Me.Log("Page from cache", Log_Debug)
+		      Cache.Expires = New Date
+		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
+		    ElseIf doc = Nil Then
+		      doc = HandleRequest(clientrequest)
+		      If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
+		        Session.AddCacheItem(doc)
 		      End If
 		    End If
+		    
 		    If doc = Nil Then
 		      Me.Log("Running HandleRequest event", Log_Debug)
 		      doc = HandleRequest(clientrequest)
@@ -247,25 +250,27 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTPParse.Response
-		  If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
-		  Dim logID As String = "(NO_SESSION)"
-		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
-		  Me.Log(CurrentMethodName + logID, Log_Trace)
-		  If UseSessions THen
-		    If Sender.GetRedirect(Path) <> Nil Then
-		      Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
-		      Return Sender.GetRedirect(Path)
+		  If Sender <> Nil Then
+		    If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
+		    Dim logID As String = "(NO_SESSION)"
+		    If UseSessions Then logID = "(" + Sender.SessionID + ")"
+		    Me.Log(CurrentMethodName + logID, Log_Trace)
+		    If UseSessions THen
+		      If Sender.GetRedirect(Path) <> Nil Then
+		        Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
+		        Return Sender.GetRedirect(Path)
+		      End If
 		    End If
-		  End If
-		  
-		  If Me.Redirects.HasKey(Path) Then
-		    Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
-		    Return Me.Redirects.Value(Path)
+		    
+		    If Me.Redirects.HasKey(Path) Then
+		      Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
+		      Return Me.Redirects.Value(Path)
+		    End If
 		  End If
 		  
 		  If Me.GlobalRedirects.HasKey(Path) Then
 		    Me.Log("(GLOBAL hit!) Get redirect: " + Path, Log_Debug)
-		    Sender.AddCacheItem(Me.GlobalRedirects.Value(Path))
+		    If Sender <> Nil Then Sender.AddCacheItem(Me.GlobalRedirects.Value(Path))
 		    Return Me.GlobalRedirects.Value(Path)
 		  End If
 		  
@@ -610,6 +615,7 @@ Inherits ServerSocket
 			      icon.MIMEType = New HTTPParse.ContentType("image/png")
 			      icon.StatusCode = 200
 			      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
+			      icon.FromCache = True
 			      mGlobalRedirects.Value(img) = icon
 			    Next
 			  End If
