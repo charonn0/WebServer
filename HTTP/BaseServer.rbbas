@@ -49,13 +49,13 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClientErrorHandler(Sender As TCPSocket)
+		Private Sub ClientErrorHandler(Sender As SSLSocket)
 		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DataAvailable(Sender As TCPSocket)
+		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Debug)
 		  Dim data As MemoryBlock = Sender.ReadAll
@@ -195,8 +195,16 @@ Inherits ServerSocket
 		      Me.Log("Response is not Acceptable", Log_Error)
 		    End If
 		  Catch err As UnsupportedFormatException
-		    doc = New HTTPParse.ErrorResponse(400, "") 'bad request
-		    Me.Log("Request is NOT well formed", Log_Error)
+		    If err.ErrorNumber = 1 Then 'ssl?
+		      doc = New HTTPParse.ErrorResponse(101, "") 'Switch protocols
+		      doc.MessageBody = ""
+		      doc.Headers.DeleteAllHeaders
+		      doc.SetHeader("Upgrade", "HTTP/1.0")
+		      Me.Log("Request is NOT well formed", Log_Error)
+		    Else
+		      doc = New HTTPParse.ErrorResponse(400, "") 'bad request
+		      Me.Log("Request is NOT well formed", Log_Error)
+		    End If
 		  End Try
 		  SendResponse(Sender, doc)
 		  
@@ -262,6 +270,20 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function GetSession(Socket As SSLSocket) As HTTP.Session
+		  If UseSessions Then
+		    If Me.Sockets.HasKey(Socket) Then
+		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
+		    Else
+		      Dim s As HTTP.Session = Me.GetSession("New_Session")
+		      Sockets.Value(Socket) = s.SessionID
+		      Return s
+		    End If
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function GetSession(SessionID As String) As HTTP.Session
 		  If UseSessions Then
 		    If Me.Sessions.HasKey(SessionID) Then
@@ -272,20 +294,6 @@ Inherits ServerSocket
 		      s.NewSession = True
 		      Sessions.Value(s.SessionID) = s
 		      Me.Log("Session created: " + s.SessionID, Log_Debug)
-		      Return s
-		    End If
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function GetSession(Socket As TCPSocket) As HTTP.Session
-		  If UseSessions Then
-		    If Me.Sockets.HasKey(Socket) Then
-		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
-		    Else
-		      Dim s As HTTP.Session = Me.GetSession("New_Session")
-		      Sockets.Value(Socket) = s.SessionID
 		      Return s
 		    End If
 		  End If
@@ -339,7 +347,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As TCPSocket, ResponseDocument As HTTPParse.Response)
+		Private Sub SendResponse(Socket As SSLSocket, ResponseDocument As HTTPParse.Response)
 		  Dim logID As String = "(NO_SESSION)"
 		  Dim session As HTTP.Session
 		  If UseSessions Then
@@ -352,24 +360,30 @@ Inherits ServerSocket
 		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
 		  End If
-		  
+		  If Socket.SSLConnected Then
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")
+		  Else
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
+		  End If
 		  If Not ResponseDocument.FromCache Then
-		    #If GZIPAvailable Then
-		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
-		      Dim gz As String
-		      Try
-		        Dim size As Integer = ResponseDocument.MessageBody.LenB
-		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
-		        ResponseDocument.MessageBody = gz
-		        size = gz.LenB * 100 / size
-		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
-		      Catch Error
-		        'Just send the uncompressed data
-		      End Try
-		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
-		    #else
-		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		    #endif
+		    If ResponseDocument.MessageBody.LenB > 0 Then
+		      #If GZIPAvailable Then
+		        ResponseDocument.SetHeader("Content-Encoding", "gzip")
+		        Dim gz As String
+		        Try
+		          Dim size As Integer = ResponseDocument.MessageBody.LenB
+		          gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
+		          ResponseDocument.MessageBody = gz
+		          size = gz.LenB * 100 / size
+		          Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
+		        Catch Error
+		          'Just send the uncompressed data
+		        End Try
+		        ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		      #else
+		        ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		      #endif
+		    End If
 		  End If
 		  ResponseDocument.SetHeader("Connection", "close")
 		  

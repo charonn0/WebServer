@@ -3,7 +3,11 @@ Protected Class URI
 Inherits HTTPParse.URI
 	#tag Method, Flags = &h0
 		Function LocalPath() As String
-		  Return Join(Me.ServerFile, "/")
+		  If UBound(Me.ServerFile) > -1 Then
+		    Return Join(Me.ServerFile, "/")
+		  Else
+		    Return "/"
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -14,43 +18,20 @@ Inherits HTTPParse.URI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Parent() As HTTP.URI
+		  Dim parent As New HTTP.URI(Me.ToString)
+		  If UBound(parent.ServerFile) > -1 Then
+		    Call parent.ServerFile.Pop
+		  End If
+		  Return parent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToString() As String
-		  //This method overloads the assigment operator ("=") so that any instance of the URI class can be converted directly into a string
-		  
-		  Dim URL As String
-		  If Protocol = "mailto" Then
-		    URL = "mailto:"
-		  Else
-		    If Protocol <> "" Then URL = Protocol + "://"
-		  End If
-		  
-		  If Username <> "" Then
-		    URL = URL + Username
-		    If Password <> "" Then URL = URL + ":" + Password
-		    URL = URL + "@"
-		  End If
-		  
-		  URL = URL + FQDN
-		  
-		  If Port <> 0 Then //port specified
-		    URL = URL + ":" + Format(Port, "#####")
-		  End If
-		  
-		  If LocalPath <> "" Then
-		    URL = URL + LocalPath
-		  Else
-		    If Protocol <> "mailto" Then URL = URL + "/"
-		  End If
-		  
-		  If UBound(Arguments) > -1 Then
-		    URL = URL + "?" + Join(Arguments, "&")
-		  End If
-		  
-		  If Fragment <> "" Then
-		    URL = URL + "#" + Fragment
-		  End If
-		  
-		  Return URL
+		  Dim s As String = Me
+		  If s.Trim = "" Then s = "/"
+		  Return s
 		End Function
 	#tag EndMethod
 
@@ -61,18 +42,21 @@ Inherits HTTPParse.URI
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FQDN"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Fragment"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -99,23 +83,20 @@ Inherits HTTPParse.URI
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Port"
 			Group="Behavior"
 			Type="Integer"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Protocol"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ServerFile"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -135,6 +116,7 @@ Inherits HTTPParse.URI
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.URI"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

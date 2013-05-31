@@ -222,7 +222,7 @@ Protected Class URI
 		      URL = URL.Replace(Join(ServerFile, "/") + "?", "")
 		      Arguments = Split(URL, "&")
 		    ElseIf URL.Trim <> "" Then
-		      ServerFile.Append(URL)
+		      ServerFile = Split(URL, "/")
 		    End If
 		  Else
 		    Protocol = "mailto"

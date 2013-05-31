@@ -65,6 +65,13 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeleteAllHeaders()
+		  Super.DeleteAllHeaders
+		  ReDim Cookies(-1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Source(SetCookies As Boolean = False) As String
 		  Dim data As String = Super.Source
 		  

@@ -46,6 +46,7 @@ Inherits HTTP.BaseServer
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
 		  Dim origpath As String = Path.Trim
+		  If origpath = "" Then origpath = "/"
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  Path = Path.ReplaceAll("/", "\")
 		  

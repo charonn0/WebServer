@@ -20,7 +20,12 @@ Inherits HTTPParse.HTTPMessage
 		  line = NthField(data, CRLF, 1)
 		  
 		  If CountFields(line.Trim, " ") <> 3 Then
-		    Raise New UnsupportedFormatException
+		    Dim err As New UnsupportedFormatException
+		    Dim mb As MemoryBlock = line
+		    If mb.Byte(0) = &h16 And mb.Byte(1) = &h03 Then 'ssl?
+		      err.ErrorNumber = 1
+		    End If
+		    Raise err
 		  End If
 		  
 		  data = Replace(data, line + CRLF, "")
@@ -44,7 +49,7 @@ Inherits HTTPParse.HTTPMessage
 		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
-		  Me.Path = New URI(URLDecode(NthField(line, " ", 2).Trim))
+		  Me.Path = New URI(NthField(line, " ", 2))
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
 		  Me.Expiry = New Date
 		  Me.Expiry.TotalSeconds = Me.Expiry.TotalSeconds + 60
