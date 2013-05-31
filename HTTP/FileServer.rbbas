@@ -28,7 +28,12 @@ Inherits HTTP.BaseServer
 		      If UBound(ClientRequest.Path.Arguments) > -1 Then
 		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
 		      End If
-		      doc = New HTTPParse.FileResponse(item, ClientRequest.Path.LocalPath + args)
+		      If item.Directory Then
+		        doc = New HTTPParse.DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
+		        HTTPParse.DirectoryIndex(doc).Populate
+		      Else
+		        doc = New HTTPParse.FileResponse(item, ClientRequest.Path.LocalPath + args)
+		      End If
 		    End If
 		  End Select
 		  If doc <> Nil Then
@@ -96,6 +101,10 @@ Inherits HTTP.BaseServer
 		#tag EndSetter
 		DocumentRoot As FolderItem
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h1
+		Protected Icons As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDirectoryBrowsing As Boolean = True

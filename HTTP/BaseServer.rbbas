@@ -251,6 +251,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTPParse.Response
+		  If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
@@ -262,9 +263,15 @@ Inherits ServerSocket
 		  End If
 		  
 		  If Me.Redirects.HasKey(Path) Then
-		    Me.Log("(global hit!) Get redirect: " + Path, Log_Debug)
+		    Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
 		    Return Me.Redirects.Value(Path)
 		  End If
+		  
+		  If Me.GlobalRedirects.HasKey(Path) Then
+		    Me.Log("(GLOBAL hit!) Get redirect: " + Path, Log_Debug)
+		    Return Me.GlobalRedirects.Value(Path)
+		  End If
+		  
 		  Me.Log("(miss!) Get redirect: " + Path, Log_Debug)
 		End Function
 	#tag EndMethod
@@ -361,7 +368,7 @@ Inherits ServerSocket
 		    ResponseDocument = tmp
 		  End If
 		  If Socket.SSLConnected Then
-		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")'</acronym>")
 		  Else
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
@@ -548,6 +555,81 @@ Inherits ServerSocket
 		EnforceContentType As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mGlobalRedirects = Nil Then
+			    mGlobalRedirects = New Dictionary
+			    Dim icons As New Dictionary( _
+			    "/_bsdaemonimags/bin.png":MIMEbin, _
+			    "/_bsdaemonimags/script.png":MIMEScript, _
+			    "/_bsdaemonimags/xojo.png":MIMERBP, _
+			    "/_bsdaemonimags/dir.png":MIMEdir, _
+			    "/_bsdaemonimags/txt.png":MIMETxt, _
+			    "/_bsdaemonimags/html.png":MIMEHTML, _
+			    "/_bsdaemonimags/css.png":MIMECSS, _
+			    "/_bsdaemonimags/xml.png":MIMEXML, _
+			    "/_bsdaemonimags/image.png":MIMEImage, _
+			    "/_bsdaemonimags/mov.png":MIMEMov, _
+			    "/_bsdaemonimags/font.png":MIMEFont, _
+			    "/_bsdaemonimags/zip.png":MIMEZip, _
+			    "/_bsdaemonimags/wav.png":MIMEWAV, _
+			    "/_bsdaemonimags/mus.png":MIMEMus, _
+			    "/_bsdaemonimags/pdf.png":MIMEPDF, _
+			    "/_bsdaemonimags/xls.png":MIMEXLS, _
+			    "/_bsdaemonimags/doc.png":MIMEDOC, _
+			    "/_bsdaemonimags/unknown.png":MIMEUnknown, _
+			    "/_bsdaemonimags/upicon.png":upIcon, _
+			    "/_bsdaemonimags/sorticon.png":sortIcon, _
+			    "/_bsdaemonimags/sortup.png":sortupIcon)
+			    
+			    For Each img As String In icons.Keys
+			      Dim icon As HTTPParse.FileResponse
+			      Dim p As Picture
+			      #If RBVersion >= 2011.4 Then
+			        App.UseGDIPlus = True
+			        p = New Picture(MIMEbin.Width, MIMEbin.Height)
+			      #Else
+			        p = New Picture(MIMEbin.Width, MIMEbin.Height, 32)
+			        p.Transparent = 1
+			      #endif
+			      p.Graphics.DrawPicture(icons.Value(img), 0, 0)
+			      Dim tmp As FolderItem = GetTemporaryFolderItem
+			      p.Save(tmp, Picture.SaveAsPNG)
+			      icon = New HTTPParse.FileResponse(tmp, img)
+			      #If GZIPAvailable Then
+			        icon.SetHeader("Content-Encoding", "gzip")
+			        Dim gz As String
+			        Try
+			          Dim size As Integer = icon.MessageBody.LenB
+			          gz = GZipPage(icon.MessageBody)
+			          icon.MessageBody = gz
+			          size = gz.LenB * 100 / size
+			        Catch Error
+			          'Just send the uncompressed data
+			        End Try
+			        icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
+			      #endif
+			      icon.MIMEType = New HTTPParse.ContentType("image/png")
+			      icon.StatusCode = 200
+			      mGlobalRedirects.Value(img) = icon
+			    Next
+			  End If
+			  Return mGlobalRedirects
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mGlobalRedirects = value
+			End Set
+		#tag EndSetter
+		Shared GlobalRedirects As Dictionary
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h1
+		Protected Shared GlobalsInited As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mAuthenticationRealm As String = """Restricted Area"""
 	#tag EndProperty
@@ -566,6 +648,10 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h21
 		Private mEnforceContentType As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mGlobalRedirects As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -4,11 +4,7 @@ Inherits HTTPParse.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(page As FolderItem, Path As String)
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
-		  If page.Directory Then
-		    Dim data As New HTTPParse.DirectoryIndex(page, path)
-		    Me.MessageBody = data.ToString
-		    Me.MIMEType = New HTTPParse.ContentType("text/html")
-		  Else
+		  If Not page.Directory Then
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
 		    bs.Close
