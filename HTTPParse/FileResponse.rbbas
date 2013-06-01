@@ -1,5 +1,5 @@
 #tag Class
-Protected Class FileResponse
+Class FileResponse
 Inherits HTTPParse.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(page As FolderItem, Path As String)
@@ -8,7 +8,7 @@ Inherits HTTPParse.Response
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    Me.MessageBody = bs.Read(bs.Length)
 		    bs.Close
-		    Me.MIMEType = New HTTPParse.ContentType(page)
+		    Me.MIMEType = New ContentType(page)
 		  End If
 		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		  Me.StatusCode = 200

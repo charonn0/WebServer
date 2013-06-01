@@ -1,5 +1,5 @@
 #tag Class
-Protected Class Headers
+Class Headers
 Inherits InternetHeaders
 	#tag Method, Flags = &h1000
 		Sub Constructor(Data As String)
@@ -15,7 +15,7 @@ Inherits InternetHeaders
 		    v = Right(line, line.Len - (n.Len + 2)).Trim
 		    Select Case n
 		    Case "Set-Cookie"
-		      Cookies.Append(New HTTPParse.Cookie(v))
+		      Cookies.Append(New Cookie(v))
 		    Case "Cookie"
 		      Dim s() As String = Split(v, ";")
 		      For x As Integer = 0 To UBound(s)
@@ -23,13 +23,13 @@ Inherits InternetHeaders
 		        Dim l, r As String
 		        l = NthField(s(x).Trim, "=", 1)
 		        r = NthField(s(x).Trim, "=", 2)
-		        Dim c As New HTTPParse.Cookie(l, r)
+		        Dim c As New Cookie(l, r)
 		        Cookies.Append(c)
 		      Next
 		    Case "Accept"
 		      Dim s() As String = Split(v, ",")
 		      For x As Integer = 0 To UBound(s)
-		        AcceptableTypes.Append(New HTTPParse.ContentType(s(x)))
+		        AcceptableTypes.Append(New ContentType(s(x)))
 		      Next
 		    Else
 		      Me.AppendHeader(n, v)
@@ -39,7 +39,7 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Cookie(Index As Integer = - 1, Assigns NewCookie As HTTPParse.Cookie)
+		Sub Cookie(Index As Integer = - 1, Assigns NewCookie As Cookie)
 		  #pragma BreakOnExceptions Off
 		  If NewCookie = Nil Then
 		    Cookies.Remove(Index)
@@ -53,7 +53,7 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Cookie(Index As Integer) As HTTPParse.Cookie
+		Function Cookie(Index As Integer) As Cookie
 		  Return Cookies(Index)
 		End Function
 	#tag EndMethod
@@ -75,7 +75,7 @@ Inherits InternetHeaders
 		Function Source(SetCookies As Boolean = False) As String
 		  Dim data As String = Super.Source
 		  
-		  For Each c As HTTPParse.Cookie In Me.Cookies
+		  For Each c As Cookie In Me.Cookies
 		    If SetCookies Then
 		      data = data + CRLF + "Set-Cookie: " + c.ToString
 		    Else
@@ -85,7 +85,7 @@ Inherits InternetHeaders
 		  
 		  Dim acc As String
 		  For i As Integer = 0 To UBound(AcceptableTypes)
-		    Dim type As HTTPParse.ContentType = AcceptableTypes(i)
+		    Dim type As ContentType = AcceptableTypes(i)
 		    If i > 0 And i < AcceptableTypes.Ubound Then
 		      acc = acc + type.ToString + ", "
 		    ElseIf i = 0 And AcceptableTypes.Ubound > 0 Then
@@ -104,11 +104,11 @@ Inherits InternetHeaders
 
 
 	#tag Property, Flags = &h0
-		AcceptableTypes() As HTTPParse.ContentType
+		AcceptableTypes() As ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected Cookies() As HTTPParse.Cookie
+		Protected Cookies() As Cookie
 	#tag EndProperty
 
 

@@ -1,5 +1,5 @@
 #tag Class
-Protected Class VirtualResponse
+Class VirtualResponse
 Inherits HTTPParse.FileResponse
 	#tag Method, Flags = &h1000
 		Sub Constructor(page As FolderItem, Path As String)
@@ -34,7 +34,7 @@ Inherits HTTPParse.FileResponse
 		  Headers.AppendHeader("Location", RedirectURL)
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  Me.MessageBody = ErrorPage(302, RedirectURL)
-		  Me.MIMEType = New HTTPParse.ContentType("text/html")
+		  Me.MIMEType = New ContentType("text/html")
 		  Super.Constructor(Me.MessageBody.LenB, Me.MIMEType)
 		End Sub
 	#tag EndMethod

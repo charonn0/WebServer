@@ -1,5 +1,5 @@
 #tag Class
-Protected Class Cookie
+Class Cookie
 Inherits Pair
 	#tag Method, Flags = &h1000
 		Sub Constructor(Raw As String)
@@ -68,7 +68,7 @@ Inherits Pair
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OriginCompare(CompareTo As HTTPParse.Cookie) As Boolean
+		Function OriginCompare(CompareTo As Cookie) As Boolean
 		  If CompareTo.Domain <> Me.Domain Then Return False
 		  If CompareTo.Path <> Me.Path Then Return False
 		  If CompareTo.Port <> Me.Port Then Return False

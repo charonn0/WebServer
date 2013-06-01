@@ -1162,7 +1162,7 @@ End
 		  For i As Integer = 0 To RequestHeaders.LastIndex
 		    heads.AppendHeader(RequestHeaders.Cell(i, 0), RequestHeaders.Cell(i, 1))
 		  Next
-		  Me.Request.Headers = New HTTPParse.Headers(heads.Source)
+		  Me.Request.Headers = New Headers(heads.Source)
 		  
 		  If AutoHost.Value Then
 		    Me.Request.SetHeader("Host", theURL.FQDN)
@@ -1274,7 +1274,7 @@ End
 #tag Events CookiesButton
 	#tag Event
 		Sub Action()
-		  Dim allcookies() As HTTPParse.Cookie
+		  Dim allcookies() As Cookie
 		  For i As Integer = 0 To Response.Headers.CookieCount - 1
 		    allcookies.Append(Response.Headers.Cookie(i))
 		  Next
@@ -1414,10 +1414,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim c As HTTPParse.Cookie
+		  Dim c As Cookie
 		  Dim editindex As Integer = -1
 		  If RequestHeaders.Cell(RequestHeaders.ListIndex, 0) = "Cookie" Then
-		    c = New HTTPParse.Cookie(NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 1), NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 2))
+		    c = New Cookie(NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 1), NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 2))
 		    editindex = RequestHeaders.ListIndex
 		  End If
 		  c = CookieEdit.GetCookie(c)

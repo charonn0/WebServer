@@ -1,5 +1,5 @@
 #tag Class
-Protected Class DirectoryIndex
+Class DirectoryIndex
 Inherits HTTPParse.StaticResponse
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
@@ -120,7 +120,7 @@ Inherits HTTPParse.StaticResponse
 		      c = "#A7A7A7"
 		    End If
 		    line = ReplaceAll(line, "%ROWCOLOR%", c)
-		    Dim type As New HTTPParse.ContentType(item)
+		    Dim type As New ContentType(item)
 		    line = ReplaceAll(line, "%FILEPATH%", href)
 		    line = ReplaceAll(line, "%FILENAME%", name)
 		    if item.Directory Then

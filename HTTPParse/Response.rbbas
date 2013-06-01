@@ -2,7 +2,7 @@
 Protected Class Response
 Inherits HTTPParse.HTTPMessage
 	#tag Method, Flags = &h1000
-		Sub Constructor(Length As Integer, Type As HTTPParse.ContentType)
+		Sub Constructor(Length As Integer, Type As ContentType)
 		  Me.SetHeader("Content-Type", Type.ToString)
 		  Me.SetHeader("Content-Length", Str(Length))
 		  Me.SetHeader("Server", HTTP.DaemonVersion)
@@ -21,7 +21,7 @@ Inherits HTTPParse.HTTPMessage
 		  line = NthField(data, CRLF, 1)
 		  data = Replace(data, line + CRLF, "")
 		  data = Replace(data, Me.MessageBody, "")
-		  Me.Headers = New HTTPParse.Headers(data)
+		  Me.Headers = New Headers(data)
 		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))

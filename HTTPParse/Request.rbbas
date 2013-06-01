@@ -30,7 +30,7 @@ Inherits HTTPParse.HTTPMessage
 		  
 		  data = Replace(data, line + CRLF, "")
 		  Dim h As String = NthField(data, CRLF + CRLF, 1)
-		  Me.Headers = New HTTPParse.Headers(h)
+		  Me.Headers = New Headers(h)
 		  Me.MessageBody = Replace(data, h, "")
 		  
 		  If Me.HasHeader("Content-Type") Then
@@ -104,11 +104,11 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Cookies() As HTTPParse.Cookie
+		Cookies() As Cookie
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Headers As HTTPParse.Headers
+		Headers As Headers
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

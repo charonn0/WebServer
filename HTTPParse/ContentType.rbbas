@@ -1,7 +1,7 @@
 #tag Class
-Protected Class ContentType
+Class ContentType
 	#tag Method, Flags = &h0
-		Function Accepts(OtherType As HTTPParse.ContentType) As Boolean
+		Function Accepts(OtherType As ContentType) As Boolean
 		  If OtherType.SuperType <> Me.SuperType And OtherType.SuperType <> "*" And Me.SuperType <> "*" Then Return False
 		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*"Then Return False
 		  Return True

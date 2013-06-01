@@ -1,5 +1,5 @@
 #tag Class
-Protected Class ErrorResponse
+Class ErrorResponse
 Inherits HTTPParse.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(ErrorCode As Integer, Param As String)
@@ -7,7 +7,7 @@ Inherits HTTPParse.Response
 		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
 		  Me.StatusCode = ErrorCode
 		  Dim data As String = ErrorPage(StatusCode, Param)
-		  Super.Constructor(data.LenB, New HTTPParse.ContentType("text/html"))
+		  Super.Constructor(data.LenB, New ContentType("text/html"))
 		  Me.StatusCode = ErrorCode
 		  Me.MessageBody = data
 		  Me.Expires = New Date(1999, 12, 31, 23, 59, 59)

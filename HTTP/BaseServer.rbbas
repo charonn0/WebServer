@@ -96,13 +96,13 @@ Inherits ServerSocket
 		    End If
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = New HTTPParse.ErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      doc = New ErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New HTTPParse.ErrorResponse(401, clientrequest.Path.LocalPath)
+		        doc = New ErrorResponse(401, clientrequest.Path.LocalPath)
 		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
@@ -148,29 +148,29 @@ Inherits ServerSocket
 		      Select Case clientrequest.Method
 		      Case RequestMethod.TRACE
 		        Me.Log("Request is a TRACE", Log_Debug)
-		        doc = New HTTPParse.ErrorResponse(200, "")
+		        doc = New ErrorResponse(200, "")
 		        doc.SetHeader("Content-Length", Str(Data.Size))
 		        doc.SetHeader("Content-Type", "message/http")
 		        doc.MessageBody = Data
 		      Case RequestMethod.OPTIONS
 		        Me.Log("Request is a OPTIONS", Log_Debug)
-		        doc = New HTTPParse.ErrorResponse(200, "")
+		        doc = New ErrorResponse(200, "")
 		        doc.MessageBody = ""
 		        doc.SetHeader("Content-Length", "0")
 		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		        doc.SetHeader("Accept-Ranges", "bytes")
 		      Case RequestMethod.GET, RequestMethod.HEAD
 		        Me.Log("Request is a HEAD", Log_Debug)
-		        doc = New HTTPParse.ErrorResponse(404, clientrequest.Path.LocalPath)
+		        doc = New ErrorResponse(404, clientrequest.Path.LocalPath)
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		          doc = New HTTPParse.ErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		          doc = New ErrorResponse(501, clientrequest.MethodName) 'Not implemented
 		          Me.Log("Request is not implemented", Log_Error)
 		        ElseIf clientrequest.MethodName = "" Then
-		          doc = New HTTPParse.ErrorResponse(400, "") 'bad request
+		          doc = New ErrorResponse(400, "") 'bad request
 		          Me.Log("Request is malformed", Log_Error)
 		        ElseIf clientrequest.MethodName <> "" Then
-		          doc = New HTTPParse.ErrorResponse(405, clientrequest.MethodName)
+		          doc = New ErrorResponse(405, clientrequest.MethodName)
 		          Me.Log("Request is a NOT ALLOWED", Log_Error)
 		        End If
 		      End Select
@@ -178,10 +178,10 @@ Inherits ServerSocket
 		    doc.Path = clientrequest.Path
 		    If clientrequest.IsModifiedSince(doc.Expires) Then
 		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		        doc = New HTTPParse.ErrorResponse(304, "")
+		        doc = New ErrorResponse(304, "")
 		        doc.MessageBody = ""
 		      Else
-		        doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
+		        doc = New ErrorResponse(412, "") 'Precondition failed
 		        doc.MessageBody = ""
 		      End If
 		    End If
@@ -201,20 +201,20 @@ Inherits ServerSocket
 		          Return
 		        End If
 		      Next
-		      Dim accepted As HTTPParse.ContentType = doc.MIMEType
-		      doc = New HTTPParse.ErrorResponse(406, "") 'Not Acceptable
+		      Dim accepted As ContentType = doc.MIMEType
+		      doc = New ErrorResponse(406, "") 'Not Acceptable
 		      doc.MIMEType = accepted
 		      Me.Log("Response is not Acceptable", Log_Error)
 		    End If
 		  Catch err As UnsupportedFormatException
 		    If err.ErrorNumber = 1 Then 'ssl?
-		      doc = New HTTPParse.ErrorResponse(101, "") 'Switch protocols
+		      doc = New ErrorResponse(101, "") 'Switch protocols
 		      doc.MessageBody = ""
 		      doc.Headers.DeleteAllHeaders
 		      doc.SetHeader("Upgrade", "HTTP/1.0")
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    Else
-		      doc = New HTTPParse.ErrorResponse(400, "") 'bad request
+		      doc = New ErrorResponse(400, "") 'bad request
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    End If
 		  End Try
@@ -239,7 +239,7 @@ Inherits ServerSocket
 		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
 		    Me.Log(logtxt , Log_Error)
 		  #endif
-		  errpage = New HTTPParse.ErrorResponse(500, stack)
+		  errpage = New ErrorResponse(500, stack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
@@ -419,7 +419,7 @@ Inherits ServerSocket
 		    Session.ExtendSession
 		    If Session.NewSession Then
 		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
-		      Dim c As New HTTPParse.Cookie("SessionID=" + Session.SessionID)
+		      Dim c As New Cookie("SessionID=" + Session.SessionID)
 		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
 		      c.Path = "/"
 		      c.Port = Me.Port

@@ -11,16 +11,16 @@ Inherits HTTP.BaseServer
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(404, ClientRequest.Path.LocalPath)
+		      doc = New ErrorResponse(404, ClientRequest.Path.LocalPath)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = New HTTPParse.ErrorResponse(403, ClientRequest.Path.LocalPath)
+		      doc = New ErrorResponse(403, ClientRequest.Path.LocalPath)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
-		      doc = New HTTPParse.VirtualResponse("/", Location)
+		      doc = New VirtualResponse("/", Location)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
@@ -29,10 +29,10 @@ Inherits HTTP.BaseServer
 		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
 		      End If
 		      If item.Directory Then
-		        doc = New HTTPParse.DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
+		        doc = New DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
-		        doc = New HTTPParse.FileResponse(item, ClientRequest.Path.LocalPath + args)
+		        doc = New FileResponse(item, ClientRequest.Path.LocalPath + args)
 		      End If
 		    End If
 		  End Select
@@ -74,7 +74,7 @@ Inherits HTTP.BaseServer
 		  "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
 		  
 		  For Each img As String In icons.Keys
-		    Dim icon As HTTPParse.StaticResponse
+		    Dim icon As StaticResponse
 		    Dim p As Picture
 		    #If RBVersion >= 2011.4 Then
 		      App.UseGDIPlus = True
@@ -86,7 +86,7 @@ Inherits HTTP.BaseServer
 		    p.Graphics.DrawPicture(icons.Value(img), 0, 0)
 		    Dim tmp As FolderItem = GetTemporaryFolderItem
 		    p.Save(tmp, Picture.SaveAsPNG)
-		    icon = New HTTPParse.StaticResponse(tmp, img)
+		    icon = New StaticResponse(tmp, img)
 		    #If GZIPAvailable Then
 		      icon.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
@@ -100,7 +100,7 @@ Inherits HTTP.BaseServer
 		      End Try
 		      icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
 		    #endif
-		    icon.MIMEType = New HTTPParse.ContentType("image/png")
+		    icon.MIMEType = New ContentType("image/png")
 		    icon.StatusCode = 200
 		    'icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
 		    icon.FromCache = True
@@ -108,14 +108,14 @@ Inherits HTTP.BaseServer
 		  Next
 		  
 		  
-		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
+		  Dim redirect As New VirtualResponse("/bs", "http://www.boredomsoft.org")
 		  redirect.FromCache = True
 		  Me.AddRedirect(redirect)
 		  
 		  If Not GlobalRedirects.HasKey("/robots.txt") Then
-		    Dim doc As New HTTPParse.ErrorResponse(200, "")
+		    Dim doc As New ErrorResponse(200, "")
 		    doc.Path = "/robots.txt"
-		    doc.MIMEType = New HTTPParse.ContentType("text/html")
+		    doc.MIMEType = New ContentType("text/html")
 		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
 		    doc.FromCache = True
 		    AddRedirect(doc)

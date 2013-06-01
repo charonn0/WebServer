@@ -1,5 +1,5 @@
 #tag Class
-Protected Class StaticResponse
+Class StaticResponse
 Inherits HTTPParse.VirtualResponse
 	#tag Method, Flags = &h1000
 		Sub Constructor(page As FolderItem, Path As String)

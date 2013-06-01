@@ -98,16 +98,16 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Headers() As HTTPParse.Headers
+		Function Headers() As Headers
 		  If mHeaders = Nil Then
-		    mHeaders = New HTTPParse.Headers
+		    mHeaders = New Headers
 		  End If
 		  return mHeaders
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Headers(Assigns HTTPHeaders As HTTPParse.Headers)
+		Protected Sub Headers(Assigns HTTPHeaders As Headers)
 		  mHeaders = HTTPHeaders
 		End Sub
 	#tag EndMethod
@@ -164,7 +164,7 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub SetCookie(Name As String, Assigns Value As String)
-		  Dim c As New HTTPParse.Cookie(Name, Value)
+		  Dim c As New Cookie(Name, Value)
 		  Me.RemoveCookie(c.Name)
 		  Me.Headers.Cookie(-1) = c
 		End Sub
@@ -232,7 +232,7 @@ Protected Class HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHeaders As HTTPParse.Headers
+		Private mHeaders As Headers
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -241,12 +241,12 @@ Protected Class HTTPMessage
 			  If mMIMEType = Nil Then
 			    Dim s As String = NthField(Me.Path.LocalPath, "/", CountFields(Me.Path.LocalPath, "/"))
 			    Dim f As FolderItem = SpecialFolder.Temporary.Child(s)
-			    mMIMEType = New HTTPParse.ContentType(f)
+			    mMIMEType = New ContentType(f)
 			  End If
 			  return mMIMEType
 			  
 			  'Exception
-			  'Return New HTTPParse.ContentType("application/octet-stream")
+			  'Return New ContentType("application/octet-stream")
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -254,11 +254,11 @@ Protected Class HTTPMessage
 			  mMIMEType = value
 			End Set
 		#tag EndSetter
-		MIMEType As HTTPParse.ContentType
+		MIMEType As ContentType
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mMIMEType As HTTPParse.ContentType
+		Private mMIMEType As ContentType
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
