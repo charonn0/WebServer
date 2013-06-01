@@ -65,9 +65,11 @@ Inherits ServerSocket
 		    While readlen < la.Len
 		      Dim length As Integer = InStr(la, CRLF + CRLF)
 		      length = InStr(length, la, CRLF + CRLF)
-		      requests.Append(Sender.Read(length + 3))
+		      Dim req As String = Sender.Read(length + 3).Trim
+		      If req <> "" Then requests.Append(req)
 		      readlen = readlen + length + 3
 		    Wend
+		    Break
 		  Else
 		    requests.Append(Sender.ReadAll)
 		  End If
@@ -80,9 +82,6 @@ Inherits ServerSocket
 		    Try
 		      clientrequest = New HTTPParse.Request(data, UseSessions)
 		      Me.Log("Request is well formed", Log_Debug)
-		      If clientrequest.HasHeader("Connection") Then
-		        'Me.KeepAlive = (clientrequest.GetHeader("Connection") = "keep-alive")
-		      End If
 		      Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		      If UseSessions Then
 		        Dim ID As String = clientrequest.GetCookie("SessionID")
@@ -192,6 +191,12 @@ Inherits ServerSocket
 		          doc = New HTTPParse.ErrorResponse(412, "") 'Precondition failed
 		          doc.MessageBody = ""
 		        End If
+		      End If
+		      
+		      If r = UBound(requests) Then
+		        clientrequest.SetHeader("Connection", "close")
+		      Else
+		        clientrequest.SetHeader("Connection", "keep-alive")
 		      End If
 		      
 		      If EnforceContentType Then
@@ -403,7 +408,7 @@ Inherits ServerSocket
 		      #endif
 		    End If
 		  End If
-		  ResponseDocument.SetHeader("Connection", "close")
+		  'ResponseDocument.SetHeader("Connection", "close")
 		  
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
@@ -490,7 +495,7 @@ Inherits ServerSocket
 
 
 	#tag Property, Flags = &h0
-		AllowPipeLinedRequests As Boolean = False
+		AllowPipeLinedRequests As Boolean = True
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
