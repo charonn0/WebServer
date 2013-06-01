@@ -231,7 +231,7 @@ Inherits ServerSocket
 		    If UBound(Err.Stack) <= -1 Then
 		      stack = "<br />(empty)<br />"
 		    Else
-		      stack = Join(Err.Stack, "<br />")
+		      stack = Join(Err.CleanStack, "<br />")
 		    End If
 		    stack = "<b>Exception<b>: " + Introspection.GetType(Err).FullName + "<br />Error Number: " + Str(Err.ErrorNumber) + "<br />Message: " + Err.Message _
 		    + "<br />Stack follows:<blockquote>" + stack + "</blockquote>" + EndOfLine
@@ -722,6 +722,12 @@ Inherits ServerSocket
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AllowPipeLinedRequests"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRealm"
 			Visible=true
