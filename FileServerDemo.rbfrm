@@ -463,7 +463,7 @@ Begin Window FileServerDemo
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   401
+      Height          =   379
       HelpTag         =   ""
       Hierarchical    =   ""
       Index           =   -2147483648
@@ -487,7 +487,7 @@ Begin Window FileServerDemo
       TextFont        =   "System"
       TextSize        =   0
       TextUnit        =   0
-      Top             =   0
+      Top             =   22
       Underline       =   ""
       UseFocusRing    =   False
       Visible         =   True
@@ -686,6 +686,79 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   80
    End
+   Begin TextField SearchField
+      AcceptTabs      =   ""
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &hFFFFFF
+      Bold            =   ""
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   ""
+      Left            =   0
+      LimitText       =   0
+      LockBottom      =   ""
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   ""
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   ""
+      ReadOnly        =   ""
+      Scope           =   0
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &h000000
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   0
+      Underline       =   ""
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   735
+   End
+   Begin PushButton PushButton6
+      AutoDeactivate  =   True
+      Bold            =   ""
+      ButtonStyle     =   0
+      Cancel          =   ""
+      Caption         =   "Next"
+      Default         =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   ""
+      Left            =   739
+      LockBottom      =   ""
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   ""
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0
+      TextUnit        =   0
+      Top             =   0
+      Underline       =   ""
+      Visible         =   True
+      Width           =   34
+   End
 End
 #tag EndWindow
 
@@ -720,6 +793,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		CurrentSearchIndex As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private LastLogDirection As Boolean
@@ -927,6 +1004,7 @@ End
 		          End If
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c0080FF99
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          
 		        Case HTTP.BaseServer.Log_Response
 		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Request Then Return
@@ -940,6 +1018,7 @@ End
 		          End If
 		          
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		        Case HTTP.BaseServer.Log_Error
 		          If Severity < squelch Then Return
 		          If i = 0 Then
@@ -950,24 +1029,29 @@ End
 		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(error.Width, error.Height)
 		          End If
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		        Case HTTP.BaseServer.Log_Debug
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Debug")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
 		        Case HTTP.BaseServer.Log_Socket
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Socket")
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
 		        Case HTTP.BaseServer.Log_Trace
 		          If Severity < squelch Then Return
 		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Trace"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          Listbox1.RowPicture(Listbox1.LastIndex) = traceIcon
 		        Else
 		          Listbox1.AddRow(lines(i)), now.ShortDate + " " + Now.LongTime, "Unspecified"
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFFFF99
+		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		        End Select
 		      End If
 		    Next
@@ -1065,6 +1149,28 @@ End
 	#tag Event
 		Sub Action()
 		  Listbox1.DeleteAllRows
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PushButton6
+	#tag Event
+		Sub Action()
+		  If CurrentSearchIndex > Listbox1.ListCount - 1 Then CurrentSearchIndex = 0
+		  For i As Integer = CurrentSearchIndex To Listbox1.LastIndex
+		    If InStr(Listbox1.Cell(i, 0), SearchField.Text) > 0 Then
+		      Listbox1.ListIndex = i
+		      Listbox1.ScrollPosition = i
+		      CurrentSearchIndex = i + 1
+		      Exit For
+		    ElseIf i >= Listbox1.ListCount - 1 Then
+		      If MsgBox("Continue search from start?", 36, "Log search") = 6 Then
+		        i = 0
+		      End If
+		    End If
+		  Next
+		  
+		Exception OutOfBoundsException
+		  MsgBox("No more matches")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
