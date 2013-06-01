@@ -54,11 +54,27 @@ Inherits ServerSocket
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1000
+		Sub Constructor()
+		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
+		  Me.AddRedirect(redirect)
+		  
+		  If Not GlobalRedirects.HasKey("/robots.txt") Then
+		    Dim doc As New HTTPParse.ErrorResponse(200, "")
+		    doc.Path = "/robots.txt"
+		    doc.MIMEType = New HTTPParse.ContentType("text/html")
+		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
+		     GlobalRedirects.Value("/robots.txt") = doc
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Incoming data", Log_Debug)
 		  Dim data As MemoryBlock = Sender.ReadAll
+		  If CountFields(data, CRLF + CRLF) > 2 Then Break
 		  Dim clientrequest As HTTPParse.Request
 		  Dim doc As HTTPParse.Response
 		  Dim session As HTTP.Session
@@ -316,13 +332,6 @@ Inherits ServerSocket
 		  Sessions = New Dictionary
 		  Sockets = New Dictionary
 		  Super.Listen
-		  If Not Redirects.HasKey("/robots.txt") Then
-		    Dim doc As New HTTPParse.ErrorResponse(200, "")
-		    doc.Path = "/robots.txt"
-		    doc.MIMEType = New HTTPParse.ContentType("text/html")
-		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		    AddRedirect(doc)
-		  End If
 		  Sessions = New Dictionary
 		  SessionTimer = New Timer
 		  AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler
@@ -410,6 +419,8 @@ Inherits ServerSocket
 		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
 		      Dim c As New HTTPParse.Cookie("SessionID=" + Session.SessionID)
 		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
+		      c.Path = "/"
+		      c.Port = Me.Port
 		      ResponseDocument.Headers.Cookie(-1) = c
 		      'ResponseDocument.Headers.Cookie
 		      Session.NewSession = False
@@ -614,7 +625,7 @@ Inherits ServerSocket
 			      #endif
 			      icon.MIMEType = New HTTPParse.ContentType("image/png")
 			      icon.StatusCode = 200
-			      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
+			      'icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
 			      icon.FromCache = True
 			      mGlobalRedirects.Value(img) = icon
 			    Next

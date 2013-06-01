@@ -9,7 +9,7 @@ Inherits HTTPParse.FileResponse
 		  'Use this constructor to create a document from another document
 		  Me.StatusCode = 200
 		  Dim d As New Date
-		  d.TotalSeconds = d.TotalSeconds + 3600
+		  d.TotalSeconds = d.TotalSeconds + 601
 		  Me.Expires = d
 		End Sub
 	#tag EndMethod

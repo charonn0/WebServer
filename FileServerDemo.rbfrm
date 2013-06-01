@@ -459,8 +459,8 @@ Begin Window FileServerDemo
       Enabled         =   True
       EnableDrag      =   ""
       EnableDragReorder=   ""
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      GridLinesHorizontal=   1
+      GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   401
@@ -489,7 +489,7 @@ Begin Window FileServerDemo
       TextUnit        =   0
       Top             =   0
       Underline       =   ""
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   779
       _ScrollWidth    =   -1
@@ -710,8 +710,6 @@ End
 		  End If
 		  Sock.Port = Val(port.Text)
 		  Sock.DocumentRoot = SharedFile
-		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
-		  Sock.AddRedirect(redirect)
 		  Sock.UseSessions = UseSessions.Value
 		  sock.Listen
 		  If Sock.ConnectionType = ConnectionTypes.Insecure Then
@@ -887,9 +885,11 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function MouseDown(x As Integer, y As Integer) As Boolean
+		Function CellClick(row as Integer, column as Integer, x as Integer, y as Integer) As Boolean
 		  #pragma Unused x
 		  #pragma Unused y
+		  #pragma Unused row
+		  #pragma Unused column
 		  Return True
 		End Function
 	#tag EndEvent
