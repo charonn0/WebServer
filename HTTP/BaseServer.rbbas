@@ -54,21 +54,6 @@ Inherits ServerSocket
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1000
-		Sub Constructor()
-		  Dim redirect As New HTTPParse.VirtualResponse("/bs", "http://www.boredomsoft.org")
-		  Me.AddRedirect(redirect)
-		  
-		  If Not GlobalRedirects.HasKey("/robots.txt") Then
-		    Dim doc As New HTTPParse.ErrorResponse(200, "")
-		    doc.Path = "/robots.txt"
-		    doc.MIMEType = New HTTPParse.ContentType("text/html")
-		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		     GlobalRedirects.Value("/robots.txt") = doc
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
@@ -267,7 +252,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTPParse.Response
 		  If Sender <> Nil Then
-		    If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
+		    'If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
 		    Dim logID As String = "(NO_SESSION)"
 		    If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		    Me.Log(CurrentMethodName + logID, Log_Trace)
@@ -277,11 +262,11 @@ Inherits ServerSocket
 		        Return Sender.GetRedirect(Path)
 		      End If
 		    End If
-		    
-		    If Me.Redirects.HasKey(Path) Then
-		      Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
-		      Return Me.Redirects.Value(Path)
-		    End If
+		  End If
+		  
+		  If Me.Redirects.HasKey(Path) Then
+		    Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
+		    Return Me.Redirects.Value(Path)
 		  End If
 		  
 		  If Me.GlobalRedirects.HasKey(Path) Then
@@ -573,62 +558,6 @@ Inherits ServerSocket
 			Get
 			  If mGlobalRedirects = Nil Then
 			    mGlobalRedirects = New Dictionary
-			    Dim icons As New Dictionary( _
-			    "/" + VirtualRoot + "/img/bin.png":MIMEbin, _
-			    "/" + VirtualRoot + "/img/script.png":MIMEScript, _
-			    "/" + VirtualRoot + "/img/xojo.png":MIMERBP, _
-			    "/" + VirtualRoot + "/img/dir.png":MIMEdir, _
-			    "/" + VirtualRoot + "/img/txt.png":MIMETxt, _
-			    "/" + VirtualRoot + "/img/html.png":MIMEHTML, _
-			    "/" + VirtualRoot + "/img/css.png":MIMECSS, _
-			    "/" + VirtualRoot + "/img/xml.png":MIMEXML, _
-			    "/" + VirtualRoot + "/img/image.png":MIMEImage, _
-			    "/" + VirtualRoot + "/img/mov.png":MIMEMov, _
-			    "/" + VirtualRoot + "/img/font.png":MIMEFont, _
-			    "/" + VirtualRoot + "/img/zip.png":MIMEZip, _
-			    "/" + VirtualRoot + "/img/wav.png":MIMEWAV, _
-			    "/" + VirtualRoot + "/img/mus.png":MIMEMus, _
-			    "/" + VirtualRoot + "/img/pdf.png":MIMEPDF, _
-			    "/" + VirtualRoot + "/img/xls.png":MIMEXLS, _
-			    "/" + VirtualRoot + "/img/doc.png":MIMEDOC, _
-			    "/" + VirtualRoot + "/img/unknown.png":MIMEUnknown, _
-			    "/" + VirtualRoot + "/img/upicon.png":upIcon, _
-			    "/" + VirtualRoot + "/img/sorticon.png":sortIcon, _
-			    "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
-			    
-			    For Each img As String In icons.Keys
-			      Dim icon As HTTPParse.StaticResponse
-			      Dim p As Picture
-			      #If RBVersion >= 2011.4 Then
-			        App.UseGDIPlus = True
-			        p = New Picture(MIMEbin.Width, MIMEbin.Height)
-			      #Else
-			        p = New Picture(MIMEbin.Width, MIMEbin.Height, 32)
-			        p.Transparent = 1
-			      #endif
-			      p.Graphics.DrawPicture(icons.Value(img), 0, 0)
-			      Dim tmp As FolderItem = GetTemporaryFolderItem
-			      p.Save(tmp, Picture.SaveAsPNG)
-			      icon = New HTTPParse.StaticResponse(tmp, img)
-			      #If GZIPAvailable Then
-			        icon.SetHeader("Content-Encoding", "gzip")
-			        Dim gz As String
-			        Try
-			          Dim size As Integer = icon.MessageBody.LenB
-			          gz = GZipPage(icon.MessageBody)
-			          icon.MessageBody = gz
-			          size = gz.LenB * 100 / size
-			        Catch Error
-			          'Just send the uncompressed data
-			        End Try
-			        icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
-			      #endif
-			      icon.MIMEType = New HTTPParse.ContentType("image/png")
-			      icon.StatusCode = 200
-			      'icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
-			      icon.FromCache = True
-			      mGlobalRedirects.Value(img) = icon
-			    Next
 			  End If
 			  Return mGlobalRedirects
 			End Get
