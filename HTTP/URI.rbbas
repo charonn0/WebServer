@@ -3,11 +3,12 @@ Protected Class URI
 Inherits HTTPParse.URI
 	#tag Method, Flags = &h0
 		Function LocalPath() As String
-		  Dim item As String = "/"
+		  Dim item As String
 		  For i As Integer = 0 To UBound(Me.ServerFile)
 		    If Me.ServerFile(i).Trim = ""  Then Continue
-		    item = item + Me.ServerFile(i).Trim + "/"
+		    item = item + "/" + Me.ServerFile(i).Trim
 		  Next
+		  If item.Trim = "" Then item = "/"
 		  Return item
 		End Function
 	#tag EndMethod

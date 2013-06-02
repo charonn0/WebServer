@@ -96,13 +96,13 @@ Inherits ServerSocket
 		    End If
 		    
 		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = New ErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		      doc = doc.ErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		      Me.Log("Unsupported protocol version", Log_Error)
 		    ElseIf AuthenticationRequired Then
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = New ErrorResponse(401, clientrequest.Path.LocalPath)
+		        doc = doc.ErrorResponse(401, clientrequest.Path.LocalPath)
 		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
@@ -148,29 +148,29 @@ Inherits ServerSocket
 		      Select Case clientrequest.Method
 		      Case RequestMethod.TRACE
 		        Me.Log("Request is a TRACE", Log_Debug)
-		        doc = New ErrorResponse(200, "")
+		        doc = doc.ErrorResponse(200, "")
 		        doc.SetHeader("Content-Length", Str(Data.Size))
 		        doc.SetHeader("Content-Type", "message/http")
 		        doc.MessageBody = Data
 		      Case RequestMethod.OPTIONS
 		        Me.Log("Request is a OPTIONS", Log_Debug)
-		        doc = New ErrorResponse(200, "")
+		        doc = doc.ErrorResponse(200, "")
 		        doc.MessageBody = ""
 		        doc.SetHeader("Content-Length", "0")
 		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		        doc.SetHeader("Accept-Ranges", "bytes")
 		      Case RequestMethod.GET, RequestMethod.HEAD
 		        Me.Log("Request is a HEAD", Log_Debug)
-		        doc = New ErrorResponse(404, clientrequest.Path.LocalPath)
+		        doc = doc.ErrorResponse(404, clientrequest.Path.LocalPath)
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		          doc = New ErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		          doc = doc.ErrorResponse(501, clientrequest.MethodName) 'Not implemented
 		          Me.Log("Request is not implemented", Log_Error)
 		        ElseIf clientrequest.MethodName = "" Then
-		          doc = New ErrorResponse(400, "") 'bad request
+		          doc = doc.ErrorResponse(400, "") 'bad request
 		          Me.Log("Request is malformed", Log_Error)
 		        ElseIf clientrequest.MethodName <> "" Then
-		          doc = New ErrorResponse(405, clientrequest.MethodName)
+		          doc = doc.ErrorResponse(405, clientrequest.MethodName)
 		          Me.Log("Request is a NOT ALLOWED", Log_Error)
 		        End If
 		      End Select
@@ -178,18 +178,18 @@ Inherits ServerSocket
 		    doc.Path = clientrequest.Path
 		    If clientrequest.IsModifiedSince(doc.Expires) Then
 		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		        doc = New ErrorResponse(304, "")
+		        doc = doc.ErrorResponse(304, "")
 		        doc.MessageBody = ""
 		      Else
-		        doc = New ErrorResponse(412, "") 'Precondition failed
+		        doc = doc.ErrorResponse(412, "") 'Precondition failed
 		        doc.MessageBody = ""
 		      End If
 		    End If
 		    
-		    If Sender.Lookahead.Trim = "" Then
-		      clientrequest.SetHeader("Connection", "close")
-		    Else
+		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
 		      clientrequest.SetHeader("Connection", "keep-alive")
+		    Else
+		      clientrequest.SetHeader("Connection", "close")
 		    End If
 		    
 		    If EnforceContentType Then
@@ -202,19 +202,19 @@ Inherits ServerSocket
 		        End If
 		      Next
 		      Dim accepted As ContentType = doc.MIMEType
-		      doc = New ErrorResponse(406, "") 'Not Acceptable
+		      doc = doc.ErrorResponse(406, "") 'Not Acceptable
 		      doc.MIMEType = accepted
 		      Me.Log("Response is not Acceptable", Log_Error)
 		    End If
 		  Catch err As UnsupportedFormatException
 		    If err.ErrorNumber = 1 Then 'ssl?
-		      doc = New ErrorResponse(101, "") 'Switch protocols
+		      doc = doc.ErrorResponse(101, "") 'Switch protocols
 		      doc.MessageBody = ""
 		      doc.Headers.DeleteAllHeaders
 		      doc.SetHeader("Upgrade", "HTTP/1.0")
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    Else
-		      doc = New ErrorResponse(400, "") 'bad request
+		      doc = doc.ErrorResponse(400, "") 'bad request
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    End If
 		  End Try
@@ -239,7 +239,7 @@ Inherits ServerSocket
 		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
 		    Me.Log(logtxt , Log_Error)
 		  #endif
-		  errpage = New ErrorResponse(500, stack)
+		  errpage = doc.ErrorResponse(500, stack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
@@ -357,11 +357,11 @@ Inherits ServerSocket
 		Private Sub SendCompleteHandler(Sender As SSLSocket, UserAborted As Boolean)
 		  #pragma Unused UserAborted
 		  Me.Log("Send complete", Log_Socket)
-		  If Sender.Lookahead.Trim = "" Then
+		  If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
+		    Me.Log("Socket kept alive", Log_Debug)
+		  Else
 		    Sender.Close
 		    Me.Log("Socket closed", Log_Debug)
-		  Else
-		    Me.Log("Socket kept alive", Log_Debug)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -405,7 +405,11 @@ Inherits ServerSocket
 		      #endif
 		    End If
 		  End If
-		  'ResponseDocument.SetHeader("Connection", "close")
+		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
+		    ResponseDocument.SetHeader("Connection", "keep-alive")
+		  Else
+		    ResponseDocument.SetHeader("Connection", "close")
+		  End If
 		  
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))

@@ -1194,7 +1194,7 @@ End
 
 	#tag Method, Flags = &h1000
 		Sub Update(Raw As String)
-		  Response = New HTTPParse.Response(Raw, "", False)
+		  Response = New HTTPParse.Response(Raw)
 		  Code.Text = Str(Response.StatusCode)'NthField(response, " ", 2)
 		  Select Case Response.StatusCode
 		  Case 200

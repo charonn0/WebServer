@@ -1,12 +1,11 @@
 #tag Class
 Class DirectoryIndex
-Inherits HTTPParse.StaticResponse
+Inherits HTTPParse.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
 		  Me.Target = Target
 		  Me.RequestPath = ServerPath
-		  Me.MIMEType = New ContentType("text/html")
-		  Super.Constructor(Target, ServerPath)
+		  Super.Constructor(200, New ContentType("text/html"), HTTP.RequestMethod.GET, "")
 		End Sub
 	#tag EndMethod
 

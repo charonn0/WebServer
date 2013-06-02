@@ -11,16 +11,16 @@ Inherits HTTP.BaseServer
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = New ErrorResponse(404, ClientRequest.Path.LocalPath)
+		      doc = doc.ErrorResponse(404, ClientRequest.Path.LocalPath)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = New ErrorResponse(403, ClientRequest.Path.LocalPath)
+		      doc = doc.ErrorResponse(403, ClientRequest.Path.LocalPath)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
-		      doc = New VirtualResponse("/", Location)
+		      doc = doc.Redirector("/", Location)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
@@ -32,7 +32,7 @@ Inherits HTTP.BaseServer
 		        doc = New DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
-		        doc = New FileResponse(item, ClientRequest.Path.LocalPath + args)
+		        doc = doc.FromFile(item, ClientRequest.Path.LocalPath + args)
 		      End If
 		    End If
 		  End Select
@@ -74,7 +74,7 @@ Inherits HTTP.BaseServer
 		  "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
 		  
 		  For Each img As String In icons.Keys
-		    Dim icon As StaticResponse
+		    Dim icon As HTTPParse.Response
 		    Dim p As Picture
 		    #If RBVersion >= 2011.4 Then
 		      App.UseGDIPlus = True
@@ -86,7 +86,7 @@ Inherits HTTP.BaseServer
 		    p.Graphics.DrawPicture(icons.Value(img), 0, 0)
 		    Dim tmp As FolderItem = GetTemporaryFolderItem
 		    p.Save(tmp, Picture.SaveAsPNG)
-		    icon = New StaticResponse(tmp, img)
+		    icon = icon.FromFile(tmp, img)
 		    #If GZIPAvailable Then
 		      icon.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
@@ -98,25 +98,38 @@ Inherits HTTP.BaseServer
 		      Catch Error
 		        'Just send the uncompressed data
 		      End Try
-		      icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
 		    #endif
+		    icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
 		    icon.MIMEType = New ContentType("image/png")
 		    icon.StatusCode = 200
-		    'icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
+		    icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
 		    icon.FromCache = True
-		    AddRedirect(icon)
+		    icon.Path = img
+		    GlobalRedirects.Value(img) = icon
+		    'AddRedirect(icon)
 		  Next
 		  
-		  
-		  Dim redirect As New VirtualResponse("/bs", "http://www.boredomsoft.org")
+		  Dim redirect As HTTPParse.Response
+		  redirect = redirect.Redirector("/bs", "http://www.boredomsoft.org")
 		  redirect.FromCache = True
 		  Me.AddRedirect(redirect)
 		  
 		  If Not GlobalRedirects.HasKey("/robots.txt") Then
-		    Dim doc As New ErrorResponse(200, "")
+		    Dim doc As HTTPParse.Response
+		    doc = doc.ErrorResponse(200, "")
 		    doc.Path = "/robots.txt"
 		    doc.MIMEType = New ContentType("text/html")
 		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
+		    doc.FromCache = True
+		    AddRedirect(doc)
+		  End If
+		  
+		  If Not GlobalRedirects.HasKey("/favicon.ico") Then
+		    Dim doc As HTTPParse.Response
+		    doc = doc.ErrorResponse(200, "")
+		    doc.Path = "/favicon.ico"
+		    doc.MIMEType = New ContentType("image/x-icon")
+		    doc.MessageBody = favicon
 		    doc.FromCache = True
 		    AddRedirect(doc)
 		  End If
@@ -191,6 +204,13 @@ Inherits HTTP.BaseServer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AllowPipeLinedRequests"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			InheritedFrom="HTTP.BaseServer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRealm"
 			Visible=true

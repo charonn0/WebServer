@@ -1,42 +1,87 @@
 #tag Class
 Protected Class Response
 Inherits HTTPParse.HTTPMessage
-	#tag Method, Flags = &h1000
-		Sub Constructor(Length As Integer, Type As ContentType)
-		  Me.SetHeader("Content-Type", Type.ToString)
-		  Me.SetHeader("Content-Length", Str(Length))
-		  Me.SetHeader("Server", HTTP.DaemonVersion)
-		  Me.SetHeader("Content-Encoding", "Identity")
+	#tag Method, Flags = &h1001
+		Protected Sub Constructor(ResponseCode As Integer, Type As ContentType, Method As HTTP.RequestMethod, Body As String = "")
+		  Me.StatusCode = ResponseCode
 		  Me.MIMEType = Type
+		  Me.Method = Method
+		  Me.MessageBody = body
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(Data As String, AuthRealm As String, RequireDigestAuth As Boolean)
-		  Dim body As Integer = InStr(data, CRLF + CRLF)
-		  Me.MessageBody = Right(data, data.Len - body)
-		  'NthField(data, CRLF + CRLF, 2)
-		  data = Replace(data, Me.MessageBody, "").Trim
+	#tag Method, Flags = &h1000
+		Sub Constructor(Raw As String)
+		  Dim body As Integer = InStr(raw, CRLF + CRLF)
+		  Me.MessageBody = Right(raw, raw.Len - body)
+		  raw = Replace(raw, Me.MessageBody, "").Trim
 		  Dim line As String
-		  line = NthField(data, CRLF, 1)
-		  data = Replace(data, line + CRLF, "")
-		  data = Replace(data, Me.MessageBody, "")
-		  Me.Headers = New Headers(data)
+		  line = NthField(raw, CRLF, 1)
+		  raw = Replace(raw, line + CRLF, "")
+		  raw = Replace(raw, Me.MessageBody, "")
+		  Me.Headers = New Headers(raw)
 		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
 		  Me.StatusCode = Val(NthField(line, " ", 2))
 		  Me.StatusMessage = HTTPCodeToMessage(Me.StatusCode)
-		  Me.AuthRealm = AuthRealm
-		  Me.AuthSecure = RequireDigestAuth
-		  'If Me.GetHeader("Content-Encoding") = "gzip" Then
-		  'Me.GZipped = True
-		  '#If GZIPAvailable Then
-		  'Me.MessageBody = GunZipPage(Me.MessageBody)
-		  'Break
-		  '#endif
-		  'End If
+		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function CopyDoc(CachedPage As HTTPParse.Response, Path As String) As HTTPParse.Response
+		  'Use this constructor to create a document from another document
+		  Dim rply As HTTPParse.Response = NewResponse("")
+		  rply.MessageBody = CachedPage.MessageBody
+		  rply.StatusCode = 200
+		  rply.Path = Path
+		  rply.MIMEType = CachedPage.MIMEType
+		  rply.Headers = CachedPage.Headers
+		  rply.Expires = CachedPage.Expires
+		  
+		  Return rply
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function ErrorResponse(ErrorCode As Integer, Param As String) As HTTPParse.Response
+		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
+		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
+		  Dim rply As HTTPParse.Response = NewResponse("")
+		  rply.StatusCode = ErrorCode
+		  Dim data As String = ErrorPage(ErrorCode, Param)
+		  rply.SetHeader("Content-Length", Str(data.LenB))
+		  rply.MIMEType = New ContentType("text/html")
+		  rply.StatusCode = ErrorCode
+		  rply.MessageBody = data
+		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
+		  Return rply
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function FromFile(page As FolderItem, Path As String) As HTTPParse.Response
+		  'Use this constructor to create a Document from a FolderItem (file or directory)
+		  Dim rply As HTTPParse.Response = NewResponse("")
+		  If Not page.Directory Then
+		    Dim bs As BinaryStream = BinaryStream.Open(page)
+		    rply.MessageBody = bs.Read(bs.Length)
+		    bs.Close
+		    rply.MIMEType = New ContentType(page)
+		  End If
+		  rply.SetHeader("Content-Length", Str(rply.MessageBody.LenB))
+		  If rply.MIMEType = Nil Then
+		    rply.MIMEType = New ContentType("text/html")
+		  End If
+		  rply.StatusCode = 200
+		  rply.Path = Path
+		  Dim d As New Date
+		  d.TotalSeconds = d.TotalSeconds + 601
+		  rply.Expires = d
+		  Return rply
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -71,10 +116,45 @@ Inherits HTTPParse.HTTPMessage
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1000
+		 Shared Function NewResponse(Raw As String = "") As HTTPParse.Response
+		  Return New HTTPParse.Response(Raw)
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function Redirector(Path As String, RedirectURL As String) As HTTPParse.Response
+		  'Use this constructor to create a 302 redirect Document
+		  Dim rply As HTTPParse.Response = NewResponse("")
+		  rply.StatusCode = 302
+		  rply.Path = Path
+		  rply.SetHeader("Location", RedirectURL)
+		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
+		  rply.MessageBody = ErrorPage(302, RedirectURL)
+		  rply.MIMEType = New ContentType("text/html")
+		  If rply.MIMEType = Nil Then
+		    rply.MIMEType = New ContentType("text/html")
+		  End If
+		  Return rply
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ToString() As String
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Super.ToString
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function Virtual(VirtualURL As String) As HTTPParse.Response
+		  'Use this constructor to create a 302 redirect Document
+		  Dim rply As HTTPParse.Response = NewResponse("")
+		  rply.StatusCode = 200
+		  rply.Path = VirtualURL
+		  Return rply
 		End Function
 	#tag EndMethod
 
