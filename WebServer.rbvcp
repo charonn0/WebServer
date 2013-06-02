@@ -44,6 +44,7 @@ Class=DirectoryIndex;HTTPParse/DirectoryIndex.rbbas;&h281017FF;&h487CC7FF;false
 Window=CertificateEntry;CertificateEntry.rbfrm;&h36516FFF;&h0;false
 Class=URI;HTTPParse/URI.rbbas;&h5AE6DFFF;&h487CC7FF;false
 Folder=MIMEIcons;MIMEIcons;&h2A028FFF;&h0;false
+RawData=favicon;MIMEIcons/favicon.ico;&h3A0D7FF;&h2A028FFF;false
 Picture=MIMEbin;MIMEIcons/MIMEbin.png;&h25AA4FFF;&h2A028FFF;false;1;&h0
 Picture=MIMEcss;MIMEIcons/MIMEcss.png;&h204BC7FF;&h2A028FFF;false;1;&h0
 Picture=MIMEdir;MIMEIcons/MIMEdir.png;&h77254FFF;&h2A028FFF;false;1;&h0
