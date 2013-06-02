@@ -126,10 +126,12 @@ Inherits HTTP.BaseServer
 		  
 		  If Not GlobalRedirects.HasKey("/favicon.ico") Then
 		    Dim doc As HTTPParse.Response
-		    doc = doc.ErrorResponse(200, "")
-		    doc.Path = "/favicon.ico"
+		    Dim tmp As FolderItem = GetTemporaryFolderItem()
+		    Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
+		    bs.Write(favicon)
+		    bs.Close
+		    doc = doc.FromFile(tmp, "/favicon.ico")
 		    doc.MIMEType = New ContentType("image/x-icon")
-		    doc.MessageBody = favicon
 		    doc.FromCache = True
 		    AddRedirect(doc)
 		  End If
