@@ -65,7 +65,6 @@ Picture=MIMEzip;MIMEIcons/MIMEzip.png;&h1E8E0FFF;&h2A028FFF;false;1;&h0
 Picture=sortIcon;MIMEIcons/sortIcon.png;&h54F68FFF;&h2A028FFF;false;0;&h0
 Picture=sortupIcon;MIMEIcons/sortupIcon.png;&h767D9FFF;&h2A028FFF;false;0;&h0
 Picture=upIcon;MIMEIcons/upIcon.png;&h103447FF;&h2A028FFF;false;0;&h0
-RawData=favicon;MIMEIcons/favicon.ico;&h5C345FFF;&h2A028FFF;false
 DefaultWindow=FileServerDemo
 MajorVersion=1
 MinorVersion=0
