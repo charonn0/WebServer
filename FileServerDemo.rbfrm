@@ -709,7 +709,7 @@ Begin Window FileServerDemo
       LockBottom      =   ""
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   ""
+      LockRight       =   True
       LockTop         =   True
       Mask            =   ""
       Password        =   ""
@@ -745,8 +745,8 @@ Begin Window FileServerDemo
       Left            =   739
       LockBottom      =   ""
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   ""
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   0
       TabIndex        =   24
@@ -884,15 +884,19 @@ End
 		  'Me.AddRow(Format(i, "-0"))
 		  'Next
 		  'Me.ListIndex = 3
+		  Me.AddRow("Off")
+		  Me.RowTag(0) = 3
+		  Me.AddRow("Errors Only")
+		  Me.RowTag(1) = 2
 		  Me.AddRow("Normal")
-		  Me.RowTag(0) = 1
+		  Me.RowTag(2) = 1
 		  Me.AddRow("Debug")
-		  Me.RowTag(1) = -1
+		  Me.RowTag(3) = -1
 		  Me.AddRow("Trace")
-		  Me.RowTag(2) = -2
+		  Me.RowTag(4) = -2
 		  Me.AddRow("Socket")
-		  Me.RowTag(3) = -3
-		  Me.ListIndex = 1
+		  Me.RowTag(5) = -3
+		  Me.ListIndex = 2
 		End Sub
 	#tag EndEvent
 #tag EndEvents
