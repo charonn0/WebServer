@@ -1,6 +1,9 @@
 WebServer for Realbasic/REALstudio/Xojo
+
 Copyright (c)2013 Andrew Lambert
+
 http://www.boredomsoft.org/WebServer.bs
+
 
 This project implements a complete HTTP server. Primary HTTP-related logic is located in the [HTTP.BaseServer](https://github.com/charonn0/WebServer/blob/master/HTTP/BaseServer.rbbas) 
 class, which is a subclass of the built-in [ServerSocket](http://docs.realsoftware.com/index.php/ServerSocket) class. 
