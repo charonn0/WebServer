@@ -2,9 +2,9 @@
 Protected Class FileServer
 Inherits HTTP.BaseServer
 	#tag Event
-		Function HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
+		Function HandleRequest(ClientRequest As HTTP.Request) As HTTP.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
-		  Dim doc As HTTPParse.Response 'The response object
+		  Dim doc As HTTP.Response 'The response object
 		  Dim item As FolderItem = FindItem(ClientRequest.Path.LocalPath)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
@@ -38,7 +38,7 @@ Inherits HTTP.BaseServer
 		  End Select
 		  If doc <> Nil Then
 		    doc.Method = ClientRequest.Method
-		    Me.Log(doc.StatusMessage, Log_Debug)
+		    'Me.Log(HTTPReplyString(doc.StatusCode), Log_Debug)
 		  Else
 		    Me.Log("The document is Nil", Log_Debug)
 		  End If
@@ -74,7 +74,7 @@ Inherits HTTP.BaseServer
 		  "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
 		  
 		  For Each img As String In icons.Keys
-		    Dim icon As HTTPParse.Response
+		    Dim icon As HTTP.Response
 		    Dim p As Picture
 		    #If RBVersion >= 2011.4 Then
 		      App.UseGDIPlus = True
@@ -109,13 +109,13 @@ Inherits HTTP.BaseServer
 		    'AddRedirect(icon)
 		  Next
 		  
-		  Dim redirect As HTTPParse.Response
+		  Dim redirect As HTTP.Response
 		  redirect = redirect.Redirector("/bs", "http://www.boredomsoft.org")
 		  redirect.FromCache = True
 		  Me.AddRedirect(redirect)
 		  
 		  If Not GlobalRedirects.HasKey("/robots.txt") Then
-		    Dim doc As HTTPParse.Response
+		    Dim doc As HTTP.Response
 		    doc = doc.ErrorResponse(200, "")
 		    doc.Path = "/robots.txt"
 		    doc.MIMEType = New ContentType("text/html")
@@ -125,7 +125,7 @@ Inherits HTTP.BaseServer
 		  End If
 		  
 		  If Not GlobalRedirects.HasKey("/favicon.ico") Then
-		    Dim doc As HTTPParse.Response
+		    Dim doc As HTTP.Response
 		    Dim tmp As FolderItem = GetTemporaryFolderItem()
 		    Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
 		    bs.Write(favicon)

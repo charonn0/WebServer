@@ -9,7 +9,7 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub Constructor(UseSessions As Boolean = False)
-		  'Construct an empty HTTPParse.Request
+		  'Construct an empty HTTP.Request
 		  If Not UseSessions Then Me.SessionID = "NO_SESSION"
 		End Sub
 	#tag EndMethod

@@ -24,15 +24,13 @@ Inherits HTTPParse.HTTPMessage
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
 		  Me.StatusCode = Val(NthField(line, " ", 2))
-		  Me.StatusMessage = HTTPCodeToMessage(Me.StatusCode)
-		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function CopyDoc(CachedPage As HTTPParse.Response, Path As String) As HTTPParse.Response
+		 Shared Function CopyDoc(CachedPage As HTTP.Response, Path As String) As HTTP.Response
 		  'Use this constructor to create a document from another document
-		  Dim rply As HTTPParse.Response = NewResponse("")
+		  Dim rply As HTTP.Response = NewResponse("")
 		  rply.MessageBody = CachedPage.MessageBody
 		  rply.StatusCode = 200
 		  rply.Path = Path
@@ -45,10 +43,10 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function ErrorResponse(ErrorCode As Integer, Param As String) As HTTPParse.Response
+		 Shared Function ErrorResponse(ErrorCode As Integer, Param As String) As HTTP.Response
 		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
 		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
-		  Dim rply As HTTPParse.Response = NewResponse("")
+		  Dim rply As HTTP.Response = NewResponse("")
 		  rply.StatusCode = ErrorCode
 		  Dim data As String = ErrorPage(ErrorCode, Param)
 		  rply.SetHeader("Content-Length", Str(data.LenB))
@@ -62,9 +60,9 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function FromFile(page As FolderItem, Path As String) As HTTPParse.Response
+		 Shared Function FromFile(page As FolderItem, Path As String) As HTTP.Response
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
-		  Dim rply As HTTPParse.Response = NewResponse("")
+		  Dim rply As HTTP.Response = NewResponse("")
 		  If Not page.Directory Then
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    rply.MessageBody = bs.Read(bs.Length)
@@ -117,17 +115,17 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h1000
-		 Shared Function NewResponse(Raw As String = "") As HTTPParse.Response
-		  Return New HTTPParse.Response(Raw)
+		 Shared Function NewResponse(Raw As String = "") As HTTP.Response
+		  Return New HTTP.Response(Raw)
 		  
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function Redirector(Path As String, RedirectURL As String) As HTTPParse.Response
+		 Shared Function Redirector(Path As String, RedirectURL As String) As HTTP.Response
 		  'Use this constructor to create a 302 redirect Document
-		  Dim rply As HTTPParse.Response = NewResponse("")
+		  Dim rply As HTTP.Response = NewResponse("")
 		  rply.StatusCode = 302
 		  rply.Path = Path
 		  rply.SetHeader("Location", RedirectURL)
@@ -149,9 +147,9 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function Virtual(VirtualURL As String) As HTTPParse.Response
+		 Shared Function Virtual(VirtualURL As String) As HTTP.Response
 		  'Use this constructor to create a 302 redirect Document
-		  Dim rply As HTTPParse.Response = NewResponse("")
+		  Dim rply As HTTP.Response = NewResponse("")
 		  rply.StatusCode = 200
 		  rply.Path = VirtualURL
 		  Return rply
@@ -212,6 +210,10 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mStatusMessage As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTrueMethodName As String
 	#tag EndProperty
 
@@ -219,9 +221,14 @@ Inherits HTTPParse.HTTPMessage
 		StatusCode As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return HTTPCodeToMessage(Me.StatusCode)
+			End Get
+		#tag EndGetter
 		StatusMessage As String
-	#tag EndProperty
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

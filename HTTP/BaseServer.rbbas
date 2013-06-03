@@ -41,7 +41,7 @@ Inherits ServerSocket
 
 
 	#tag Method, Flags = &h0
-		Sub AddRedirect(Page As HTTPParse.Response)
+		Sub AddRedirect(Page As HTTP.Response)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Add redirect for " + page.Path.LocalPath, Log_Debug)
 		  Redirects.Value(page.Path.LocalPath) = Page
@@ -69,11 +69,11 @@ Inherits ServerSocket
 		    data = Sender.ReadAll
 		  End If
 		  
-		  Dim clientrequest As HTTPParse.Request
-		  Dim doc As HTTPParse.Response
+		  Dim clientrequest As HTTP.Request
+		  Dim doc As HTTP.Response
 		  Dim session As HTTP.Session
 		  Try
-		    clientrequest = New HTTPParse.Request(data, UseSessions)
+		    clientrequest = New HTTP.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
 		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
@@ -90,7 +90,7 @@ Inherits ServerSocket
 		    
 		    
 		    
-		    Dim tmp As HTTPParse.Request = clientrequest
+		    Dim tmp As HTTP.Request = clientrequest
 		    If TamperRequest(tmp) Then
 		      clientrequest = tmp
 		    End If
@@ -110,7 +110,7 @@ Inherits ServerSocket
 		    End If
 		    
 		    
-		    Dim cache As HTTPParse.Response
+		    Dim cache As HTTP.Response
 		    If UseSessions Then
 		      If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
 		        Select Case clientrequest.CacheDirective
@@ -122,7 +122,7 @@ Inherits ServerSocket
 		        cache = GetCache(Session, clientRequest.Path.LocalPath)
 		      End If
 		    End If
-		    Dim redir As HTTPParse.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
+		    Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -225,7 +225,7 @@ Inherits ServerSocket
 		Exception Err
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
-		  Dim errpage As HTTPParse.Response
+		  Dim errpage As HTTP.Response
 		  Dim stack As String
 		  #If DebugBuild Then
 		    If UBound(Err.Stack) <= -1 Then
@@ -247,7 +247,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetCache(Sender As HTTP.Session, Path As String) As HTTPParse.Response
+		Private Function GetCache(Sender As HTTP.Session, Path As String) As HTTP.Response
 		  Dim logID As String = "(NO_SESSION)"
 		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
@@ -262,7 +262,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTPParse.Response
+		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTP.Response
 		  If Sender <> Nil Then
 		    'If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
 		    Dim logID As String = "(NO_SESSION)"
@@ -367,7 +367,7 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SendResponse(Socket As SSLSocket, ResponseDocument As HTTPParse.Response)
+		Private Sub SendResponse(Socket As SSLSocket, ResponseDocument As HTTP.Response)
 		  Dim logID As String = "(NO_SESSION)"
 		  Dim session As HTTP.Session
 		  If UseSessions Then
@@ -375,7 +375,7 @@ Inherits ServerSocket
 		    logID = "(" + Session.SessionID + ")"
 		  End If
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
-		  Dim tmp As HTTPParse.Response = ResponseDocument
+		  Dim tmp As HTTP.Response = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
@@ -475,11 +475,11 @@ Inherits ServerSocket
 
 
 	#tag Hook, Flags = &h0
-		Event Authenticate(ClientRequest As HTTPParse.Request) As Boolean
+		Event Authenticate(ClientRequest As HTTP.Request) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event HandleRequest(ClientRequest As HTTPParse.Request) As HTTPParse.Response
+		Event HandleRequest(ClientRequest As HTTP.Request) As HTTP.Response
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -487,11 +487,11 @@ Inherits ServerSocket
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperRequest(ByRef Request As HTTPParse.Request) As Boolean
+		Event TamperRequest(ByRef Request As HTTP.Request) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TamperResponse(ByRef Response As HTTPParse.Response) As Boolean
+		Event TamperResponse(ByRef Response As HTTP.Response) As Boolean
 	#tag EndHook
 
 

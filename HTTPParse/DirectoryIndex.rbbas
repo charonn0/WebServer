@@ -1,6 +1,6 @@
 #tag Class
 Class DirectoryIndex
-Inherits HTTPParse.Response
+Inherits HTTP.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
 		  Me.Target = Target

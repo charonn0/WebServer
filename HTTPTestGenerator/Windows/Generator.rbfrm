@@ -1152,7 +1152,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Generate()
 		  mTheURL = Nil
-		  Me.Request = New HTTPParse.Request()
+		  Me.Request = New HTTP.Request()
 		  Me.Request.Method = HTTPMethod(Me.RequestMethod.Text)
 		  If Me.Request.Method = HTTP.RequestMethod.InvalidMethod Then Me.Request.MethodName = Me.RequestMethod.Text
 		  Me.Request.Path = theURL.LocalPath
@@ -1194,7 +1194,7 @@ End
 
 	#tag Method, Flags = &h1000
 		Sub Update(Raw As String)
-		  Response = New HTTPParse.Response(Raw)
+		  Response = New HTTP.Response(Raw)
 		  Code.Text = Str(Response.StatusCode)'NthField(response, " ", 2)
 		  Select Case Response.StatusCode
 		  Case 200
@@ -1209,7 +1209,7 @@ End
 		    
 		  End Select
 		  ResponseHeaders.DeleteAllRows
-		  CodeName.Text = Response.StatusMessage
+		  CodeName.Text = HTTP.HTTPCodeToMessage(Response.StatusCode)
 		  For i As Integer = 0 To Response.Headers.Count - 1
 		    Dim n, v As String
 		    n = Response.Headers.Name(i)
@@ -1249,11 +1249,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Request As HTTPParse.Request
+		Request As HTTP.Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Response As HTTPParse.Response
+		Response As HTTP.Response
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

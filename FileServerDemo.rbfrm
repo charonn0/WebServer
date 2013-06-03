@@ -573,6 +573,7 @@ Begin Window FileServerDemo
       Width           =   175
    End
    Begin HTTP.FileServer Sock
+      AllowPipeLinedRequests=   True
       AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
       DirectoryBrowsing=   True
@@ -1082,7 +1083,7 @@ End
 #tag EndEvents
 #tag Events Sock
 	#tag Event
-		Function Authenticate(ClientRequest As HTTPParse.Request) As Boolean
+		Function Authenticate(ClientRequest As HTTP.Request) As Boolean
 		  Return Username.Text  = ClientRequest.AuthUsername And Password.Text = ClientRequest.AuthPassword 'And realmtext.Text = ClientRequest.AuthRealm
 		End Function
 	#tag EndEvent
@@ -1093,7 +1094,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function TamperResponse(ByRef Response As HTTPParse.Response) As Boolean
+		Function TamperResponse(ByRef Response As HTTP.Response) As Boolean
 		  If Response.StatusCode = 200 Then
 		    Response.SetHeader("X-Judgement-Render", "Your request is granted.")
 		  ElseIf Response.StatusCode = 302 Then

@@ -183,7 +183,7 @@ Protected Class HTTPMessage
 		  If Not HeadersOnly Then data = Me.MessageBody
 		  SetHeader("Content-Type", Me.MIMEType.ToString)
 		  If Headers.Count > 0 Then
-		    If Me IsA HTTPParse.Request Then
+		    If Me IsA HTTP.Request Then
 		      data = Me.Headers.Source + CRLF + CRLF + data
 		    Else
 		      data = Me.Headers.Source(True) + CRLF + CRLF + data
