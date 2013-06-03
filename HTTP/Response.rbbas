@@ -30,7 +30,7 @@ Inherits HTTPParse.HTTPMessage
 	#tag Method, Flags = &h0
 		 Shared Function CopyDoc(CachedPage As HTTP.Response, Path As String) As HTTP.Response
 		  'Use this constructor to create a document from another document
-		  Dim rply As HTTP.Response = NewResponse("")
+		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.MessageBody = CachedPage.MessageBody
 		  rply.StatusCode = 200
 		  rply.Path = Path
@@ -43,10 +43,10 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function ErrorResponse(ErrorCode As Integer, Param As String) As HTTP.Response
+		 Shared Function GetErrorResponse(ErrorCode As Integer, Param As String) As HTTP.Response
 		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
 		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
-		  Dim rply As HTTP.Response = NewResponse("")
+		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = ErrorCode
 		  Dim data As String = ErrorPage(ErrorCode, Param)
 		  rply.SetHeader("Content-Length", Str(data.LenB))
@@ -60,9 +60,9 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function FromFile(page As FolderItem, Path As String) As HTTP.Response
+		 Shared Function GetFileResponse(page As FolderItem, Path As String) As HTTP.Response
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
-		  Dim rply As HTTP.Response = NewResponse("")
+		  Dim rply As HTTP.Response = GetNewResponse("")
 		  If Not page.Directory Then
 		    Dim bs As BinaryStream = BinaryStream.Open(page)
 		    rply.MessageBody = bs.Read(bs.Length)
@@ -78,6 +78,31 @@ Inherits HTTPParse.HTTPMessage
 		  Dim d As New Date
 		  d.TotalSeconds = d.TotalSeconds + 601
 		  rply.Expires = d
+		  Return rply
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1000
+		 Shared Function GetNewResponse(Raw As String = "") As HTTP.Response
+		  Return New HTTP.Response(Raw)
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function GetRedirectResponse(Path As String, RedirectURL As String) As HTTP.Response
+		  'Use this constructor to create a 302 redirect Document
+		  Dim rply As HTTP.Response = GetNewResponse("")
+		  rply.StatusCode = 302
+		  rply.Path = Path
+		  rply.SetHeader("Location", RedirectURL)
+		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
+		  rply.MessageBody = ErrorPage(302, RedirectURL)
+		  rply.MIMEType = New ContentType("text/html")
+		  If rply.MIMEType = Nil Then
+		    rply.MIMEType = New ContentType("text/html")
+		  End If
 		  Return rply
 		End Function
 	#tag EndMethod
@@ -114,31 +139,6 @@ Inherits HTTPParse.HTTPMessage
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1000
-		 Shared Function NewResponse(Raw As String = "") As HTTP.Response
-		  Return New HTTP.Response(Raw)
-		  
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		 Shared Function Redirector(Path As String, RedirectURL As String) As HTTP.Response
-		  'Use this constructor to create a 302 redirect Document
-		  Dim rply As HTTP.Response = NewResponse("")
-		  rply.StatusCode = 302
-		  rply.Path = Path
-		  rply.SetHeader("Location", RedirectURL)
-		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
-		  rply.MessageBody = ErrorPage(302, RedirectURL)
-		  rply.MIMEType = New ContentType("text/html")
-		  If rply.MIMEType = Nil Then
-		    rply.MIMEType = New ContentType("text/html")
-		  End If
-		  Return rply
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ToString() As String
 		  Return HTTPReplyString(Me.StatusCode) + CRLF + Super.ToString(False)
@@ -146,10 +146,10 @@ Inherits HTTPParse.HTTPMessage
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		 Shared Function Virtual(VirtualURL As String) As HTTP.Response
+	#tag Method, Flags = &h21
+		Private Shared Function Virtual(VirtualURL As String) As HTTP.Response
 		  'Use this constructor to create a 302 redirect Document
-		  Dim rply As HTTP.Response = NewResponse("")
+		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = 200
 		  rply.Path = VirtualURL
 		  Return rply

@@ -7,24 +7,6 @@ Inherits HTTP.ScriptResponse
 		End Function
 	#tag EndEvent
 
-	#tag Event
-		Sub ScriptError(Line As Integer, Code As Integer, RuntimeError As Boolean, Stack() As String)
-		  Break
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function ScriptInput(Prompt As String) As String
-		  Break
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub ScriptPrint(Data As String)
-		  Break
-		End Sub
-	#tag EndEvent
-
 
 	#tag ViewBehavior
 		#tag ViewProperty

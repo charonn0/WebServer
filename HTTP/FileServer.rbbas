@@ -11,16 +11,16 @@ Inherits HTTP.BaseServer
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = doc.ErrorResponse(404, ClientRequest.Path.LocalPath)
+		      doc = doc.GetErrorResponse(404, ClientRequest.Path.LocalPath)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = doc.ErrorResponse(403, ClientRequest.Path.LocalPath)
+		      doc = doc.GetErrorResponse(403, ClientRequest.Path.LocalPath)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
-		      doc = doc.Redirector("/", Location)
+		      doc = doc.GetRedirectResponse("/", Location)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
@@ -32,7 +32,7 @@ Inherits HTTP.BaseServer
 		        doc = New DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
-		        doc = doc.FromFile(item, ClientRequest.Path.LocalPath + args)
+		        doc = doc.GetFileResponse(item, ClientRequest.Path.LocalPath + args)
 		      End If
 		    End If
 		  End Select
@@ -86,7 +86,7 @@ Inherits HTTP.BaseServer
 		    p.Graphics.DrawPicture(icons.Value(img), 0, 0)
 		    Dim tmp As FolderItem = GetTemporaryFolderItem
 		    p.Save(tmp, Picture.SaveAsPNG)
-		    icon = icon.FromFile(tmp, img)
+		    icon = icon.GetFileResponse(tmp, img)
 		    #If GZIPAvailable Then
 		      icon.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
@@ -110,12 +110,12 @@ Inherits HTTP.BaseServer
 		  Next
 		  
 		  Dim redirect As HTTP.Response
-		  redirect = redirect.Redirector("/bs", "http://www.boredomsoft.org")
+		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
 		  redirect.FromCache = True
 		  Me.AddRedirect(redirect)
 		  
 		  Dim doc As HTTP.Response
-		  doc = doc.ErrorResponse(200, "")
+		  doc = doc.GetErrorResponse(200, "")
 		  doc.Path = "/robots.txt"
 		  doc.MIMEType = New ContentType("text/html")
 		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
@@ -126,7 +126,7 @@ Inherits HTTP.BaseServer
 		  Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
 		  bs.Write(favicon)
 		  bs.Close
-		  doc = doc.FromFile(tmp, "/favicon.ico")
+		  doc = doc.GetFileResponse(tmp, "/favicon.ico")
 		  doc.MIMEType = New ContentType("image/x-icon")
 		  doc.FromCache = True
 		  AddRedirect(doc)

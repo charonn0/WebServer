@@ -13,7 +13,6 @@ Protected Class Session
 
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTP.Response)
-		  // Part of the Redirector interface.
 		  Me.Redirects.Value(Page.Path.LocalPath) = Page
 		  
 		  
@@ -104,7 +103,6 @@ Protected Class Session
 
 	#tag Method, Flags = &h0
 		Sub RemoveRedirect(HTTPpath As String)
-		  // Part of the Redirector interface.
 		  If Redirects.HasKey(HTTPpath) Then
 		    Redirects.Remove(HTTPpath)
 		  End If
