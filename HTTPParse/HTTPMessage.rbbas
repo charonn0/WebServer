@@ -119,18 +119,6 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Method() As HTTP.RequestMethod
-		  Return mRequestMethod
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Method(Assigns NewMethod As HTTP.RequestMethod)
-		  mRequestMethod = NewMethod
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function MethodName() As String
 		  If Me.Method <> RequestMethod.InvalidMethod Then
 		    Return HTTPMethodName(Me.Method)
@@ -237,6 +225,10 @@ Protected Class HTTPMessage
 		MessageBody As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		Method As HTTP.RequestMethod
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mHeaders As Headers
 	#tag EndProperty
@@ -265,10 +257,6 @@ Protected Class HTTPMessage
 
 	#tag Property, Flags = &h21
 		Private mMIMEType As ContentType
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRequestMethod As HTTP.RequestMethod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

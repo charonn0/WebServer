@@ -61,6 +61,14 @@ Protected Module HTTP
 		      end if
 		      func = func.ReplaceAll( "#", "" )
 		      
+		    ElseIf func.InStr( "!" ) > 0 Then
+		      if returnType = "" Then
+		        sig = "Shared Sub"
+		      Else
+		        sig = "Shared Function"
+		      end if
+		      func = func.ReplaceAll( "!", "" )
+		      
 		    Elseif returnType = "" Then
 		      sig = "Sub"
 		      

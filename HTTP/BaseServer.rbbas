@@ -225,20 +225,25 @@ Inherits ServerSocket
 		  If Err IsA EndException Or Err IsA ThreadEndException Then Raise Err
 		  'Return an HTTP 500 Internal Server Error page.
 		  Dim errpage As HTTP.Response
-		  Dim stack As String
+		  Dim htmlstack, logstack, funcName As String
 		  #If DebugBuild Then
-		    If UBound(Err.Stack) <= -1 Then
-		      stack = "<br />(empty)<br />"
+		    Dim s() As String = Err.CleanStack
+		    funcName = Introspection.GetType(Err).FullName
+		    If UBound(s) <= -1 Then
+		      htmlstack = "<br />(empty)<br />"
+		      logstack = "    (empty)" + EndOfLine
 		    Else
-		      stack = Join(Err.CleanStack, "<br />")
+		      htmlstack = Join(s, "<br />    ")
+		      logstack = Join(s, EndOfLine + "    ")
 		    End If
-		    stack = "<b>Exception<b>: " + Introspection.GetType(Err).FullName + "<br />Error Number: " + Str(Err.ErrorNumber) + "<br />Message: " + Err.Message _
-		    + "<br />Stack follows:<blockquote>" + stack + "</blockquote>" + EndOfLine
-		    Dim logtxt As String = "Exception: " + Introspection.GetType(Err).FullName + EndOfLine + "Error Number: " + Str(Err.ErrorNumber) + EndOfLine + "Message: " + Err.Message _
-		    + EndOfLine + "Stack follows:" + EndOfLine + Join(Err.Stack, EndOfLine)
-		    Me.Log(logtxt , Log_Error)
+		    htmlstack = "<b>Exception<b>: " + funcName + "<br />Error Number: " + Str(Err.ErrorNumber) + "<br />Message: " _
+		    + Err.Message + "<br />Stack trace:<blockquote>    " + htmlstack + "</blockquote>" + EndOfLine
+		    
+		    logstack = "Exception: " + funcName + EndOfLine + "Error Number: " + Str(Err.ErrorNumber) + EndOfLine + "Message: " _
+		    + Err.Message + EndOfLine + "Stack trace:" + EndOfLine + "    " + logstack
 		  #endif
-		  errpage = doc.GetErrorResponse(500, stack)
+		  Me.Log("Runtime exception!" + EndOfLine + logstack , Log_Error)
+		  errpage = doc.GetErrorResponse(500, htmlstack)
 		  
 		  Me.SendResponse(Sender, errpage)
 		  
