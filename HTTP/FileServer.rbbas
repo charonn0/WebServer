@@ -135,6 +135,18 @@ Inherits HTTP.BaseServer
 		    doc.FromCache = True
 		    AddRedirect(doc)
 		  End If
+		  
+		  
+		  If Not GlobalRedirects.HasKey("/script.bas") Then
+		    Dim doc As HTTP.Response
+		    doc = New HelloWorld
+		    doc.Path = "/script.bas"
+		    doc.MIMEType = New ContentType("text/html")
+		    doc.FromCache = True
+		    AddRedirect(doc)
+		  End If
+		  
+		  
 		End Sub
 	#tag EndMethod
 

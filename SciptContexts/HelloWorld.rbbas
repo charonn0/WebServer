@@ -1,31 +1,37 @@
-#tag Interface
-Protected Interface ScriptContext
-	#tag Method, Flags = &h0
-		Function ContextComment() As String
-		  
+#tag Class
+Protected Class HelloWorld
+Inherits HTTP.ScriptResponse
+	#tag Event
+		Function GetSource() As String
+		  Return "Dim s As String" + EndOfLine + "s = ""<html><head><title>Test</title></head><body>Hello, world!</body></html>""" + EndOfLine + "MessageBody = s"
 		End Function
-	#tag EndMethod
+	#tag EndEvent
 
-	#tag Method, Flags = &h0
-		Function ContextName() As String
-		  
-		End Function
-	#tag EndMethod
+	#tag Event
+		Sub ScriptError(Line As Integer, Code As Integer, RuntimeError As Boolean, Stack() As String)
+		  Break
+		End Sub
+	#tag EndEvent
 
-	#tag Method, Flags = &h0
-		Function ContextVersion() As Single
-		  
+	#tag Event
+		Function ScriptInput(Prompt As String) As String
+		  Break
 		End Function
-	#tag EndMethod
+	#tag EndEvent
 
-	#tag Method, Flags = &h0
-		Function IsMethodAvailable(MethodName As String) As Boolean
-		  
-		End Function
-	#tag EndMethod
+	#tag Event
+		Sub ScriptPrint(Data As String)
+		  Break
+		End Sub
+	#tag EndEvent
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="HeaderLineCount"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -60,5 +66,5 @@ Protected Interface ScriptContext
 			InheritedFrom="Object"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

@@ -10,21 +10,17 @@ Inherits HTTP.Response
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1001
-		Protected Sub Constructor(Precompile As Boolean = True)
+	#tag Method, Flags = &h1000
+		Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  // Constructor(ResponseCode As Integer, Type As ContentType, Method As HTTP.RequestMethod, Body As String = "") -- From Response
 		  Super.Constructor(200, GetType("text/html"), RequestMethod.GET)
 		  Me.ScriptHost = New RbScript
-		  Me.ScriptHost.Source = RaiseEvent GetSource()
 		  Me.ScriptHost.Context = Me
 		  AddHandler ScriptHost.CompilerError, AddressOf Me.CompilerError
 		  AddHandler ScriptHost.Input, AddressOf Me.InputHandler
 		  AddHandler ScriptHost.Print, AddressOf Me.PrintHandler
 		  AddHandler ScriptHost.RuntimeError, AddressOf Me.RuntimeError
-		  If Precompile Then
-		    ScriptHost.Precompile
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -220,9 +216,17 @@ Inherits HTTP.Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetContext(NewContext As ScriptContext)
+		Sub SetContext(NewContext As Object)
 		  ScriptHost.Context = NewContext
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToString() As String
+		  Me.ScriptHost.Source = RaiseEvent GetSource()
+		  ScriptHost.Run
+		  Return Super.ToString
+		End Function
 	#tag EndMethod
 
 
