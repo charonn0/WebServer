@@ -141,7 +141,7 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
-		  Return HTTPReplyString(Me.StatusCode) + CRLF + Super.ToString
+		  Return HTTPReplyString(Me.StatusCode) + CRLF + Super.ToString(False)
 		  
 		End Function
 	#tag EndMethod

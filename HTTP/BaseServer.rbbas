@@ -386,7 +386,7 @@ Inherits ServerSocket
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
 		  If Not ResponseDocument.FromCache Then
-		    If ResponseDocument.MessageBody.LenB > 0 Then
+		    If ResponseDocument.MessageBody.LenB > 0 And Not ResponseDocument IsA ScriptResponse Then
 		      #If GZIPAvailable Then
 		        ResponseDocument.SetHeader("Content-Encoding", "gzip")
 		        Dim gz As String

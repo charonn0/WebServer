@@ -184,7 +184,7 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ToString(HeadersOnly As Boolean = False) As String
+		Protected Function ToString(HeadersOnly As Boolean) As String
 		  Dim data As String
 		  If Not HeadersOnly Then data = Me.MessageBody
 		  SetHeader("Content-Type", Me.MIMEType.ToString)

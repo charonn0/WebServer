@@ -91,7 +91,7 @@ Inherits HTTPParse.HTTPMessage
 		    Me.MessageBody = Me.MultiPart.ToString
 		    Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
 		  End If
-		  data = data + Super.ToString
+		  data = data + Super.ToString(False)
 		  
 		  Return data
 		  
