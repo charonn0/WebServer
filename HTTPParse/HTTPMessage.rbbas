@@ -84,6 +84,12 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetHeaders() As String
+		  Return Me.ToString(True)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasCookie(CookieName As String) As Boolean
 		  If GetCookie(CookieName) <> "" Then Return True
 		End Function
@@ -177,8 +183,8 @@ Protected Class HTTPMessage
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ToString(HeadersOnly As Boolean = False) As String
+	#tag Method, Flags = &h1
+		Protected Function ToString(HeadersOnly As Boolean = False) As String
 		  Dim data As String
 		  If Not HeadersOnly Then data = Me.MessageBody
 		  SetHeader("Content-Type", Me.MIMEType.ToString)
