@@ -19,7 +19,12 @@ Inherits HTTP.BaseServer
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
-		      Dim location As String = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
+		      Dim location As String
+		      If Me.ConnectionType = ConnectionTypes.Insecure Then
+		        location = "http://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
+		      Else
+		        location = "https://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
+		      End If
 		      doc = doc.GetRedirectResponse("/", Location)
 		    Else
 		      '200 OK

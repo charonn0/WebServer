@@ -495,7 +495,7 @@ Inherits ServerSocket
 
 
 	#tag Property, Flags = &h0
-		AllowPipeLinedRequests As Boolean = True
+		AllowPipeLinedRequests As Boolean = False
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
