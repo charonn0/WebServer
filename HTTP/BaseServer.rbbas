@@ -133,17 +133,13 @@ Inherits ServerSocket
 		      Me.Log("Page from cache", Log_Debug)
 		      Cache.Expires = New Date
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
-		    ElseIf doc = Nil Then
-		      doc = HandleRequest(clientrequest)
-		      If UseSessions And Session <> Nil And clientrequest.CacheDirective <> "no-store" Then
-		        Session.AddCacheItem(doc)
-		      End If
 		    End If
 		    
 		    If doc = Nil Then
 		      Me.Log("Running HandleRequest event", Log_Debug)
 		      doc = HandleRequest(clientrequest)
 		    End If
+		    
 		    If doc = Nil Then
 		      Select Case clientrequest.Method
 		      Case RequestMethod.TRACE
@@ -159,8 +155,11 @@ Inherits ServerSocket
 		        doc.SetHeader("Content-Length", "0")
 		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
 		        doc.SetHeader("Accept-Ranges", "bytes")
-		      Case RequestMethod.GET, RequestMethod.HEAD
+		      Case RequestMethod.HEAD
 		        Me.Log("Request is a HEAD", Log_Debug)
+		        doc = doc.ErrorResponse(404, clientrequest.Path.LocalPath)
+		      Case RequestMethod.GET
+		        Me.Log("Request is a GET", Log_Debug)
 		        doc = doc.ErrorResponse(404, clientrequest.Path.LocalPath)
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
