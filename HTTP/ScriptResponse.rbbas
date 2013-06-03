@@ -222,10 +222,11 @@ Inherits HTTP.Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToString() As String
+		Function ToString(HeadersOnly As Boolean = False) As String
 		  Me.ScriptHost.Source = RaiseEvent GetSource()
 		  ScriptHost.Run
-		  Return Super.ToString
+		  Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
+		  Return Super.ToString(HeadersOnly)
 		End Function
 	#tag EndMethod
 

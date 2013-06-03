@@ -114,39 +114,27 @@ Inherits HTTP.BaseServer
 		  redirect.FromCache = True
 		  Me.AddRedirect(redirect)
 		  
-		  If Not GlobalRedirects.HasKey("/robots.txt") Then
-		    Dim doc As HTTP.Response
-		    doc = doc.ErrorResponse(200, "")
-		    doc.Path = "/robots.txt"
-		    doc.MIMEType = New ContentType("text/html")
-		    doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		    doc.FromCache = True
-		    AddRedirect(doc)
-		  End If
+		  Dim doc As HTTP.Response
+		  doc = doc.ErrorResponse(200, "")
+		  doc.Path = "/robots.txt"
+		  doc.MIMEType = New ContentType("text/html")
+		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
+		  doc.FromCache = True
+		  AddRedirect(doc)
 		  
-		  If Not GlobalRedirects.HasKey("/favicon.ico") Then
-		    Dim doc As HTTP.Response
-		    Dim tmp As FolderItem = GetTemporaryFolderItem()
-		    Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
-		    bs.Write(favicon)
-		    bs.Close
-		    doc = doc.FromFile(tmp, "/favicon.ico")
-		    doc.MIMEType = New ContentType("image/x-icon")
-		    doc.FromCache = True
-		    AddRedirect(doc)
-		  End If
+		  Dim tmp As FolderItem = GetTemporaryFolderItem()
+		  Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
+		  bs.Write(favicon)
+		  bs.Close
+		  doc = doc.FromFile(tmp, "/favicon.ico")
+		  doc.MIMEType = New ContentType("image/x-icon")
+		  doc.FromCache = True
+		  AddRedirect(doc)
 		  
-		  
-		  If Not GlobalRedirects.HasKey("/script.bas") Then
-		    Dim doc As HTTP.Response
-		    doc = New HelloWorld
-		    doc.Path = "/script.bas"
-		    doc.MIMEType = New ContentType("text/html")
-		    doc.FromCache = True
-		    AddRedirect(doc)
-		  End If
-		  
-		  
+		  doc = New HelloWorld
+		  doc.Path = "/script.bas"
+		  doc.MIMEType = New ContentType("text/html")
+		  AddRedirect(doc)
 		End Sub
 	#tag EndMethod
 

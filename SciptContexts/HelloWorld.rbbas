@@ -28,9 +28,34 @@ Inherits HTTP.ScriptResponse
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="HeaderLineCount"
+			Name="AuthRealm"
 			Group="Behavior"
-			Type="Integer"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AuthSecure"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AuthUsername"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FromCache"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTP.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GZipped"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTP.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -40,6 +65,12 @@ Inherits HTTP.ScriptResponse
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="LastError"
+			Group="Behavior"
+			Type="Integer"
+			InheritedFrom="HTTP.ScriptResponse"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
@@ -47,10 +78,41 @@ Inherits HTTP.ScriptResponse
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MessageBody"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ProtocolVersion"
+			Group="Behavior"
+			Type="Single"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SessionID"
+			Group="Behavior"
+			Type="String"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatusCode"
+			Group="Behavior"
+			Type="Integer"
+			InheritedFrom="HTTP.Response"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StatusMessage"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTP.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
