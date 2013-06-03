@@ -178,7 +178,6 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Certificate"
       TextAlign       =   0
       TextColor       =   &h000000
@@ -213,7 +212,6 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "RSA Private Key Block"
       TextAlign       =   0
       TextColor       =   &h000000
@@ -248,7 +246,6 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Certificate Password"
       TextAlign       =   2
       TextColor       =   &h000000

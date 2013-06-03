@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MainWindow
+Begin Window FileServerDemo
    BackColor       =   16777215
    Backdrop        =   ""
    CloseButton     =   True
@@ -465,7 +465,7 @@ Begin Window MainWindow
       HeadingIndex    =   -1
       Height          =   379
       HelpTag         =   ""
-      Hierarchical    =   True
+      Hierarchical    =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Log Data	Date	Type"
@@ -804,18 +804,12 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected Messages() As LogMsg
+		Protected Messages() As Pair
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private SharedFile As FolderItem
 	#tag EndProperty
-
-
-	#tag Structure, Name = LogMsg, Flags = &h0
-		Severity As Integer
-		Msg As String*4086
-	#tag EndStructure
 
 
 #tag EndWindowCode
@@ -981,10 +975,12 @@ End
 #tag Events LogTimer
 	#tag Event
 		Sub Action()
+		  Dim message As String
+		  Dim severity As Integer
 		  While UBound(messages) > -1
-		    Dim msg As LogMsg
-		    Dim severity As Integer = msg.Severity
-		    Dim message As String = msg.Msg
+		    Dim p As Pair = messages.Pop
+		    message = P.Left
+		    severity = p.Right
 		    Dim lines() As String = Split(Message, EndOfLine)
 		    Dim squelch As Integer
 		    #pragma BreakOnExceptions Off
@@ -1001,12 +997,10 @@ End
 		        Case HTTP.BaseServer.Log_Request
 		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Response Then Return
 		          If i = 0 Then
-		            Listbox1.AddFolder(lines(i))
-		            Listbox1.Cell(Listbox1.LastIndex, 1) = now.ShortDate + " " + Now.LongTime
-		            Listbox1.Cell(Listbox1.LastIndex, 2) = "HTTP Request"
+		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
 		          Else
-		            Listbox1.InsertRow(Listbox1.LastIndex + 1, lines(i), 1)
+		            Listbox1.AddRow(lines(i), " ", " ")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = New Picture(greenarrowright.Width, greenarrowright.Height)
 		          End If
 		          
@@ -1095,10 +1089,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Log(Message As String, Severity As Integer)
-		  Dim msg As LogMsg
-		  msg.Severity = Severity
-		  msg.Msg = Message
-		  Messages.Insert(0, msg)
+		  Messages.Insert(0, Message:Severity)
 		  
 		End Sub
 	#tag EndEvent
