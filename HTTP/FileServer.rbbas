@@ -153,12 +153,26 @@ Inherits HTTP.BaseServer
 		  If Not DocumentRoot.Directory And "\" + DocumentRoot.Name = path Then
 		    Return DocumentRoot
 		  End If
-		  
-		  Path = ReplaceAll(DocumentRoot.AbsolutePath + Path, "\\", "\")
-		  Dim item As FolderItem = GetTrueFolderItem(Path, FolderItem.PathTypeAbsolute)
+		  #If RBVersion >= 2013 Then
+		    Path = ReplaceAll(DocumentRoot.NativePath + Path, "\\", "\")
+		  #Else
+		    Path = ReplaceAll(DocumentRoot.AbsolutePath + Path, "\\", "\")
+		  #endif
+		  Dim item As FolderItem
+		  #If RBVersion >= 2013 Then
+		    item = GetTrueFolderItem(Path, FolderItem.PathTypeNative)
+		  #Else
+		    item = GetTrueFolderItem(Path, FolderItem.PathTypeAbsolute)
+		  #endif
 		  
 		  If item <> Nil And item.Exists Then
-		    Me.Log(CurrentMethodName + " Found: '" + origpath + "' at '" + item.AbsolutePath + "'", Log_Debug)
+		    Dim nm As String
+		    #If RBVersion >= 2013 Then
+		      nm = item.NativePath
+		    #Else
+		      nm = item.AbsolutePath
+		    #endif
+		    Me.Log(CurrentMethodName + " Found: '" + origpath + "' at '" + nm + "'", Log_Debug)
 		    Return item
 		  End If
 		  
@@ -191,7 +205,13 @@ Inherits HTTP.BaseServer
 		#tag Setter
 			Set
 			  mDocumentRoot = value
-			  Me.Log(CurrentMethodName + "=" + value.AbsolutePath, Log_Trace)
+			  Dim valpath As String
+			  #If RBVersion >= 2013 Then
+			    valpath = value.NativePath
+			  #Else
+			    valpath = value.AbsolutePath
+			  #endif
+			  Me.Log(CurrentMethodName + "=" + valPath, Log_Trace)
 			End Set
 		#tag EndSetter
 		DocumentRoot As FolderItem

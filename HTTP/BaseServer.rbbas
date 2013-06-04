@@ -542,7 +542,14 @@ Inherits ServerSocket
 		#tag Setter
 			Set
 			  mCertificateFile = value
-			  Me.Log(CurrentMethodName + "=" + value.AbsolutePath, Log_Trace)
+			  Dim valpath As String
+			  #If RBVersion >= 2013 Then
+			    valpath = value.NativePath
+			  #Else
+			    valpath = value.AbsolutePath
+			  #endif
+			  
+			  Me.Log(CurrentMethodName + "=" + valPath, Log_Trace)
 			End Set
 		#tag EndSetter
 		CertificateFile As FolderItem

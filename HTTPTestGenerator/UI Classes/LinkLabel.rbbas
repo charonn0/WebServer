@@ -163,14 +163,22 @@ Inherits Label
 		    Dim scriptShell As New OLEObject("Wscript.shell")
 		    
 		    If scriptShell <> Nil then
-		      lnkObj = scriptShell.CreateShortcut(SpecialFolder.Temporary.AbsolutePath + ShortcutName + ".url")
+		      #If RBVersion >= 2013 Then
+		        lnkObj = scriptShell.CreateShortcut(SpecialFolder.Temporary.NativePath + ShortcutName + ".url")
+		      #Else
+		        lnkObj = scriptShell.CreateShortcut(SpecialFolder.Temporary.AbsolutePath + ShortcutName + ".url")
+		      #endif
 		      If lnkObj <> Nil then
 		        lnkObj.TargetPath = URL
 		        lnkObj.Save
 		        
-		        Dim optionalparams As String
-		        
-		        If IconResource <> Nil Then optionalparams = "IconFile=" + IconResource.AbsolutePath + CRLF + _
+		        Dim optionalparams, icoresourcepath As String
+		        #If RBVersion >= 2013 Then
+		          icoresourcepath = IconResource.NativePath
+		        #Else
+		          icoresourcepath = IconResource.AbsolutePath
+		        #endif
+		        If IconResource <> Nil Then optionalparams = "IconFile=" + icoresourcepath + CRLF + _
 		        "IconIndex=" + Str(IconIndex) + EndOfLine
 		        
 		        If optionalparams.Trim <> "" Then
