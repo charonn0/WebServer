@@ -213,8 +213,9 @@ Inherits HTTP.BaseServer
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="AllowPipeLinedRequests"
+			Visible=true
 			Group="Behavior"
-			InitialValue="True"
+			InitialValue="False"
 			Type="Boolean"
 			InheritedFrom="HTTP.BaseServer"
 		#tag EndViewProperty
@@ -236,8 +237,10 @@ Inherits HTTP.BaseServer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CertificatePassword"
+			Visible=true
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTP.BaseServer"
 		#tag EndViewProperty
 		#tag ViewProperty

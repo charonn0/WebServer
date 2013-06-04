@@ -60,7 +60,7 @@ Inherits ServerSocket
 		  Me.Log("Incoming data", Log_Debug)
 		  Dim data As MemoryBlock
 		  Dim la As String = Sender.Lookahead
-		  If AllowPipeLinedRequests And Left(la, 3) = "GET" or Left(la, 4) = "HEAD" Then
+		  If AllowPipeLinedRequests And (Left(la, 3) = "GET" or Left(la, 4) = "HEAD") Then
 		    Dim length As Integer = InStr(la, CRLF + CRLF)
 		    data = Sender.Read(length + 3)
 		    Me.Log("HTTP Pipelining mode is selected", Log_Debug)
@@ -732,8 +732,9 @@ Inherits ServerSocket
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="AllowPipeLinedRequests"
+			Visible=true
 			Group="Behavior"
-			InitialValue="True"
+			InitialValue="False"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -752,6 +753,7 @@ Inherits ServerSocket
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CertificatePassword"
+			Visible=true
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"

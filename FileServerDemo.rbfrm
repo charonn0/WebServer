@@ -573,9 +573,10 @@ Begin Window FileServerDemo
       Width           =   175
    End
    Begin HTTP.FileServer Sock
-      AllowPipeLinedRequests=   True
+      AllowPipeLinedRequests=   False
       AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
+      CertificatePassword=   ""
       DirectoryBrowsing=   True
       EnforceContentType=   True
       Height          =   32
