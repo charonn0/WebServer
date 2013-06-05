@@ -127,6 +127,7 @@ Inherits HTTPParse.HTTPMessage
 			Name="AuthRealm"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -139,6 +140,7 @@ Inherits HTTPParse.HTTPMessage
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -146,6 +148,7 @@ Inherits HTTPParse.HTTPMessage
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -153,18 +156,21 @@ Inherits HTTPParse.HTTPMessage
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MessageBody"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -177,12 +183,14 @@ Inherits HTTPParse.HTTPMessage
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -190,6 +198,7 @@ Inherits HTTPParse.HTTPMessage
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 	#tag EndViewBehavior

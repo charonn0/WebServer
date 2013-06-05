@@ -776,6 +776,7 @@ Inherits ServerSocket
 			Name="Index"
 			Visible=true
 			Group="ID"
+			Type="Integer"
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -805,6 +806,7 @@ Inherits ServerSocket
 			Name="Name"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -826,6 +828,7 @@ Inherits ServerSocket
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="ServerSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
