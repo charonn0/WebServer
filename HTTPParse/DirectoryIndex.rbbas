@@ -142,12 +142,12 @@ Inherits HTTP.Response
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "")
 		  End If
 		  Dim head As String = TableHeader
-		  If dir = 1 Then
+		  If dir = 0 Then
 		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sorticon.png")
-		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
+		    head = ReplaceAll(head, "%DIRECTION%", "&dir=1")
 		  Else
 		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sortup.png")
-		    head = ReplaceAll(head, "%DIRECTION%", "&dir=1")
+		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
 		  End If
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
 		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + URLDecode(RequestPath.LocalPath))
@@ -240,6 +240,7 @@ Inherits HTTP.Response
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -259,6 +260,7 @@ Inherits HTTP.Response
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -266,6 +268,7 @@ Inherits HTTP.Response
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -279,6 +282,7 @@ Inherits HTTP.Response
 			Name="Name"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -291,6 +295,7 @@ Inherits HTTP.Response
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -310,6 +315,7 @@ Inherits HTTP.Response
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -317,6 +323,7 @@ Inherits HTTP.Response
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 	#tag EndViewBehavior
