@@ -1,5 +1,5 @@
 Type=Desktop
-RBProjectVersion=2011.043
+RBProjectVersion=2013.01
 MinIDEVersion=20070100
 Class=App;App.rbbas;&h7B4387FF;&h0;false
 BuildSteps=Build Automation;Build Automation.rbbas;&h61B4F7FF;&h0;false
