@@ -244,10 +244,11 @@ Inherits HTTP.Response
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FromCache"
+			Name="Compressable"
 			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
-			InheritedFrom="HTTPParse.Response"
+			InheritedFrom="HTTP.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GZipped"

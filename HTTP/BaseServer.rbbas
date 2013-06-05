@@ -129,7 +129,7 @@ Inherits ServerSocket
 		    ElseIf cache <> Nil Then
 		      'Cache hit
 		      doc = Cache
-		      doc.FromCache = True
+		      doc.Compressable = False
 		      Me.Log("Page from cache", Log_Debug)
 		      Cache.Expires = New Date
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
@@ -389,25 +389,23 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
-		  If Not ResponseDocument.FromCache Then
-		    If ResponseDocument.MessageBody.LenB > 0 And Not ResponseDocument IsA ScriptResponse Then
-		      #If GZIPAvailable Then
-		        ResponseDocument.SetHeader("Content-Encoding", "gzip")
-		        Dim gz As String
-		        Try
-		          Dim size As Integer = ResponseDocument.MessageBody.LenB
-		          gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
-		          ResponseDocument.MessageBody = gz
-		          size = gz.LenB * 100 / size
-		          Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
-		        Catch Error
-		          'Just send the uncompressed data
-		        End Try
-		        ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
-		      #else
-		        ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		      #endif
-		    End If
+		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
+		    #If GZIPAvailable Then
+		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
+		      Dim gz As String
+		      Try
+		        Dim size As Integer = ResponseDocument.MessageBody.LenB
+		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
+		        ResponseDocument.MessageBody = gz
+		        size = gz.LenB * 100 / size
+		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
+		      Catch Error
+		        'Just send the uncompressed data
+		      End Try
+		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    #else
+		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		    #endif
 		  End If
 		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
 		    ResponseDocument.SetHeader("Connection", "keep-alive")

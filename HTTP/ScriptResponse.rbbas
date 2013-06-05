@@ -17,6 +17,7 @@ Inherits HTTP.Response
 		  Super.Constructor(200, GetType("text/html"), RequestMethod.GET)
 		  Me.ScriptHost = New RbScript
 		  Me.ScriptHost.Context = Me
+		  Me.Compressable = False
 		  AddHandler ScriptHost.CompilerError, AddressOf Me.CompilerError
 		  AddHandler ScriptHost.Input, AddressOf Me.InputHandler
 		  AddHandler ScriptHost.Print, AddressOf Me.PrintHandler
@@ -279,8 +280,9 @@ Inherits HTTP.Response
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FromCache"
+			Name="Compressable"
 			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 			InheritedFrom="HTTP.Response"
 		#tag EndViewProperty

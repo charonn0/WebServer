@@ -109,7 +109,7 @@ Inherits HTTP.BaseServer
 		      icon.MIMEType = New ContentType("image/png")
 		      icon.StatusCode = 200
 		      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
-		      icon.FromCache = True
+		      icon.Compressable = False
 		      icon.Path = img
 		      GlobalRedirects.Value(img) = icon
 		      'AddRedirect(icon)
@@ -120,7 +120,7 @@ Inherits HTTP.BaseServer
 		  
 		  Dim redirect As HTTP.Response
 		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
-		  redirect.FromCache = True
+		  redirect.Compressable = False
 		  Me.AddRedirect(redirect)
 		  
 		  Dim doc As HTTP.Response
@@ -128,7 +128,7 @@ Inherits HTTP.BaseServer
 		  doc.Path = "/robots.txt"
 		  doc.MIMEType = New ContentType("text/html")
 		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		  doc.FromCache = True
+		  doc.Compressable = False
 		  AddRedirect(doc)
 		  
 		  Dim tmp As FolderItem = GetTemporaryFolderItem()
@@ -137,7 +137,7 @@ Inherits HTTP.BaseServer
 		  bs.Close
 		  doc = doc.GetFileResponse(tmp, "/favicon.ico")
 		  doc.MIMEType = New ContentType("image/x-icon")
-		  doc.FromCache = True
+		  doc.Compressable = False
 		  AddRedirect(doc)
 		  
 		  doc = New HelloWorld

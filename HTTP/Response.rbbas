@@ -79,6 +79,13 @@ Inherits HTTPParse.HTTPMessage
 		  d.TotalSeconds = d.TotalSeconds + 601
 		  rply.Expires = d
 		  Return rply
+		  
+		Exception Err As IOException
+		  If err.Message.Trim = "" Then
+		    err.Message = "The file could not be opened for reading."
+		  End If
+		  #pragma BreakOnExceptions Off
+		  Raise Err
 		End Function
 	#tag EndMethod
 
@@ -158,7 +165,7 @@ Inherits HTTPParse.HTTPMessage
 
 
 	#tag Property, Flags = &h0
-		FromCache As Boolean
+		Compressable As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -253,8 +260,9 @@ Inherits HTTPParse.HTTPMessage
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FromCache"
+			Name="Compressable"
 			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
