@@ -51,8 +51,6 @@ Inherits HTTPParse.HTTPMessage
 		  
 		  Me.Path = New URI(NthField(line, " ", 2))
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 3).Trim, "HTTP/", ""))
-		  Me.Expires = New Date
-		  Me.Expires.TotalSeconds = Me.Expires.TotalSeconds + 60
 		  If Me.HasHeader("Authorization") Then
 		    Dim pw As String = Me.GetHeader("Authorization")
 		    pw = pw.Replace("Basic ", "")
