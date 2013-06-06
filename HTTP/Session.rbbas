@@ -5,7 +5,7 @@ Protected Class Session
 		  If Page = Nil Then Return
 		  If Page.Path = Nil Then Return
 		  If Me.Cacheable Then
-		    Me.PageCache.Value(Page.Path.LocalPath) = Page
+		    Me.PageCache.Value(Page.Path.ServerPath) = Page
 		  End If
 		  
 		End Sub
@@ -13,7 +13,7 @@ Protected Class Session
 
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTP.Response)
-		  Me.Redirects.Value(Page.Path.LocalPath) = Page
+		  Me.Redirects.Value(Page.Path.ServerPath) = Page
 		  
 		  
 		End Sub

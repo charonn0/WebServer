@@ -965,7 +965,7 @@ End
 		  Me.Request = New HTTP.Request()
 		  Me.Request.Method = HTTPMethod(Me.RequestMethod.Text)
 		  If Me.Request.Method = HTTP.RequestMethod.InvalidMethod Then Me.Request.MethodName = Me.RequestMethod.Text
-		  Me.Request.Path = theURL.LocalPath
+		  Me.Request.Path = theURL
 		  If Me.Request.path = "" Then Me.Request.path = "/"
 		  Me.Request.ProtocolVersion = CDbl(NthField(ProtocolVer.Text, "/", 2))
 		  For i As Integer = 0 To RequestHeaders.ListCount - 1

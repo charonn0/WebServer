@@ -43,8 +43,8 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTP.Response)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Add redirect for " + page.Path.LocalPath, Log_Debug)
-		  Redirects.Value(page.Path.LocalPath) = Page
+		  Me.Log("Add redirect for " + page.Path.ServerPath, Log_Debug)
+		  Redirects.Value(page.Path.ServerPath) = Page
 		End Sub
 	#tag EndMethod
 
@@ -102,7 +102,7 @@ Inherits ServerSocket
 		      Me.Log("Authenticating", Log_Debug)
 		      If Not Authenticate(clientrequest) Then
 		        Me.Log("Authentication failed", Log_Error)
-		        doc = doc.GetErrorResponse(401, clientrequest.Path.LocalPath)
+		        doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
 		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
 		      Else
 		        Me.Log("Authentication Successful", Log_Debug)
@@ -119,10 +119,10 @@ Inherits ServerSocket
 		          cache = Nil
 		        End Select
 		      Else
-		        cache = GetCache(Session, clientRequest.Path.LocalPath)
+		        cache = GetCache(Session, clientRequest.Path.ServerPath)
 		      End If
 		    End If
-		    Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.LocalPath)
+		    Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
 		    If redir <> Nil Then
 		      doc = redir
 		      Me.Log("Using redirect.", Log_Debug)
@@ -157,10 +157,10 @@ Inherits ServerSocket
 		        doc.SetHeader("Accept-Ranges", "bytes")
 		      Case RequestMethod.HEAD
 		        Me.Log("Request is a HEAD", Log_Debug)
-		        doc = doc.GetErrorResponse(404, clientrequest.Path.LocalPath)
+		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
 		      Case RequestMethod.GET
 		        Me.Log("Request is a GET", Log_Debug)
-		        doc = doc.GetErrorResponse(404, clientrequest.Path.LocalPath)
+		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
 		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented

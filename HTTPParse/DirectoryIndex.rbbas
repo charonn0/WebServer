@@ -103,7 +103,7 @@ Inherits HTTP.Response
 		    Dim line As String = TableRow
 		    Dim name, href, icon As String
 		    name = item.Name
-		    href = ReplaceAll(RequestPath.LocalPath + "/" + name, "//", "/")
+		    href = ReplaceAll(RequestPath.ServerPath + "/" + name, "//", "/")
 		    
 		    While Name.len > 40
 		      Dim start As Integer
@@ -135,8 +135,8 @@ Inherits HTTP.Response
 		    line = ReplaceAll(line, "%FILEDATE%", item.ModificationDate.ShortDate + " " + item.ModificationDate.ShortTime)
 		    lines.Append(line)
 		  Next
-		  If RequestPath.LocalPath <> "/" Then
-		    Dim s As String = RequestPath.Parent.LocalPath
+		  If RequestPath.ServerPath <> "/" Then
+		    Dim s As String = RequestPath.Parent.ServerPath
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""/" + HTTP.BaseServer.VirtualRoot + "/img/upicon.png"" width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
 		  Else
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "")
@@ -150,7 +150,7 @@ Inherits HTTP.Response
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
 		  End If
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
-		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + URLDecode(RequestPath.LocalPath))
+		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + URLDecode(RequestPath.ServerPath))
 		  If Ubound(Items) + 1 = 1 Then
 		    pagedata = Replace(pagedata, "%ITEMCOUNT%", "1 item.")
 		  Else

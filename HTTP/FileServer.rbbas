@@ -5,17 +5,17 @@ Inherits HTTP.BaseServer
 		Function HandleRequest(ClientRequest As HTTP.Request) As HTTP.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response 'The response object
-		  Dim item As FolderItem = FindItem(ClientRequest.Path.LocalPath)
+		  Dim item As FolderItem = FindItem(ClientRequest.Path.ServerPath)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)
-		      doc = doc.GetErrorResponse(404, ClientRequest.Path.LocalPath)
+		      doc = doc.GetErrorResponse(404, ClientRequest.Path.ServerPath)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
-		      doc = doc.GetErrorResponse(403, ClientRequest.Path.LocalPath)
+		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
 		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
@@ -34,10 +34,10 @@ Inherits HTTP.BaseServer
 		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
 		      End If
 		      If item.Directory Then
-		        doc = New DirectoryIndex(item, ClientRequest.Path.LocalPath + args)
+		        doc = New DirectoryIndex(item, ClientRequest.Path.ServerPath + args)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
-		        doc = doc.GetFileResponse(item, ClientRequest.Path.LocalPath + args)
+		        doc = doc.GetFileResponse(item, ClientRequest.Path.ServerPath + args)
 		      End If
 		    End If
 		  End Select

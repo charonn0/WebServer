@@ -244,7 +244,7 @@ Protected Class HTTPMessage
 		#tag Getter
 			Get
 			  If mMIMEType = Nil Then
-			    Dim s As String = NthField(Me.Path.LocalPath, "/", CountFields(Me.Path.LocalPath, "/"))
+			    Dim s As String = NthField(Me.Path.ServerPath, "/", CountFields(Me.Path.ServerPath, "/"))
 			    Dim f As FolderItem = SpecialFolder.Temporary.Child(s)
 			    mMIMEType = New ContentType(f)
 			  End If
