@@ -46,7 +46,6 @@ Begin Window CookieEdit
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Name:"
       TextAlign       =   2
       TextColor       =   &h000000
@@ -81,7 +80,6 @@ Begin Window CookieEdit
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Value:"
       TextAlign       =   2
       TextColor       =   &h000000
@@ -116,7 +114,6 @@ Begin Window CookieEdit
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Expires:"
       TextAlign       =   2
       TextColor       =   &h000000
@@ -151,7 +148,6 @@ Begin Window CookieEdit
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Path:"
       TextAlign       =   2
       TextColor       =   &h000000
@@ -186,7 +182,6 @@ Begin Window CookieEdit
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Domain:"
       TextAlign       =   2
       TextColor       =   &h000000
@@ -483,7 +478,9 @@ End
 		    CookieName.Text = Me.Cook.Name
 		    CookieValue.Text = Me.Cook.Value
 		    CookieDomain.Text = Self.Cook.Domain
-		    CookieExpiry.Text = HTTPDate(Self.Cook.Expires)
+		    If Self.Cook.Expires <> Nil Then
+		      CookieExpiry.Text = HTTPDate(Self.Cook.Expires)
+		    End If
 		    CookiePath.Text = Self.Cook.Path
 		    'Self.Cook.Port = 80
 		  End If

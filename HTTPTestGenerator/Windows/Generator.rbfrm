@@ -1,9 +1,8 @@
 #tag Window
 Begin Window Generator
-   BackColor       =   &cFFFFFF00
+   BackColor       =   "&cFFFFFF00"
    Backdrop        =   0
    CloseButton     =   True
-   Compatibility   =   ""
    Composite       =   False
    Frame           =   0
    FullScreen      =   False
@@ -44,7 +43,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -56,7 +54,7 @@ Begin Window Generator
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
+         BackColor       =   "&cFFFFFF00"
          Backdrop        =   0
          Enabled         =   True
          EraseBackground =   True
@@ -76,7 +74,6 @@ Begin Window Generator
          TabPanelIndex   =   0
          TabStop         =   True
          Top             =   204
-         Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   569
@@ -84,7 +81,7 @@ Begin Window Generator
       Begin BevelButton CookiesButton
          AcceptFocus     =   False
          AutoDeactivate  =   True
-         BackColor       =   &c00000000
+         BackColor       =   "&c00000000"
          Bevel           =   4
          Bold            =   False
          ButtonType      =   0
@@ -115,7 +112,7 @@ Begin Window Generator
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -149,7 +146,7 @@ Begin Window Generator
          TabPanelIndex   =   0
          Text            =   ""
          TextAlign       =   0
-         TextColor       =   &c0000FF00
+         TextColor       =   "&c0000FF00"
          TextFont        =   "System"
          TextSize        =   8.0
          TextUnit        =   0
@@ -162,7 +159,7 @@ Begin Window Generator
       Begin BevelButton ResponseHeaderView
          AcceptFocus     =   False
          AutoDeactivate  =   True
-         BackColor       =   &c00000000
+         BackColor       =   "&c00000000"
          Bevel           =   4
          Bold            =   False
          ButtonType      =   0
@@ -193,7 +190,7 @@ Begin Window Generator
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -223,7 +220,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -249,7 +245,7 @@ Begin Window Generator
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
-      BackColor       =   &c80808000
+      BackColor       =   "&c80808000"
       Bold            =   False
       Border          =   True
       DataField       =   ""
@@ -263,8 +259,6 @@ Begin Window Generator
       Italic          =   False
       Left            =   20
       LimitText       =   0
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -281,7 +275,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextColor       =   &cFFFFFF00
+      TextColor       =   "&cFFFFFF00"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -315,7 +309,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   "Status Code:"
       TextAlign       =   2
-      TextColor       =   &c00000000
+      TextColor       =   "&c00000000"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -349,7 +343,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   "Status Message:"
       TextAlign       =   2
-      TextColor       =   &c00000000
+      TextColor       =   "&c00000000"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -383,7 +377,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   ""
       TextAlign       =   0
-      TextColor       =   &c0000FF00
+      TextColor       =   "&c0000FF00"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -417,7 +411,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   ""
       TextAlign       =   0
-      TextColor       =   &cFF000000
+      TextColor       =   "&cFF000000"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -451,7 +445,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   "Remote IP:"
       TextAlign       =   2
-      TextColor       =   &c00000000
+      TextColor       =   "&c00000000"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -485,7 +479,7 @@ Begin Window Generator
       TabPanelIndex   =   0
       Text            =   ""
       TextAlign       =   0
-      TextColor       =   &c0000FF00
+      TextColor       =   "&c0000FF00"
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -514,7 +508,6 @@ Begin Window Generator
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -560,7 +553,7 @@ Begin Window Generator
          Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
+         BackColor       =   "&cFFFFFF00"
          Bold            =   False
          Border          =   True
          CueText         =   ""
@@ -590,7 +583,7 @@ Begin Window Generator
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -654,7 +647,7 @@ Begin Window Generator
          Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   True
-         BackColor       =   &cFFFFFF00
+         BackColor       =   "&cFFFFFF00"
          Bold            =   False
          Border          =   True
          DataField       =   ""
@@ -669,8 +662,6 @@ Begin Window Generator
          Italic          =   False
          Left            =   20
          LimitText       =   0
-         LineHeight      =   0.0
-         LineSpacing     =   1.0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -687,7 +678,7 @@ Begin Window Generator
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -700,7 +691,7 @@ Begin Window Generator
       Begin PushButton Sender
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Send"
          Default         =   False
@@ -752,7 +743,7 @@ Begin Window Generator
          TabPanelIndex   =   0
          Text            =   "Message Body:"
          TextAlign       =   0
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -798,7 +789,7 @@ Begin Window Generator
       Begin BevelButton EditCookies
          AcceptFocus     =   False
          AutoDeactivate  =   True
-         BackColor       =   &c00000000
+         BackColor       =   "&c00000000"
          Bevel           =   4
          Bold            =   False
          ButtonType      =   0
@@ -829,7 +820,7 @@ Begin Window Generator
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -842,7 +833,7 @@ Begin Window Generator
       Begin PushButton PushButton3
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "HTTP Form"
          Default         =   False
@@ -932,38 +923,6 @@ Begin Window Generator
       Width           =   560
       _ScrollWidth    =   -1
    End
-   Begin CheckBox AutoUA
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Auto User-Agent"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   349
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      State           =   1
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   -53
-      Underline       =   False
-      Value           =   True
-      Visible         =   True
-      Width           =   126
-   End
    Begin CheckBox gziprequest
       AutoDeactivate  =   True
       Bold            =   False
@@ -996,145 +955,6 @@ Begin Window Generator
       Visible         =   True
       Width           =   126
    End
-   Begin PushButton PushButton1
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "+"
-      Default         =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   -58
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   136
-      Underline       =   False
-      Visible         =   True
-      Width           =   20
-   End
-   Begin PushButton PushButton2
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "-"
-      Default         =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   -58
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   113
-      Underline       =   False
-      Visible         =   True
-      Width           =   20
-   End
-   Begin HintTextField UAString
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      HasText         =   False
-      Height          =   22
-      HelpTag         =   ""
-      HintText        =   "User-Agent String"
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   119
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   0
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   -73
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   218
-   End
-   Begin CheckBox AutoHost
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Auto Host Header"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   -7
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      State           =   0
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   -72
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   126
-   End
 End
 #tag EndWindow
 
@@ -1152,11 +972,11 @@ End
 		    Me.Request.SetHeader(RequestHeaders.Cell(i, 0), RequestHeaders.Cell(i, 1))
 		  Next
 		  
-		  If AutoHost.Value Then
+		  If Not Me.Request.HasHeader("Host") And Me.Request.ProtocolVersion >= 1.1 Then
 		    Me.Request.SetHeader("Host", theURL.FQDN)
 		  End If
 		  
-		  If Me.Request.ProtocolVersion >= 1.1 Then
+		  If Not Me.Request.HasHeader("Connection") And Me.Request.ProtocolVersion >= 1.1 Then
 		    Me.Request.SetHeader("Connection", "close")
 		  End If
 		  
@@ -1365,18 +1185,6 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
-		  'If column = 2 And row > Me.ListCount - 1 Then
-		  'g.ForeColor = &c0000FF00
-		  'g.Underline = True
-		  'Dim strHeight As Integer = g.StringHeight("Add", Len("Add"))
-		  'Dim strWidth As Double = g.StringWidth("Add")
-		  'g.DrawString("Add", g.Width - (strWidth + 5), strHeight)
-		  'Return True
-		  'End If
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function MouseDown(x As Integer, y As Integer) As Boolean
 		  Dim a, b As Integer
 		  a = Me.RowFromXY(X, Y)
@@ -1454,8 +1262,12 @@ End
 		Sub Action()
 		  Dim c As Cookie
 		  Dim editindex As Integer = -1
-		  If RequestHeaders.Cell(RequestHeaders.ListIndex, 0) = "Cookie" Then
-		    c = New Cookie(NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 1), NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), ":", 2))
+		  
+		  If RequestHeaders.ListIndex > -1 And RequestHeaders.Cell(RequestHeaders.ListIndex, 0) = "Cookie" Then
+		    Dim n, v As String
+		    n = NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), "=", 1)
+		    v = NthField(RequestHeaders.Cell(RequestHeaders.ListIndex, 1), "=", 2)
+		    c = New Cookie(n, v)
 		    editindex = RequestHeaders.ListIndex
 		  End If
 		  c = CookieEdit.GetCookie(c)
@@ -1509,274 +1321,3 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PushButton1
-	#tag Event
-		Sub Action()
-		  RequestHeaders.AddRow("New-Header-Name", "New-Header-Value", "")
-		  RequestHeaders.CellType(RequestHeaders.LastIndex, 0) = Listbox.TypeEditable
-		  RequestHeaders.EditCell(RequestHeaders.LastIndex, 0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PushButton2
-	#tag Event
-		Sub Action()
-		  If RequestHeaders.ListIndex > -1 Then
-		    RequestHeaders.RemoveRow(RequestHeaders.ListIndex)
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag ViewBehavior
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Appearance"
-		Type="Picture"
-		EditorType="Picture"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Composite"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=true
-		Group="Appearance"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		InheritedFrom="Window"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"10 - Drawer Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreen"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Position"
-		InitialValue="400"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Visible=true
-		Group="Appearance"
-		InitialValue="0"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Position"
-		InitialValue="32000"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Position"
-		InitialValue="32000"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBar"
-		Visible=true
-		Group="Appearance"
-		Type="MenuBar"
-		EditorType="MenuBar"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Position"
-		InitialValue="64"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Position"
-		InitialValue="64"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Output"
-		Group="Behavior"
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		InheritedFrom="Window"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Appearance"
-		InitialValue="Untitled"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Visible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Position"
-		InitialValue="600"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-#tag EndViewBehavior
