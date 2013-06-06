@@ -29,7 +29,7 @@ Protected Module HTTPParse
 		  Dim items() As String = Split(PostData, "&")
 		  Dim form As New Dictionary
 		  For i As Integer = 0 To UBound(items)
-		    form.Value(URLDecode(NthField(items(i), "=", 1))) = URLDecode(NthField(items(i), "=", 2))
+		    form.Value(DecodeURLComponent(NthField(items(i), "=", 1))) = DecodeURLComponent(NthField(items(i), "=", 2))
 		  Next
 		  
 		  Return form
@@ -40,7 +40,7 @@ Protected Module HTTPParse
 		Function EncodeFormData(PostData As Dictionary) As String
 		  Dim data() As String
 		  For Each key As String in PostData.Keys
-		    data.Append(URLEncode(Key) + "=" + URLEncode(PostData.Value(key)))
+		    data.Append(EncodeURLComponent(Key) + "=" + EncodeURLComponent(PostData.Value(key)))
 		  Next
 		  Return Join(data, "&")
 		End Function
@@ -574,86 +574,6 @@ Protected Module HTTPParse
 	#tag ExternalMethod, Flags = &h1
 		Protected Soft Declare Function RpcStringFree Lib "Rpcrt4" Alias "RpcStringFreeA" (Addr As Ptr) As Integer
 	#tag EndExternalMethod
-
-	#tag Method, Flags = &h0
-		Function URLDecode(s as String) As String
-		  'This method is from here: https://github.com/bskrtich/RBHTTPServer
-		  // takes a Unix-encoded string and decodes it to the standard text encoding.
-		  
-		  // By Sascha René Leib, published 11/08/2003 on the Athenaeum
-		  
-		  Dim r As String
-		  Dim c As Integer ' current char
-		  Dim i As Integer ' loop var
-		  
-		  // first, remove the unix-path-encoding:
-		  
-		  For i= 1 To LenB(s)
-		    c = AscB(MidB(s, i, 1))
-		    
-		    If c = 37 Then ' %
-		      r = r + ChrB(Val("&h" + MidB(s, i+1, 2)))
-		      i = i + 2
-		    Else
-		      r = r + ChrB(c)
-		    End If
-		    
-		  Next
-		  
-		  r = ReplaceAll(r,"+"," ")
-		  
-		  Return r
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function URLEncode(s as String) As String
-		  'This method is from here: https://github.com/bskrtich/RBHTTPServer
-		  // takes a locally encoded text string and converts it to a Unix-encoded string
-		  
-		  // By Sascha René Leib, published 11/08/2003 on the Athenaeum
-		  
-		  Dim t As String ' encoded string
-		  Dim r As String
-		  Dim c As Integer ' current char
-		  Dim i As Integer ' loop var
-		  
-		  Dim srcEnc, trgEnc As TextEncoding
-		  Dim conv As TextConverter
-		  
-		  // in case the text converter is not available,
-		  // use at least the standard encoding:
-		  t = s
-		  
-		  // first, encode the string to UTF-8
-		  srcEnc = GetTextEncoding(0, 0, 0) ' default encoding
-		  trgEnc = GetTextEncoding(&h0100, 0, 2) ' Unicode 2.1: UTF-8
-		  If srcEnc<>Nil And trgEnc<>Nil Then
-		    conv = GetTextConverter(srcEnc, trgEnc)
-		    If conv<>Nil Then
-		      conv.clear
-		      t = conv.convert(s)
-		    End If
-		  End If
-		  
-		  For i=1 To LenB(t)
-		    c = AscB(MidB(t, i, 1))
-		    
-		    If c<=34 Or c=37 Or c=38 Then
-		      r = r + "%" + RightB("0" + Hex(c), 2)
-		    Elseif (c>=43 And c<=63) Or (c>=65 And c<=90) Or (c>=97 And c<=122) Then
-		      r = r + Chr(c)
-		    Else
-		      r = r + "%" + RightB("0" + Hex(c), 2)
-		    End If
-		    
-		  Next ' i
-		  
-		  Return r
-		  
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function UUID() As String

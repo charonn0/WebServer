@@ -150,7 +150,7 @@ Inherits HTTP.Response
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
 		  End If
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))
-		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + URLDecode(RequestPath.ServerPath))
+		  pagedata = ReplaceAll(pagedata, "%PAGETITLE%", "Index of " + DecodeURLComponent(RequestPath.ServerPath))
 		  If Ubound(Items) + 1 = 1 Then
 		    pagedata = Replace(pagedata, "%ITEMCOUNT%", "1 item.")
 		  Else

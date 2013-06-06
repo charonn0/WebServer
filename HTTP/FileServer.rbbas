@@ -152,7 +152,7 @@ Inherits HTTP.BaseServer
 		  Dim origpath As String = Path.Trim
 		  If origpath = "" Then origpath = "/"
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
-		  Path = URLDecode(Path.ReplaceAll("/", "\"))
+		  Path = DecodeURLComponent(Path.ReplaceAll("/", "\"))
 		  
 		  If Not DocumentRoot.Directory And "\" + DocumentRoot.Name = path Then
 		    Return DocumentRoot

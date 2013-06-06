@@ -147,7 +147,7 @@ Protected Class URI
 		    Dim args As String = "?"
 		    For i As Integer = 0 To UBound(Arguments)
 		      If i > 0 Then args = args + "&"
-		      args = args + URLEncode(Arguments(i))
+		      args = args + EncodeURLComponent(Arguments(i))
 		    Next
 		    URL = URL + args
 		  End If

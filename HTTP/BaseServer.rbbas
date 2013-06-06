@@ -75,7 +75,7 @@ Inherits ServerSocket
 		  Try
 		    clientrequest = New HTTP.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
-		    Me.Log(URLDecode(clientrequest.ToString), Log_Request)
+		    Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
 		    If UseSessions Then
 		      Dim ID As String = clientrequest.GetCookie("SessionID")
 		      If ID = "" Then

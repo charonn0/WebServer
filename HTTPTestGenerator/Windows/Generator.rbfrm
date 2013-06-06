@@ -1301,7 +1301,7 @@ End
 		      End If
 		    Next
 		    
-		    RequestHeaders.AddRow("Content-Type", "application/x-www-form-urlencoded", "")
+		    RequestHeaders.AddRow("Content-Type", "application/x-www-form-EncodeURLComponentd", "")
 		    RequestHeaders.AddRow("Content-Length", Str(LenB(MessageBody.Text)), "")
 		  End If
 		End Sub
