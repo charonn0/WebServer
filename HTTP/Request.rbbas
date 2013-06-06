@@ -64,6 +64,7 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function IsModifiedSince(SinceWhen As Date) As Boolean
+		  If SinceWhen = Nil Then Return True
 		  If HasHeader("If-Modified-Since") Then
 		    Dim d1 As Date
 		    d1 = HTTPDate(GetHeader("If-Modified-Since"))
