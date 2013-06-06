@@ -40,10 +40,9 @@ Begin ContainerControl MessageView
       LockTop         =   True
       PanelCount      =   4
       Panels          =   ""
-      Scope           =   "0"
+      Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -66,14 +65,13 @@ Begin ContainerControl MessageView
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
-         TextColor       =   
+         TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -88,7 +86,7 @@ Begin ContainerControl MessageView
          Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   True
-         BackColor       =   
+         BackColor       =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          DataField       =   ""
@@ -103,6 +101,8 @@ Begin ContainerControl MessageView
          Italic          =   False
          Left            =   3
          LimitText       =   0
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -111,7 +111,7 @@ Begin ContainerControl MessageView
          Mask            =   ""
          Multiline       =   True
          ReadOnly        =   True
-         Scope           =   "0"
+         Scope           =   0
          ScrollbarHorizontal=   False
          ScrollbarVertical=   True
          Styled          =   True
@@ -119,7 +119,7 @@ Begin ContainerControl MessageView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextColor       =   
+         TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -142,7 +142,8 @@ Begin ContainerControl MessageView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Scope           =   "0"
+         Renderer        =   0
+         Scope           =   0
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
@@ -168,11 +169,12 @@ Begin ContainerControl MessageView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   0
+         Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
          Width           =   569
@@ -195,14 +197,13 @@ Begin ContainerControl MessageView
          LockRight       =   True
          LockTop         =   False
          Multiline       =   False
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
-         TextColor       =   
+         TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -213,7 +214,7 @@ Begin ContainerControl MessageView
          Width           =   569
       End
       Begin LinkLabel LinkLabel1
-         ActiveColor     =   
+         ActiveColor     =   &cFF000000
          AltText         =   ""
          AutoDeactivate  =   True
          Bold            =   False
@@ -222,7 +223,7 @@ Begin ContainerControl MessageView
          Draggable       =   False
          Enabled         =   True
          Height          =   20
-         HilightColor    =   
+         HilightColor    =   &c00FFFF00
          HoverPeriod     =   250
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -235,14 +236,13 @@ Begin ContainerControl MessageView
          LockTop         =   True
          Multiline       =   False
          ResetPeriod     =   1000
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "View as media"
          TextAlign       =   2
-         TextColor       =   
+         TextColor       =   &c0000FF00
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -253,7 +253,7 @@ Begin ContainerControl MessageView
          Width           =   137
       End
       Begin LinkLabel PageTitle
-         ActiveColor     =   
+         ActiveColor     =   &cFF000000
          AltText         =   ""
          AutoDeactivate  =   True
          Bold            =   False
@@ -262,7 +262,7 @@ Begin ContainerControl MessageView
          Draggable       =   False
          Enabled         =   True
          Height          =   20
-         HilightColor    =   
+         HilightColor    =   &c00FFFF00
          HoverPeriod     =   250
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -275,14 +275,13 @@ Begin ContainerControl MessageView
          LockTop         =   True
          Multiline       =   False
          ResetPeriod     =   1000
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
-         TextColor       =   
+         TextColor       =   &c0000FF00
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0

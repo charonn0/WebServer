@@ -63,8 +63,18 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Cookies() As HTTPParse.Cookie()
+		  Dim c() As HTTPParse.Cookie
+		  For i As Integer = 0 To Me.Headers.CookieCount - 1
+		    c.Append(Me.Headers.Cookie(i))
+		  Next
+		  Return c
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsModifiedSince(SinceWhen As Date) As Boolean
-		  If SinceWhen = Nil Then Return True
+		  If SinceWhen = Nil Then Return False
 		  If HasHeader("If-Modified-Since") Then
 		    Dim d1 As Date
 		    d1 = HTTPDate(GetHeader("If-Modified-Since"))
@@ -100,10 +110,6 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Property, Flags = &h0
 		AuthPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		Cookies() As Cookie
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

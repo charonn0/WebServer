@@ -166,8 +166,15 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub SetHeader(Name As String, Value As String)
-		  RemoveHeader(Name)
-		  Me.Headers.AppendHeader(Name, Value)
+		  If Name = "Cookie" Or Name = "Set-Cookie" Then
+		    Dim n, v As String
+		    n = NthField(Value, "=", 1).Trim
+		    v = NthField(Value, "=", 2).Trim
+		    Me.SetCookie(n) = v
+		  Else
+		    RemoveHeader(Name)
+		    Me.Headers.AppendHeader(Name, Value)
+		  End If
 		End Sub
 	#tag EndMethod
 
