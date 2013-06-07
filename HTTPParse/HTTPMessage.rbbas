@@ -182,7 +182,7 @@ Protected Class HTTPMessage
 		Protected Function ToString(HeadersOnly As Boolean) As String
 		  Dim data As String
 		  If Not HeadersOnly Then data = Me.MessageBody
-		  SetHeader("Content-Type", Me.MIMEType.ToString)
+		  If Not Me IsA HTTP.Request Then SetHeader("Content-Type", Me.MIMEType.ToString)
 		  If Headers.Count > 0 Then
 		    If Me IsA HTTP.Request Then
 		      data = Me.Headers.Source + CRLF + CRLF + data

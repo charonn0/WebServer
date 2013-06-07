@@ -41,7 +41,7 @@ Begin Window Generator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   "0"
+      Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -63,7 +63,6 @@ Begin Window Generator
          HasBackColor    =   False
          Height          =   384
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "GroupBox3"
          Left            =   622
          LockBottom      =   False
@@ -72,11 +71,12 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          PreviewPic      =   0
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Top             =   204
+         Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   569
@@ -111,7 +111,7 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          MenuValue       =   0
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
@@ -143,11 +143,10 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
          TextColor       =   &c0000FF00
@@ -190,7 +189,7 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          MenuValue       =   0
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
@@ -221,7 +220,7 @@ Begin Window Generator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   "0"
+      Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -235,19 +234,15 @@ Begin Window Generator
    End
    Begin TCPSocket Sock
       Address         =   ""
-      Enabled         =   True
-      Height          =   "32"
+      Height          =   32
       Index           =   -2147483648
       Left            =   501
       LockedInPosition=   False
       Port            =   0
-      Scope           =   "0"
-      TabIndex        =   2
+      Scope           =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   -1
-      Visible         =   True
-      Width           =   "32"
+      Width           =   32
    End
    Begin TextArea OutputLog
       AcceptTabs      =   False
@@ -268,6 +263,8 @@ Begin Window Generator
       Italic          =   False
       Left            =   20
       LimitText       =   0
+      LineHeight      =   0.0
+      LineSpacing     =   1.0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -276,7 +273,7 @@ Begin Window Generator
       Mask            =   ""
       Multiline       =   True
       ReadOnly        =   True
-      Scope           =   "0"
+      Scope           =   0
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
@@ -312,11 +309,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Code:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -347,11 +343,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Status Message:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -382,11 +377,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c0000FF00
@@ -417,11 +411,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &cFF000000
@@ -452,11 +445,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Remote IP:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -487,11 +479,10 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   "0"
+      Scope           =   0
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c0000FF00
@@ -520,7 +511,7 @@ Begin Window Generator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   "0"
+      Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -551,7 +542,7 @@ Begin Window Generator
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
@@ -594,7 +585,7 @@ Begin Window Generator
          Mask            =   ""
          Password        =   False
          ReadOnly        =   False
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
@@ -641,7 +632,7 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          RequiresSelection=   False
-         Scope           =   "0"
+         Scope           =   0
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   1
@@ -678,6 +669,8 @@ Begin Window Generator
          Italic          =   False
          Left            =   20
          LimitText       =   0
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -686,7 +679,7 @@ Begin Window Generator
          Mask            =   ""
          Multiline       =   True
          ReadOnly        =   False
-         Scope           =   "0"
+         Scope           =   0
          ScrollbarHorizontal=   False
          ScrollbarVertical=   True
          Styled          =   True
@@ -723,7 +716,7 @@ Begin Window Generator
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
@@ -753,11 +746,10 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          Multiline       =   False
-         Scope           =   "0"
+         Scope           =   0
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -790,7 +782,7 @@ Begin Window Generator
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
@@ -833,7 +825,7 @@ Begin Window Generator
          LockRight       =   False
          LockTop         =   True
          MenuValue       =   0
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
@@ -866,7 +858,7 @@ Begin Window Generator
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Scope           =   "0"
+         Scope           =   0
          TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
@@ -878,22 +870,50 @@ Begin Window Generator
          Visible         =   True
          Width           =   97
       End
+      Begin CheckBox CheckBox1
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit Raw"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "GroupBox1"
+         Italic          =   False
+         Left            =   352
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   0
+         State           =   0
+         TabIndex        =   13
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   278
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   100
+      End
    End
    Begin Timer DataReceivedTimer
-      Enabled         =   True
-      Height          =   "32"
+      Height          =   32
       Index           =   -2147483648
       Left            =   -3
       LockedInPosition=   False
       Mode            =   0
       Period          =   1000
-      Scope           =   "0"
-      TabIndex        =   11
+      Scope           =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   597
-      Visible         =   True
-      Width           =   "32"
+      Width           =   32
    End
    Begin Listbox ResponseHeaders
       AutoDeactivate  =   True
@@ -927,7 +947,7 @@ Begin Window Generator
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      Scope           =   "0"
+      Scope           =   0
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
@@ -962,7 +982,7 @@ Begin Window Generator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   "0"
+      Scope           =   0
       State           =   1
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -1070,6 +1090,10 @@ End
 		Output As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private RawText As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		Request As HTTP.Request
 	#tag EndProperty
@@ -1134,8 +1158,11 @@ End
 		  IPAddress.TextColor = &c00804000
 		  IPAddress1.Text = "Connected"
 		  IPAddress.TextColor = &c00804000
-		  
-		  Me.Write(Request.ToString)
+		  If CheckBox1.Value And RawText.Trim <> "" Then
+		    Me.Write(RawText)
+		  Else
+		    Me.Write(Request.ToString)
+		  End If
 		  URL.AddItem(URL.Text)
 		End Sub
 	#tag EndEvent
@@ -1144,7 +1171,10 @@ End
 		  IPAddress1.Text = "Receiving"
 		  IPAddress.TextColor = &c00804000
 		  Output = Output + Me.ReadAll
-		  OutputLog.Text = "-----------Request-----------" + CRLF + Request.ToString + CRLF _
+		  If Not (RawText.Trim <> "" And CheckBox1.Value) Then
+		    RawText = Self.Request.ToString
+		  End If
+		  OutputLog.Text = "-----------Request-----------" + CRLF + RawText + CRLF _
 		  + "-----------Response-----------" + CRLF + OutPut + CRLF
 		  
 		  DataReceivedTimer.Mode = Timer.ModeSingle
@@ -1254,6 +1284,10 @@ End
 		Sub Action()
 		  Output = ""
 		  Generate()
+		  If CheckBox1.Value Then
+		    Dim raw As String = RawEditor.EditRaw(Self.Request)
+		    RawText = raw.Trim
+		  End If
 		  Sock.Close
 		  Sock.Address = theURL.FQDN
 		  If theURL.Port <> 0 Then
@@ -1535,6 +1569,7 @@ End
 		Name="Output"
 		Group="Behavior"
 		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
