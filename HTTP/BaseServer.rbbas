@@ -50,6 +50,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckAuth(ClientRequest As HTTP.Request) As HTTP.Response
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If AuthenticationRequired Then
 		    Me.Log("Authenticating", Log_Debug)
@@ -69,6 +70,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckCache(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim cache As HTTP.Response
 		  If UseSessions Then
 		    If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
@@ -102,6 +104,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckProtocol(ClientRequest As HTTP.Request) As HTTP.Response
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
 		    doc = doc.GetErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
@@ -116,6 +119,8 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckRedirect(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
 		  If redir <> Nil Then Me.Log("Using redirect.", Log_Debug)
 		  Return redir
@@ -124,6 +129,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub CheckType(ClientRequest As HTTP.Request, ByRef doc As HTTP.Response)
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  If EnforceContentType Then
 		    Me.Log("Checking Accepts", Log_Debug)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -151,7 +157,11 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "0000", 4)
 		  If Sender.Secure Then
-		    msg = msg + "; secure)"
+		    If Me.ConnectionType = ConnectionTypes.SSLv3 Then
+		      msg = msg + ") security=SSLv3"
+		    Else
+		      msg = msg + ") security=TLSv1"
+		    End If
 		  Else
 		    msg = msg + ")"
 		  End If
@@ -268,6 +278,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function DefaultHandler(ClientRequest As HTTP.Request, Data As MemoryBlock) As HTTP.Response
+		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
 		  Select Case clientrequest.Method
@@ -303,8 +314,8 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetCache(Sender As HTTP.Session, Path As String) As HTTP.Response
-		  Dim logID As String = "(NO_SESSION)"
-		  If UseSessions Then logID = "(" + Sender.SessionID + ")"
+		  Dim logID As String = "NO_SESSION"
+		  If UseSessions Then logID = Sender.SessionID
 		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions Then
 		    If Sender.GetCacheItem(Path) <> Nil Then
@@ -320,9 +331,9 @@ Inherits ServerSocket
 		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTP.Response
 		  If Sender <> Nil Then
 		    'If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
-		    Dim logID As String = "(NO_SESSION)"
-		    If UseSessions Then logID = "(" + Sender.SessionID + ")"
-		    Me.Log(CurrentMethodName + logID, Log_Trace)
+		    Dim logID As String = "NO_SESSION"
+		    If UseSessions Then logID = Sender.SessionID
+		    Me.Log(CurrentMethodName + "(" + Path + ") for session " + logID, Log_Trace)
 		    If UseSessions THen
 		      If Sender.GetRedirect(Path) <> Nil Then
 		        Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
@@ -330,6 +341,8 @@ Inherits ServerSocket
 		      End If
 		    End If
 		  End If
+		  
+		  Me.Log(CurrentMethodName + "(" + Path + ")", Log_Trace)
 		  
 		  If Me.Redirects.HasKey(Path) Then
 		    Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
@@ -348,6 +361,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSession(Socket As SSLSocket) As HTTP.Session
+		  Me.Log(CurrentMethodName + "(0x" + Left(Hex(Socket.Handle) + "0000", 4) + ")", Log_Trace)
 		  If UseSessions Then
 		    If Me.Sockets.HasKey(Socket) Then
 		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
@@ -362,6 +376,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSession(SessionID As String) As HTTP.Session
+		  Me.Log(CurrentMethodName + "(" + SessionID + ")", Log_Trace)
 		  If UseSessions Then
 		    If Me.Sessions.HasKey(SessionID) Then
 		      Me.Log("Session found: " + SessionID, Log_Debug)
@@ -379,6 +394,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
+		  Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
 		    #If GZIPAvailable Then
 		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
@@ -417,12 +433,18 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h0
 		Sub Log(Message As String, Type As Integer)
+		  #If DebugBuild Then
+		    System.DebugLog(Str(Type) + " " + Message)
+		  #endif
 		  RaiseEvent Log(Message.Trim + EndofLine, Type)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub PrepareResponse(ByRef ResponseDocument As HTTP.Response, Socket As SSLSocket)
+		  Dim logID As String = "NO_SESSION"
+		  If UseSessions Then logID = ResponseDocument.SessionID + ")"
+		  Me.Log(CurrentMethodName + "(" + logID + ")", Log_Trace)
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
 		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    ResponseDocument.MessageBody = ""
@@ -445,6 +467,9 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub PrepareSession(ByRef ResponseDocument As HTTP.Response, ByRef Session As HTTP.Session)
+		  Dim logID As String = "NO_SESSION"
+		  If UseSessions Then logID = Session.SessionID
+		  Me.Log(CurrentMethodName + "(" + logID + ")", Log_Trace)
 		  If UseSessions Then
 		    Session.ExtendSession
 		    If Session.NewSession Then
@@ -466,6 +491,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h0
 		Sub RemoveRedirect(HTTPpath As String)
+		  Me.Log(CurrentMethodName + "(" + HTTPpath + ")", Log_Trace)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Remove redirect: " + HTTPPath, Log_Debug)
 		  If Redirects.HasKey(HTTPpath) Then
@@ -489,13 +515,13 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub SendResponse(Socket As SSLSocket, ResponseDocument As HTTP.Response)
-		  Dim logID As String = "(NO_SESSION)"
+		  Dim logID As String = "NO_SESSION"
 		  Dim session As HTTP.Session
 		  If UseSessions Then
 		    session = GetSession(Socket)
-		    logID = "(" + Session.SessionID + ")"
+		    logID = Session.SessionID
 		  End If
-		  Me.Log(CurrentMethodName + logID, Log_Trace)
+		  Me.Log(CurrentMethodName + "(" + LogID + ")", Log_Trace)
 		  Dim tmp As HTTP.Response = ResponseDocument
 		  If TamperResponse(tmp) Then
 		    Me.Log("Outbound tamper.", Log_Debug)

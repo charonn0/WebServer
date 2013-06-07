@@ -1095,9 +1095,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Log(Message As String, Severity As Integer)
-		  #If DebugBuild Then
-		    System.DebugLog(Str(Severity) + " " + Message)
-		  #endif
 		  Messages.Insert(0, Message:Severity)
 		  
 		End Sub

@@ -25,6 +25,7 @@ Inherits HTTPParse.HTTPMessage
 		    If mb.Byte(0) = &h16 And mb.Byte(1) = &h03 Then 'ssl?
 		      err.ErrorNumber = 1
 		    End If
+		    #pragma BreakOnExceptions Off
 		    Raise err
 		  End If
 		  

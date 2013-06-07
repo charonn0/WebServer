@@ -14,7 +14,7 @@ Inherits HTTP.BaseServer
 		      doc = doc.GetErrorResponse(404, ClientRequest.Path.ServerPath)
 		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
-		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
+		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
 		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
 		    ElseIf ClientRequest.Path.ToString = "/" And Not item.Directory Then
@@ -26,6 +26,7 @@ Inherits HTTP.BaseServer
 		        location = "https://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
 		      End If
 		      doc = doc.GetRedirectResponse("/", Location)
+		      Me.Log("Redirecting / to " + location, Log_Debug)
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
@@ -34,6 +35,7 @@ Inherits HTTP.BaseServer
 		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
 		      End If
 		      If item.Directory Then
+		        Me.Log("Generating new directory index", Log_Trace)
 		        doc = New DirectoryIndex(item, ClientRequest.Path.ServerPath + args)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
@@ -80,6 +82,7 @@ Inherits HTTP.BaseServer
 		    "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
 		    
 		    For Each img As String In icons.Keys
+		      Me.Log("Add virtual file '" + img, Log_Trace)
 		      Dim icon As HTTP.Response
 		      Dim p As Picture
 		      #If RBVersion >= 2011.4 Then
