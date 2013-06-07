@@ -149,7 +149,13 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Incoming data", Log_Debug)
+		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "0000", 4)
+		  If Sender.Secure Then
+		    msg = msg + "; secure)"
+		  Else
+		    msg = msg + ")"
+		  End If
+		  Me.Log(msg, Log_Debug)
 		  Dim data As MemoryBlock
 		  Dim la As String = Sender.Lookahead
 		  If AllowPipeLinedRequests And (Left(la, 3) = "GET" or Left(la, 4) = "HEAD") Then
