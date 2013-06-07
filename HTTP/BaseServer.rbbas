@@ -78,7 +78,7 @@ Inherits ServerSocket
 		        cache = Nil
 		      End Select
 		    Else
-		      cache = GetCache(Session, clientRequest.Path.ServerPath)
+		      cache = GetCache(Session, clientRequest.Path.ToString)
 		    End If
 		    If cache <> Nil Then
 		      cache.Compressable = False
@@ -371,6 +371,29 @@ Inherits ServerSocket
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
+		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
+		    #If GZIPAvailable Then
+		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
+		      Dim gz As String
+		      Try
+		        Dim size As Integer = ResponseDocument.MessageBody.LenB
+		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
+		        ResponseDocument.MessageBody = gz
+		        size = gz.LenB * 100 / size
+		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
+		      Catch Error
+		        'Just send the uncompressed data
+		      End Try
+		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    #else
+		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		    #endif
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Listen()
 		  Me.Log(CurrentMethodName, Log_Trace)
@@ -389,6 +412,49 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub Log(Message As String, Type As Integer)
 		  RaiseEvent Log(Message.Trim + EndofLine, Type)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PrepareResponse(ByRef ResponseDocument As HTTP.Response, Socket As SSLSocket)
+		  If ResponseDocument.Method = RequestMethod.HEAD Then
+		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    ResponseDocument.MessageBody = ""
+		  End If
+		  If ResponseDocument.StatusCode = 405 Then 'Method not allowed
+		    ResponseDocument.SetHeader("Allow", "GET, HEAD, POST, TRACE")
+		  End If
+		  If Socket.SSLConnected Then
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")'</acronym>")
+		  Else
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
+		  End If
+		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
+		    ResponseDocument.SetHeader("Connection", "keep-alive")
+		  Else
+		    ResponseDocument.SetHeader("Connection", "close")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PrepareSession(ByRef ResponseDocument As HTTP.Response, ByRef Session As HTTP.Session)
+		  If UseSessions Then
+		    Session.ExtendSession
+		    If Session.NewSession Then
+		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
+		      Dim c As New Cookie("SessionID=" + Session.SessionID)
+		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
+		      c.Path = "/"
+		      c.Port = Me.Port
+		      ResponseDocument.Headers.Cookie(-1) = c
+		      'ResponseDocument.Headers.Cookie
+		      Session.NewSession = False
+		    ElseIf ResponseDocument.HasCookie("SessionID") Then
+		      Me.Log("Clear session cookie", Log_Debug)
+		      ResponseDocument.RemoveCookie("SessionID")
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -429,59 +495,11 @@ Inherits ServerSocket
 		    Me.Log("Outbound tamper.", Log_Debug)
 		    ResponseDocument = tmp
 		  End If
-		  If Socket.SSLConnected Then
-		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")'</acronym>")
-		  Else
-		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
-		  End If
-		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
-		    #If GZIPAvailable Then
-		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
-		      Dim gz As String
-		      Try
-		        Dim size As Integer = ResponseDocument.MessageBody.LenB
-		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
-		        ResponseDocument.MessageBody = gz
-		        size = gz.LenB * 100 / size
-		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
-		      Catch Error
-		        'Just send the uncompressed data
-		      End Try
-		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
-		    #else
-		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		    #endif
-		  End If
-		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
-		    ResponseDocument.SetHeader("Connection", "keep-alive")
-		  Else
-		    ResponseDocument.SetHeader("Connection", "close")
-		  End If
 		  
-		  If ResponseDocument.Method = RequestMethod.HEAD Then
-		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
-		    ResponseDocument.MessageBody = ""
-		  End If
-		  If ResponseDocument.StatusCode = 405 Then 'Method not allowed
-		    ResponseDocument.SetHeader("Allow", "GET, HEAD, POST, TRACE")
-		  End If
+		  PrepareResponse(ResponseDocument, Socket)
+		  PrepareSession(ResponseDocument, session)
+		  GZipResponse(ResponseDocument)
 		  
-		  If UseSessions Then
-		    Session.ExtendSession
-		    If Session.NewSession Then
-		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
-		      Dim c As New Cookie("SessionID=" + Session.SessionID)
-		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
-		      c.Path = "/"
-		      c.Port = Me.Port
-		      ResponseDocument.Headers.Cookie(-1) = c
-		      'ResponseDocument.Headers.Cookie
-		      Session.NewSession = False
-		    ElseIf ResponseDocument.HasCookie("SessionID") Then
-		      Me.Log("Clear session cookie", Log_Debug)
-		      ResponseDocument.RemoveCookie("SessionID")
-		    End If
-		  End If
 		  Me.Log("Sending data", Log_Socket)
 		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.GetHeaders, Log_Response)
 		  
