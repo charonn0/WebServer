@@ -7,45 +7,6 @@ Protected Class URI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(CompareTo As URI) As Integer
-		  //This method overloads the comparison operator ("=") so that any instance of the URI class can be compared directly into any
-		  //other instance of the URI class. Case-sensitivity is enforced if either instance of the URI class has its CaseSensitive
-		  //property set to True, otherwise letter case is not considered
-		  
-		  //Return values:
-		  // -1: CompareTo < Me -Or- not equal (if CaseSensitive = False)
-		  //  0: CompareTo = Me
-		  //  1: CompareTo > Me -Or- not equal (if CaseSensitive = False)
-		  
-		  #pragma BreakOnExceptions Off
-		  Dim l, r As String
-		  l = CompareTo.ToString
-		  r = Me.ToString
-		  #pragma BreakOnExceptions Default
-		  
-		  If Me.CaseSensitive Or CompareTo.CaseSensitive Then
-		    Return StrComp(l, r, 1)
-		  Else
-		    If l = r Then
-		      Return 0
-		    Else
-		      Return -1
-		    End If
-		  End If
-		  
-		Exception Err As NilObjectException
-		  Return -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Operator_Convert(URL As String)
-		  //This method overloads the assigment operator ("=") so that any string value can be assigned directly to an instance of the URI class
-		  Parse(URL)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Parent() As HTTP.URI
 		  Dim parent() As String = Split(ServerPath, "/")
 		  If UBound(parent) > -1 Then
@@ -138,7 +99,7 @@ Protected Class URI
 		  End If
 		  
 		  If ServerPath.Trim <> "" Then
-		    URL = URL + "/"
+		    URL = URL + ServerPath.Trim
 		  Else
 		    If Protocol <> "mailto" Then URL = URL + "/"
 		  End If
@@ -147,7 +108,7 @@ Protected Class URI
 		    Dim args As String = "?"
 		    For i As Integer = 0 To UBound(Arguments)
 		      If i > 0 Then args = args + "&"
-		      args = args + EncodeURLComponent(Arguments(i))
+		      args = args + URLEncode(Arguments(i))
 		    Next
 		    URL = URL + args
 		  End If
@@ -429,6 +390,7 @@ Protected Class URI
 			Name="ServerPath"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

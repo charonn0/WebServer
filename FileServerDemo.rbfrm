@@ -1,13 +1,14 @@
 #tag Window
 Begin Window FileServerDemo
-   BackColor       =   16777215
-   Backdrop        =   ""
+   BackColor       =   &cFFFFFF00
+   Backdrop        =   0
    CloseButton     =   True
+   Compatibility   =   ""
    Composite       =   False
    Frame           =   0
    FullScreen      =   False
    HasBackColor    =   False
-   Height          =   5.18e+2
+   Height          =   518
    ImplicitInstance=   True
    LiveResize      =   True
    MacProcID       =   0
@@ -23,20 +24,20 @@ Begin Window FileServerDemo
    Resizeable      =   True
    Title           =   "Server Demo"
    Visible         =   True
-   Width           =   7.79e+2
+   Width           =   779
    Begin PushButton PushButton1
       AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
       Caption         =   "Host Folder"
-      Default         =   ""
+      Default         =   False
       Enabled         =   True
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   10
       LockBottom      =   True
       LockedInPosition=   False
@@ -48,26 +49,26 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   439
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin PushButton PushButton2
       AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
       Caption         =   "Host File"
-      Default         =   ""
+      Default         =   False
       Enabled         =   True
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   10
       LockBottom      =   True
       LockedInPosition=   False
@@ -79,16 +80,16 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   412
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin CheckBox CheckBox1
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       Caption         =   "Enable GZip Compression"
       DataField       =   ""
       DataSource      =   ""
@@ -97,7 +98,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   113
       LockBottom      =   True
       LockedInPosition=   False
@@ -110,21 +111,21 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   11
+      TextSize        =   11.0
       TextUnit        =   0
       Top             =   465
-      Underline       =   ""
+      Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   175
    End
    Begin TextField port
-      AcceptTabs      =   ""
+      AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   16777215
-      Bold            =   ""
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -134,7 +135,7 @@ Begin Window FileServerDemo
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   ""
+      Italic          =   False
       Left            =   257
       LimitText       =   0
       LockBottom      =   True
@@ -143,19 +144,19 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Mask            =   ""
-      Password        =   ""
-      ReadOnly        =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   8080
-      TextColor       =   0
+      Text            =   "8080"
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   415
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   53
@@ -163,7 +164,7 @@ Begin Window FileServerDemo
    Begin ComboBox nic
       AutoComplete    =   False
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -171,7 +172,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialValue    =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   113
       ListIndex       =   0
       LockBottom      =   True
@@ -184,10 +185,10 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   414
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   132
@@ -195,7 +196,7 @@ Begin Window FileServerDemo
    Begin ComboBox LogLevel
       AutoComplete    =   False
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -203,7 +204,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialValue    =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   657
       ListIndex       =   0
       LockBottom      =   True
@@ -216,17 +217,17 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   408
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   116
    End
    Begin CheckBox CheckBox3
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       Caption         =   "Directory Browsing"
       DataField       =   ""
       DataSource      =   ""
@@ -235,7 +236,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   113
       LockBottom      =   True
       LockedInPosition=   False
@@ -248,21 +249,21 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   440
-      Underline       =   ""
+      Underline       =   False
       Value           =   True
       Visible         =   True
       Width           =   162
    End
    Begin TextField Username
-      AcceptTabs      =   ""
+      AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   16777215
-      Bold            =   ""
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -272,7 +273,7 @@ Begin Window FileServerDemo
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   ""
+      Italic          =   False
       Left            =   322
       LimitText       =   0
       LockBottom      =   True
@@ -281,26 +282,26 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Mask            =   ""
-      Password        =   ""
-      ReadOnly        =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Username"
-      TextColor       =   0
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   440
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   162
    End
    Begin CheckBox CheckBox2
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       Caption         =   "Authenticate"
       DataField       =   ""
       DataSource      =   ""
@@ -309,7 +310,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   322
       LockBottom      =   True
       LockedInPosition=   False
@@ -322,21 +323,21 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   416
-      Underline       =   ""
+      Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   88
    End
    Begin TextField password
-      AcceptTabs      =   ""
+      AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   16777215
-      Bold            =   ""
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -346,7 +347,7 @@ Begin Window FileServerDemo
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   ""
+      Italic          =   False
       Left            =   322
       LimitText       =   0
       LockBottom      =   True
@@ -355,30 +356,30 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Mask            =   ""
-      Password        =   ""
-      ReadOnly        =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   0
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password"
-      TextColor       =   0
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   464
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   162
    End
    Begin TextField realmtext
-      AcceptTabs      =   ""
+      AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   16777215
-      Bold            =   ""
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -388,7 +389,7 @@ Begin Window FileServerDemo
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   ""
+      Italic          =   False
       Left            =   322
       LimitText       =   0
       LockBottom      =   True
@@ -397,36 +398,36 @@ Begin Window FileServerDemo
       LockRight       =   False
       LockTop         =   False
       Mask            =   ""
-      Password        =   ""
-      ReadOnly        =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   0
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "realm"
-      TextColor       =   0
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   488
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   162
    End
    Begin PushButton PushButton4
       AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
       Caption         =   "Generator"
-      Default         =   ""
+      Default         =   False
       Enabled         =   True
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   10
       LockBottom      =   True
       LockedInPosition=   False
@@ -438,57 +439,57 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   465
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin Listbox Listbox1
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
-      Bold            =   ""
+      Bold            =   False
       Border          =   True
       ColumnCount     =   3
-      ColumnsResizable=   ""
+      ColumnsResizable=   False
       ColumnWidths    =   "70%,20%,10%"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
       Enabled         =   True
-      EnableDrag      =   ""
-      EnableDragReorder=   ""
+      EnableDrag      =   False
+      EnableDragReorder=   False
       GridLinesHorizontal=   1
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   379
       HelpTag         =   ""
-      Hierarchical    =   ""
+      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Log Data	Date	Type"
-      Italic          =   ""
+      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   ""
+      RequiresSelection=   False
       Scope           =   0
-      ScrollbarHorizontal=   ""
+      ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   22
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
       Width           =   779
@@ -496,7 +497,7 @@ Begin Window FileServerDemo
    End
    Begin Label Label1
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -504,27 +505,27 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   249
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      Multiline       =   ""
+      Multiline       =   False
       Scope           =   0
       Selectable      =   False
       TabIndex        =   18
       TabPanelIndex   =   0
       Text            =   ":"
       TextAlign       =   0
-      TextColor       =   &h000000
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   415
       Transparent     =   True
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   8
    End
@@ -542,7 +543,7 @@ Begin Window FileServerDemo
    End
    Begin CheckBox UseSessions
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       Caption         =   "Use Sessions"
       DataField       =   ""
       DataSource      =   ""
@@ -551,7 +552,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   113
       LockBottom      =   True
       LockedInPosition=   False
@@ -564,10 +565,10 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   11
+      TextSize        =   11.0
       TextUnit        =   0
       Top             =   489
-      Underline       =   ""
+      Underline       =   False
       Value           =   True
       Visible         =   True
       Width           =   175
@@ -575,7 +576,7 @@ Begin Window FileServerDemo
    Begin HTTP.FileServer Sock
       AllowPipeLinedRequests=   False
       AuthenticationRealm=   "Restricted Area"
-      AuthenticationRequired=   ""
+      AuthenticationRequired=   False
       CertificatePassword=   ""
       DirectoryBrowsing=   True
       EnforceContentType=   True
@@ -596,7 +597,7 @@ Begin Window FileServerDemo
    Begin ComboBox SecurityLevel
       AutoComplete    =   False
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -604,7 +605,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialValue    =   "TLS\r\nSSL"
-      Italic          =   ""
+      Italic          =   False
       Left            =   589
       ListIndex       =   0
       LockBottom      =   True
@@ -617,17 +618,17 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   412
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   49
    End
    Begin CheckBox CheckBox4
       AutoDeactivate  =   True
-      Bold            =   ""
+      Bold            =   False
       Caption         =   "Security:"
       DataField       =   ""
       DataSource      =   ""
@@ -636,7 +637,7 @@ Begin Window FileServerDemo
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   503
       LockBottom      =   True
       LockedInPosition=   False
@@ -649,27 +650,27 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   416
-      Underline       =   ""
+      Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   74
    End
    Begin PushButton PushButton5
       AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
       Caption         =   "Clear Log"
-      Default         =   ""
+      Default         =   False
       Enabled         =   True
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   693
       LockBottom      =   True
       LockedInPosition=   False
@@ -681,20 +682,20 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   10
+      TextSize        =   10.0
       TextUnit        =   0
       Top             =   438
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   80
    End
    Begin TextField SearchField
-      AcceptTabs      =   ""
+      AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   &hFFFFFF
-      Bold            =   ""
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -704,47 +705,47 @@ Begin Window FileServerDemo
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   ""
+      Italic          =   False
       Left            =   0
       LimitText       =   0
-      LockBottom      =   ""
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      Password        =   ""
-      ReadOnly        =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   0
       TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextColor       =   &h000000
+      TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   0
-      Underline       =   ""
+      Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   735
    End
    Begin PushButton PushButton6
       AutoDeactivate  =   True
-      Bold            =   ""
-      ButtonStyle     =   0
-      Cancel          =   ""
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
       Caption         =   "Next"
-      Default         =   ""
+      Default         =   False
       Enabled         =   True
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   ""
+      Italic          =   False
       Left            =   739
-      LockBottom      =   ""
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
@@ -754,10 +755,10 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
-      TextSize        =   0
+      TextSize        =   0.0
       TextUnit        =   0
       Top             =   0
-      Underline       =   ""
+      Underline       =   False
       Visible         =   True
       Width           =   34
    End
@@ -1094,6 +1095,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Log(Message As String, Severity As Integer)
+		  #If DebugBuild Then
+		    System.DebugLog(Str(Severity) + " " + Message)
+		  #endif
 		  Messages.Insert(0, Message:Severity)
 		  
 		End Sub
@@ -1180,3 +1184,255 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag ViewBehavior
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=true
+		Group="Appearance"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Appearance"
+		Type="Picture"
+		EditorType="Picture"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CloseButton"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentSearchIndex"
+		Group="Behavior"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Frame"
+		Visible=true
+		Group="Appearance"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		InheritedFrom="Window"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Metal Window"
+			"10 - Drawer Window"
+			"11 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Position"
+		InitialValue="400"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		Type="String"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LiveResize"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=true
+		Group="Appearance"
+		InitialValue="0"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxHeight"
+		Visible=true
+		Group="Position"
+		InitialValue="32000"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximizeButton"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxWidth"
+		Visible=true
+		Group="Position"
+		InitialValue="32000"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBar"
+		Visible=true
+		Group="Appearance"
+		Type="MenuBar"
+		EditorType="MenuBar"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinHeight"
+		Visible=true
+		Group="Position"
+		InitialValue="64"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimizeButton"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinWidth"
+		Visible=true
+		Group="Position"
+		InitialValue="64"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		Type="String"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Placement"
+		Visible=true
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		InheritedFrom="Window"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		Type="String"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Appearance"
+		InitialValue="Untitled"
+		Type="String"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Position"
+		InitialValue="600"
+		Type="Integer"
+		InheritedFrom="Window"
+	#tag EndViewProperty
+#tag EndViewBehavior

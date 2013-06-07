@@ -33,7 +33,7 @@ Inherits HTTPParse.HTTPMessage
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.MessageBody = CachedPage.MessageBody
 		  rply.StatusCode = 200
-		  rply.Path = Path
+		  rply.Path = New HTTP.URI(Path)
 		  rply.MIMEType = CachedPage.MIMEType
 		  rply.Headers = CachedPage.Headers
 		  rply.Expires = CachedPage.Expires
@@ -74,7 +74,7 @@ Inherits HTTPParse.HTTPMessage
 		    rply.MIMEType = New ContentType("text/html")
 		  End If
 		  rply.StatusCode = 200
-		  rply.Path = Path
+		  rply.Path = New HTTP.URI(Path)
 		  Dim d As New Date
 		  d.TotalSeconds = d.TotalSeconds + 601
 		  rply.Expires = d
@@ -102,7 +102,7 @@ Inherits HTTPParse.HTTPMessage
 		  'Use this constructor to create a 302 redirect Document
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = 302
-		  rply.Path = Path
+		  rply.Path = New HTTP.URI(Path)
 		  rply.SetHeader("Location", RedirectURL)
 		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  rply.MessageBody = ErrorPage(302, RedirectURL)
@@ -158,7 +158,7 @@ Inherits HTTPParse.HTTPMessage
 		  'Use this constructor to create a 302 redirect Document
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = 200
-		  rply.Path = VirtualURL
+		  rply.Path = New URI(VirtualURL)
 		  Return rply
 		End Function
 	#tag EndMethod

@@ -95,10 +95,10 @@ Inherits HTTPParse.HTTPMessage
 		    args = "?"
 		    For i As Integer = 0 To UBound(Me.Path.Arguments)
 		      If i > 0 Then args = args + "&"
-		      args = args + EncodeURLComponent(Me.Path.Arguments(i))
+		      args = args + URLEncode(Me.Path.Arguments(i))
 		    Next
 		  End If
-		  Dim data As String = MethodName + " " + EncodeURLComponent(Path.ServerPath) + args + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
+		  Dim data As String = MethodName + " " + URLEncode(Path.ServerPath) + args + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
 		    Me.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
 		    Me.MessageBody = Me.MultiPart.ToString

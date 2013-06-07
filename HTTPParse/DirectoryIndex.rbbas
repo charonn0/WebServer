@@ -4,7 +4,7 @@ Inherits HTTP.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
 		  Me.Target = Target
-		  Me.RequestPath = ServerPath
+		  Me.RequestPath = New URI(ServerPath)
 		  Super.Constructor(200, New ContentType("text/html"), HTTP.RequestMethod.GET, "")
 		End Sub
 	#tag EndMethod

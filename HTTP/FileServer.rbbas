@@ -17,7 +17,7 @@ Inherits HTTP.BaseServer
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Debug)
 		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
-		    ElseIf ClientRequest.Path = "/" And Not item.Directory Then
+		    ElseIf ClientRequest.Path.ToString = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String
 		      If Me.ConnectionType = ConnectionTypes.Insecure Then
@@ -110,7 +110,7 @@ Inherits HTTP.BaseServer
 		      icon.StatusCode = 200
 		      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
 		      icon.Compressable = False
-		      icon.Path = img
+		      icon.Path = New URI(img)
 		      GlobalRedirects.Value(img) = icon
 		      'AddRedirect(icon)
 		    Next
@@ -125,7 +125,7 @@ Inherits HTTP.BaseServer
 		  
 		  Dim doc As HTTP.Response
 		  doc = doc.GetErrorResponse(200, "")
-		  doc.Path = "/robots.txt"
+		  doc.Path = New URI("/robots.txt")
 		  doc.MIMEType = New ContentType("text/html")
 		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
 		  doc.Compressable = False
@@ -141,7 +141,7 @@ Inherits HTTP.BaseServer
 		  AddRedirect(doc)
 		  
 		  doc = New HelloWorld
-		  doc.Path = "/script.bas"
+		  doc.Path = New URI("/script.bas")
 		  doc.MIMEType = New ContentType("text/html")
 		  AddRedirect(doc)
 		End Sub

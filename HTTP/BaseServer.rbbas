@@ -49,6 +49,98 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function CheckAuth(ClientRequest As HTTP.Request) As HTTP.Response
+		  Dim doc As HTTP.Response
+		  If AuthenticationRequired Then
+		    Me.Log("Authenticating", Log_Debug)
+		    If Not Authenticate(clientrequest) Then
+		      Me.Log("Authentication failed", Log_Error)
+		      doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
+		      doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
+		    Else
+		      Me.Log("Authentication Successful", Log_Debug)
+		    End If
+		  End If
+		  Return doc
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckCache(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  Dim cache As HTTP.Response
+		  If UseSessions Then
+		    If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
+		      Select Case clientrequest.CacheDirective
+		      Case "no-cache", "max-age=0"
+		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
+		        cache = Nil
+		      End Select
+		    Else
+		      cache = GetCache(Session, clientRequest.Path.ServerPath)
+		    End If
+		    If cache <> Nil Then
+		      cache.Compressable = False
+		      Me.Log("Page from cache", Log_Debug)
+		      Cache.Expires = New Date
+		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
+		      If clientrequest.IsModifiedSince(Cache.Expires) Then
+		        If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
+		          Cache = Cache.GetErrorResponse(304, "")
+		          Cache.MessageBody = ""
+		        Else
+		          Cache = Cache.GetErrorResponse(412, "") 'Precondition failed
+		          Cache.MessageBody = ""
+		        End If
+		      End If
+		    End If
+		  End If
+		  Return cache
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckProtocol(ClientRequest As HTTP.Request) As HTTP.Response
+		  Dim doc As HTTP.Response
+		  If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
+		    doc = doc.GetErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		    Me.Log("Unsupported protocol version", Log_Error)
+		  End If
+		  
+		  Return doc
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckRedirect(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
+		  If redir <> Nil Then Me.Log("Using redirect.", Log_Debug)
+		  Return redir
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckType(ClientRequest As HTTP.Request, ByRef doc As HTTP.Response)
+		  If EnforceContentType Then
+		    Me.Log("Checking Accepts", Log_Debug)
+		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
+		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
+		        Me.Log("Response is a Acceptable", Log_Debug)
+		        Return
+		      End If
+		    Next
+		    Dim accepted As ContentType = doc.MIMEType
+		    doc = doc.GetErrorResponse(406, "") 'Not Acceptable
+		    doc.MIMEType = accepted
+		    Me.Log("Response is not Acceptable", Log_Error)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ClientErrorHandler(Sender As SSLSocket)
 		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
 		End Sub
@@ -95,116 +187,34 @@ Inherits ServerSocket
 		      clientrequest = tmp
 		    End If
 		    
-		    If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		      doc = doc.GetErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
-		      Me.Log("Unsupported protocol version", Log_Error)
-		    ElseIf AuthenticationRequired Then
-		      Me.Log("Authenticating", Log_Debug)
-		      If Not Authenticate(clientrequest) Then
-		        Me.Log("Authentication failed", Log_Error)
-		        doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
-		        doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
-		      Else
-		        Me.Log("Authentication Successful", Log_Debug)
-		      End If
-		    End If
 		    
-		    
-		    Dim cache As HTTP.Response
-		    If UseSessions Then
-		      If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
-		        Select Case clientrequest.CacheDirective
-		        Case "no-cache", "max-age=0"
-		          Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
-		          cache = Nil
-		        End Select
-		      Else
-		        cache = GetCache(Session, clientRequest.Path.ServerPath)
-		      End If
-		    End If
-		    Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
-		    If redir <> Nil Then
-		      doc = redir
-		      Me.Log("Using redirect.", Log_Debug)
-		    ElseIf cache <> Nil Then
-		      'Cache hit
-		      doc = Cache
-		      doc.Compressable = False
-		      Me.Log("Page from cache", Log_Debug)
-		      Cache.Expires = New Date
-		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
-		    End If
+		    Do
+		      doc = CheckAuth(clientrequest)
+		      If doc <> Nil Then Exit Do
+		      doc = CheckProtocol(clientrequest)
+		      If doc <> Nil Then Exit Do
+		      doc = CheckCache(clientrequest, session)
+		      If doc <> Nil Then Exit Do
+		      doc = CheckRedirect(clientrequest, session)
+		      If doc <> Nil Then Exit Do
+		      Exit Do
+		    Loop
 		    
 		    If doc = Nil Then
 		      Me.Log("Running HandleRequest event", Log_Debug)
 		      doc = HandleRequest(clientrequest)
 		    End If
+		    If doc = Nil Then doc = DefaultHandler(clientrequest, Data)
 		    
-		    If doc = Nil Then
-		      Select Case clientrequest.Method
-		      Case RequestMethod.TRACE
-		        Me.Log("Request is a TRACE", Log_Debug)
-		        doc = doc.GetErrorResponse(200, "")
-		        doc.SetHeader("Content-Length", Str(Data.Size))
-		        doc.SetHeader("Content-Type", "message/http")
-		        doc.MessageBody = Data
-		      Case RequestMethod.OPTIONS
-		        Me.Log("Request is a OPTIONS", Log_Debug)
-		        doc = doc.GetErrorResponse(200, "")
-		        doc.MessageBody = ""
-		        doc.SetHeader("Content-Length", "0")
-		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
-		        doc.SetHeader("Accept-Ranges", "bytes")
-		      Case RequestMethod.HEAD
-		        Me.Log("Request is a HEAD", Log_Debug)
-		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
-		      Case RequestMethod.GET
-		        Me.Log("Request is a GET", Log_Debug)
-		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
-		      Else
-		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
-		          Me.Log("Request is not implemented", Log_Error)
-		        ElseIf clientrequest.MethodName = "" Then
-		          doc = doc.GetErrorResponse(400, "") 'bad request
-		          Me.Log("Request is malformed", Log_Error)
-		        ElseIf clientrequest.MethodName <> "" Then
-		          doc = doc.GetErrorResponse(405, clientrequest.MethodName)
-		          Me.Log("Request is a NOT ALLOWED", Log_Error)
-		        End If
-		      End Select
-		    End If
 		    doc.Path = clientrequest.Path
-		    If clientrequest.IsModifiedSince(doc.Expires) Then
-		      If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		        doc = doc.GetErrorResponse(304, "")
-		        doc.MessageBody = ""
-		      Else
-		        doc = doc.GetErrorResponse(412, "") 'Precondition failed
-		        doc.MessageBody = ""
-		      End If
-		    End If
-		    
 		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
 		      clientrequest.SetHeader("Connection", "keep-alive")
 		    Else
 		      clientrequest.SetHeader("Connection", "close")
 		    End If
 		    
-		    If EnforceContentType Then
-		      Me.Log("Checking Accepts", Log_Debug)
-		      For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
-		        If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
-		          Me.Log("Response is a Acceptable", Log_Debug)
-		          SendResponse(Sender, doc)
-		          Return
-		        End If
-		      Next
-		      Dim accepted As ContentType = doc.MIMEType
-		      doc = doc.GetErrorResponse(406, "") 'Not Acceptable
-		      doc.MIMEType = accepted
-		      Me.Log("Response is not Acceptable", Log_Error)
-		    End If
+		    CheckType(clientrequest, doc)
+		    
 		  Catch err As UnsupportedFormatException
 		    If err.ErrorNumber = 1 Then 'ssl?
 		      doc = doc.GetErrorResponse(101, "") 'Switch protocols
@@ -248,6 +258,41 @@ Inherits ServerSocket
 		  Me.SendResponse(Sender, errpage)
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DefaultHandler(ClientRequest As HTTP.Request, Data As MemoryBlock) As HTTP.Response
+		  Dim doc As HTTP.Response
+		  Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
+		  Select Case clientrequest.Method
+		  Case RequestMethod.HEAD, RequestMethod.GET
+		    doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
+		  Case RequestMethod.TRACE
+		    doc = doc.GetErrorResponse(200, "")
+		    doc.SetHeader("Content-Length", Str(Data.Size))
+		    doc.SetHeader("Content-Type", "message/http")
+		    doc.MessageBody = Data
+		  Case RequestMethod.OPTIONS
+		    doc = doc.GetErrorResponse(200, "")
+		    doc.MessageBody = ""
+		    doc.SetHeader("Content-Length", "0")
+		    doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
+		    doc.SetHeader("Accept-Ranges", "bytes")
+		  Else
+		    If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
+		      doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		      Me.Log("Request is not implemented", Log_Error)
+		    ElseIf clientrequest.MethodName = "" Then
+		      doc = doc.GetErrorResponse(400, "") 'bad request
+		      Me.Log("Request is malformed", Log_Error)
+		    ElseIf clientrequest.MethodName <> "" Then
+		      doc = doc.GetErrorResponse(405, clientrequest.MethodName)
+		      Me.Log("Request is a NOT ALLOWED", Log_Error)
+		    End If
+		  End Select
+		  
+		  Return doc
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
