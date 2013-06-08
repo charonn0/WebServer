@@ -334,6 +334,7 @@ Inherits HTTP.BaseServer
 			Name="SessionTimeout"
 			Visible=true
 			Group="Behavior"
+			InitialValue="600"
 			Type="Integer"
 			InheritedFrom="WebServer"
 		#tag EndViewProperty
