@@ -130,6 +130,17 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub CheckType(ClientRequest As HTTP.Request, ByRef doc As HTTP.Response)
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
+		  #If GZIPAvailable Then
+		    Dim types() As String = Split(ClientRequest.GetHeader("Accept-Encoding"), ",")
+		    doc.Compressable = False
+		    For i As Integer = 0 To UBound(types)
+		      If types(i).Trim = "gzip" Then
+		        doc.Compressable = True
+		        Exit For
+		      End If
+		    Next
+		  #endif
+		  
 		  If EnforceContentType Then
 		    Me.Log("Checking Accepts", Log_Debug)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -412,6 +423,8 @@ Inherits ServerSocket
 		    #else
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
 		    #endif
+		  Else
+		    ResponseDocument.SetHeader("Content-Encoding", "Identity")
 		  End If
 		End Sub
 	#tag EndMethod
