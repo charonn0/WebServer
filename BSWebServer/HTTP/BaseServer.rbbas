@@ -141,7 +141,7 @@ Inherits ServerSocket
 		    Next
 		  #endif
 		  
-		  If EnforceContentType Then
+		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 Then
 		    Me.Log("Checking Accepts", Log_Debug)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
@@ -235,9 +235,9 @@ Inherits ServerSocket
 		    
 		    doc.Path = clientrequest.Path
 		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
-		      clientrequest.SetHeader("Connection", "keep-alive")
+		      doc.SetHeader("Connection", "keep-alive")
 		    Else
-		      clientrequest.SetHeader("Connection", "close")
+		      doc.SetHeader("Connection", "close")
 		    End If
 		    
 		    CheckType(clientrequest, doc)
