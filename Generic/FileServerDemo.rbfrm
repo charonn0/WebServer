@@ -1,8 +1,9 @@
 #tag Window
 Begin Window FileServerDemo
-   BackColor       =   "&cFFFFFF00"
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
+   Compatibility   =   ""
    Composite       =   False
    Frame           =   0
    FullScreen      =   False
@@ -27,7 +28,7 @@ Begin Window FileServerDemo
    Begin PushButton PushButton1
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Host Folder"
       Default         =   False
@@ -58,7 +59,7 @@ Begin Window FileServerDemo
    Begin PushButton PushButton2
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Host File"
       Default         =   False
@@ -123,7 +124,7 @@ Begin Window FileServerDemo
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   "&cFFFFFF00"
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -149,8 +150,8 @@ Begin Window FileServerDemo
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   8080
-      TextColor       =   "&c00000000"
+      Text            =   "8080"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -261,7 +262,7 @@ Begin Window FileServerDemo
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   "&cFFFFFF00"
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -288,7 +289,7 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Username"
-      TextColor       =   "&c00000000"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -335,7 +336,7 @@ Begin Window FileServerDemo
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   "&cFFFFFF00"
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -362,7 +363,7 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password"
-      TextColor       =   "&c00000000"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -377,7 +378,7 @@ Begin Window FileServerDemo
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   "&cFFFFFF00"
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -404,7 +405,7 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "realm"
-      TextColor       =   "&c00000000"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -417,7 +418,7 @@ Begin Window FileServerDemo
    Begin PushButton PushButton4
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Generator"
       Default         =   False
@@ -516,10 +517,9 @@ Begin Window FileServerDemo
       Selectable      =   False
       TabIndex        =   18
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ":"
       TextAlign       =   0
-      TextColor       =   "&c00000000"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -530,7 +530,6 @@ Begin Window FileServerDemo
       Width           =   8
    End
    Begin Timer LogTimer
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   545
@@ -538,11 +537,8 @@ Begin Window FileServerDemo
       Mode            =   2
       Period          =   1
       Scope           =   0
-      TabIndex        =   14
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   478
-      Visible         =   True
       Width           =   32
    End
    Begin CheckBox UseSessions
@@ -578,16 +574,24 @@ Begin Window FileServerDemo
       Width           =   175
    End
    Begin WebServer.FileServer Sock
-      Enabled         =   True
+      AllowPipeLinedRequests=   False
+      AuthenticationRealm=   "Restricted Area"
+      AuthenticationRequired=   False
+      CertificatePassword=   ""
+      DirectoryBrowsing=   True
+      EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
       Left            =   503
       LockedInPosition=   False
-      TabIndex        =   16
+      MaximumSocketsConnected=   10
+      MinimumSocketsAvailable=   2
+      Port            =   0
+      Scope           =   0
+      SessionTimeout  =   600
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   478
-      Visible         =   True
+      UseSessions     =   True
       Width           =   32
    End
    Begin ComboBox SecurityLevel
@@ -657,7 +661,7 @@ Begin Window FileServerDemo
    Begin PushButton PushButton5
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Clear Log"
       Default         =   False
@@ -690,7 +694,7 @@ Begin Window FileServerDemo
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
-      BackColor       =   "&cFFFFFF00"
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -717,7 +721,7 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextColor       =   "&c00000000"
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -730,7 +734,7 @@ Begin Window FileServerDemo
    Begin PushButton PushButton6
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Next"
       Default         =   False
