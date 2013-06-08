@@ -13,6 +13,7 @@ Inherits HTTP.ScriptResponse
 			Name="AuthRealm"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -25,11 +26,13 @@ Inherits HTTP.ScriptResponse
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FromCache"
+			Name="Compressable"
 			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 			InheritedFrom="HTTP.Response"
 		#tag EndViewProperty
@@ -44,6 +47,7 @@ Inherits HTTP.ScriptResponse
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -57,18 +61,21 @@ Inherits HTTP.ScriptResponse
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MessageBody"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -81,6 +88,7 @@ Inherits HTTP.ScriptResponse
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -100,6 +108,7 @@ Inherits HTTP.ScriptResponse
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -107,6 +116,7 @@ Inherits HTTP.ScriptResponse
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
 	#tag EndViewBehavior

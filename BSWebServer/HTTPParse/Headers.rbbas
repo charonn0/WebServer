@@ -84,16 +84,18 @@ Inherits InternetHeaders
 		  Next
 		  
 		  Dim acc As String
-		  For i As Integer = 0 To UBound(AcceptableTypes)
-		    Dim type As ContentType = AcceptableTypes(i)
-		    If i > 0 And i < AcceptableTypes.Ubound Then
-		      acc = acc + type.ToString + ", "
-		    ElseIf i = 0 And AcceptableTypes.Ubound > 0 Then
-		      acc = acc + type.ToString + ", "
-		    ElseIf i = AcceptableTypes.Ubound And i > 0 Then
-		      acc = acc + type.ToString
-		    End If
-		  Next
+		  If UBound(AcceptableTypes) > 0 Then
+		    Dim ts() As String
+		    For i As Integer = 0 To UBound(AcceptableTypes)
+		      ts.Append(AcceptableTypes(i).ToString)
+		    Next
+		    acc = Join(ts, ",")
+		    If Right(acc, 1) = "," Then acc = Left(acc, acc.Len - 1)
+		  ElseIf UBound(AcceptableTypes) = 0 Then
+		    acc = acc + AcceptableTypes(0).ToString
+		  End If
+		  
+		  
 		  If acc <> "" Then
 		    data = data + CRLF + "Accept: " + acc
 		  End If

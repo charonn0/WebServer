@@ -228,13 +228,13 @@ Inherits HTTP.Response
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.Response"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthSecure"
 			Group="Behavior"
 			Type="Boolean"
-			InheritedFrom="HTTPParse.Response"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthUsername"
@@ -277,7 +277,7 @@ Inherits HTTP.Response
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.Response"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -290,7 +290,7 @@ Inherits HTTP.Response
 			Name="ProtocolVersion"
 			Group="Behavior"
 			Type="Single"
-			InheritedFrom="HTTPParse.Response"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionID"

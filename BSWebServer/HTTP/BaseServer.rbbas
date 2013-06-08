@@ -533,7 +533,7 @@ Inherits ServerSocket
 		  GZipResponse(ResponseDocument)
 		  
 		  Me.Log("Sending data", Log_Socket)
-		  Me.Log(HTTPReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.GetHeaders, Log_Response)
+		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.GetHeaders, Log_Response)
 		  
 		  Socket.Write(ResponseDocument.ToString)
 		  Socket.Flush

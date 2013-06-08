@@ -362,6 +362,7 @@ Inherits TextField
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="TextField"
 		#tag EndViewProperty
 		#tag ViewProperty

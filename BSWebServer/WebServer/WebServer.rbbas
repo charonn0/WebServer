@@ -1,5 +1,23 @@
 #tag Module
-Protected Module HTTP
+Protected Module WebServer
+	#tag Method, Flags = &h1
+		Protected Sub AddMIMEType(FileExtension As String, MIMEName As String)
+		  MIMETypes.Value(FileExtension) = MIMEName
+		End Sub
+	#tag EndMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function CFRelease Lib "Carbon" (cf As Ptr) As Ptr
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function CFUUIDCreate Lib "Carbon" (alloc As Ptr) As Ptr
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function CFUUIDCreateString Lib "Carbon" (alloc As ptr, CFUUIDRef As Ptr) As CFStringRef
+	#tag EndExternalMethod
+
 	#tag Method, Flags = &h21
 		Private Function CleanMangledFunction(item as string) As string
 		  'This method was written by SirG3 <TheSirG3@gmail.com>; http://fireyesoftware.com/developer/stackcleaner/
@@ -125,6 +143,69 @@ Protected Module HTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetMIMEIcon(ext As String) As String
+		  ext = Lowercase(ext)
+		  
+		  Select Case ext
+		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/bin.png"
+		    
+		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/script.png"
+		    
+		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xojo.png"
+		    
+		  Case "folder"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/dir.png"
+		    
+		  Case "txt", "md"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/txt.png"
+		    
+		  Case "htm", "html"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/html.png"
+		    
+		  Case "css"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/css.png"
+		    
+		  Case "xml", "xsl"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xml.png"
+		    
+		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/image.png"
+		    
+		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mov.png"
+		    
+		  Case "ttf", "otf", "pfb", "pfm"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/font.png"
+		    
+		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/zip.png"
+		    
+		  Case "wav"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/wav.png"
+		    
+		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mus.png"
+		    
+		  Case "pdf", "ps"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/pdf.png"
+		    
+		  Case "xls", "xlsx"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xls.png"
+		    
+		  Case "doc", "docx"
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/doc.png"
+		    
+		  Else ' This returns the default icon
+		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/unknown.png"
+		    
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GZipPage(MessageBody As String) As String
 		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
 		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.
@@ -150,221 +231,64 @@ Protected Module HTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HTTPCodeToMessage(Code As Integer) As String
-		  Select Case Code
-		  Case 100
-		    Return "Continue"
+		Function MIMEIcon(ext As String) As String
+		  ext = Lowercase(ext)
+		  
+		  Select Case ext
+		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
+		    Return "/_bsdaemonimags/bin.png"
 		    
-		  Case 101
-		    Return "Switching Protocols"
+		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
+		    Return "/_bsdaemonimags/script.png"
 		    
-		  Case 102
-		    Return "Processing"
+		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
+		    Return "/_bsdaemonimags/xojo.png"
 		    
-		  Case 200
-		    Return "OK"
+		  Case "folder"
+		    Return "/_bsdaemonimags/dir.png"
 		    
-		  Case 201
-		    Return "Created"
+		  Case "txt", "md"
+		    Return "/_bsdaemonimags/txt.png"
 		    
-		  Case 202
-		    Return "Accepted"
+		  Case "htm", "html"
+		    Return "/_bsdaemonimags/html.png"
 		    
-		  Case 203
-		    Return "Non-Authoritative Information"
+		  Case "css"
+		    Return "/_bsdaemonimags/css.png"
 		    
-		  Case 204
-		    Return "No Content"
+		  Case "xml", "xsl"
+		    Return "/_bsdaemonimags/xml.png"
 		    
-		  Case 205
-		    Return "Reset Content"
+		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
+		    Return "/_bsdaemonimags/image.png"
 		    
-		  Case 206
-		    Return "Partial Content"
+		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
+		    Return "/_bsdaemonimags/mov.png"
 		    
-		  Case 207
-		    Return "Multi-Status"
+		  Case "ttf", "otf", "pfb", "pfm"
+		    Return "/_bsdaemonimags/font.png"
 		    
-		  Case 208
-		    Return "Already Reported"
+		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
+		    Return "/_bsdaemonimags/zip.png"
 		    
+		  Case "wav"
+		    Return "/_bsdaemonimags/wav.png"
 		    
-		  Case 226
-		    Return "IM Used"
+		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
+		    Return "/_bsdaemonimags/mus.png"
 		    
-		  Case 300
-		    Return "Multiple Choices"
+		  Case "pdf", "ps"
+		    Return "/_bsdaemonimags/pdf.png"
 		    
-		  Case 301
-		    Return "Moved Permanently"
+		  Case "xls", "xlsx"
+		    Return "/_bsdaemonimags/xls.png"
 		    
-		  Case 302
-		    Return "Found"
+		  Case "doc", "docx"
+		    Return "/_bsdaemonimags/doc.png"
 		    
-		  Case 303
-		    Return "See Other"
+		  Else ' This returns the default icon
+		    Return "/_bsdaemonimags/unknown.png"
 		    
-		  Case 304
-		    Return "Not Modified"
-		    
-		  Case 305
-		    Return "Use Proxy"
-		    
-		  Case 306
-		    Return "Switch Proxy"
-		    
-		  Case 307
-		    Return "Temporary Redirect"
-		    
-		  Case 308 ' https://tools.ietf.org/html/draft-reschke-http-status-308-07
-		    Return "Permanent Redirect"
-		    
-		  Case 400
-		    Return "Bad Request"
-		    
-		  Case 401
-		    Return "Unauthorized"
-		    
-		  Case 403
-		    Return "Forbidden"
-		    
-		  Case 404
-		    Return "Not Found"
-		    
-		  Case 405
-		    Return "Method Not Allowed"
-		    
-		  Case 406
-		    Return "Not Acceptable"
-		    
-		  Case 407
-		    Return "Proxy Authentication Required"
-		    
-		  Case 408
-		    Return "Request Timeout"
-		    
-		  Case 409
-		    Return "Conflict"
-		    
-		  Case 410
-		    Return "Gone"
-		    
-		  Case 411
-		    Return "Length Required"
-		    
-		  Case 412
-		    Return "Precondition Failed"
-		    
-		  Case 413
-		    Return "Request Entity Too Large"
-		    
-		  Case 414
-		    Return "Request-URI Too Long"
-		    
-		  Case 415
-		    Return "Unsupported Media Type"
-		    
-		  Case 416
-		    Return "Requested Range Not Satisfiable"
-		    
-		  Case 417
-		    Return "Expectation Failed"
-		    
-		  Case 418
-		    Return "I'm a teapot" ' https://tools.ietf.org/html/rfc2324
-		    
-		  Case 420
-		    Return "Enhance Your Calm" 'Nonstandard, from Twitter API
-		    
-		  Case 422
-		    Return "Unprocessable Entity"
-		    
-		  Case 423
-		    Return "Locked"
-		    
-		  Case 424
-		    Return "Failed Dependency"
-		    
-		  Case 425
-		    Return "Unordered Collection" 'Draft, https://tools.ietf.org/html/rfc3648
-		    
-		  Case 426
-		    Return "Upgrade Required"
-		    
-		  Case 428
-		    Return "Precondition Required"
-		    
-		  Case 429
-		    Return "Too Many Requests"
-		    
-		  Case 431
-		    Return "Request Header Fields Too Large"
-		    
-		  Case 444
-		    Return "No Response" 'Nginx
-		    
-		  Case 449
-		    Return "Retry With" 'Nonstandard, from Microsoft http://msdn.microsoft.com/en-us/library/dd891478.aspx
-		    
-		  Case 450
-		    Return "Blocked By Windows Parental Controls" 'Nonstandard, from Microsoft
-		    
-		  Case 451
-		    Return "Unavailable For Legal Reasons" 'Draft, https://tools.ietf.org/html/draft-tbray-http-legally-restricted-status-00
-		    
-		  Case 494
-		    Return "Request Header Too Large" 'nginx
-		    
-		  Case 495
-		    Return "Cert Error" 'nginx
-		    
-		  Case 496
-		    Return "No Cert" 'nginx
-		    
-		  Case 497
-		    Return "HTTP to HTTPS" 'nginx
-		    
-		  Case 499
-		    Return "Client Closed Request" 'nginx
-		    
-		  Case 500
-		    Return "Internal Server Error"
-		    
-		  Case 501
-		    Return "Not Implemented"
-		    
-		  Case 502
-		    Return "Bad Gateway"
-		    
-		  Case 503
-		    Return "Service Unavailable"
-		    
-		  Case 504
-		    Return "Gateway Timeout"
-		    
-		  Case 505
-		    Return "HTTP Version Not Supported"
-		    
-		  Case 506
-		    Return "Variant Also Negotiates" 'WEBDAV https://tools.ietf.org/html/rfc2295
-		    
-		  Case 507
-		    Return "Insufficient Storage" 'WEBDAV https://tools.ietf.org/html/rfc4918
-		    
-		  Case 508
-		    Return "Loop Detected" 'WEBDAV https://tools.ietf.org/html/rfc5842
-		    
-		  Case 509
-		    Return "Bandwidth Limit Exceeded" 'Apache, others
-		    
-		  Case 510
-		    Return "Not Extended"  'https://tools.ietf.org/html/rfc2774
-		    
-		  Case 511
-		    Return "Network Authentication Required" 'https://tools.ietf.org/html/rfc6585
-		    
-		  Else
-		    Return "Unknown Status Code"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -482,6 +406,66 @@ Protected Module HTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RC4(strData As String, strKey As String) As String
+		  //Credit: http://forums.realsoftware.com/viewtopic.php?f=1&t=19930
+		  //Encodes or decodes the strData string with the RC4 symmetric ciper, using the strKey as the key.
+		  //On success, returns the En/Decoded string. On error, returns an empty string.
+		  
+		  Dim MM As MemoryBlock = strData
+		  Dim MM2 As New MemoryBlock(LenB(strData))
+		  Dim memAsciiArray(255), memKeyArray(255), memJump, memTemp, memY, intKeyLength, intIndex, intT, intX As integer
+		  
+		  intKeyLength = len(strKey)
+		  
+		  For intIndex = 0 to 255
+		    memKeyArray(intIndex) = asc(mid(strKey, ((intIndex) mod (intKeyLength)) + 1, 1))
+		  next
+		  
+		  For intIndex = 0 to 255
+		    memAsciiArray(intIndex) = intIndex
+		  next
+		  
+		  For intIndex = 0 to 255
+		    memJump = (memJump + memAsciiArray(intIndex) + memKeyArray(intIndex)) mod 256
+		    memTemp = memAsciiArray(intIndex)
+		    memAsciiArray(intIndex) = memAsciiArray(memJump)
+		    memAsciiArray(memJump) = memTemp
+		  next
+		  
+		  intIndex = 0
+		  memJump = 0
+		  
+		  For intX = 1 to MM2.Size
+		    intIndex = (intIndex + 1) mod 256
+		    memJump = (memJump + memAsciiArray(intIndex)) mod 256
+		    intT = (memAsciiArray(intIndex) + memAsciiArray(memJump)) mod 256
+		    memTemp = memAsciiArray(intIndex)
+		    memAsciiArray(intIndex) = memAsciiArray(memJump)
+		    memAsciiArray(memJump) = memTemp
+		    memY = memAsciiArray(intT)
+		    mm2.Byte(intX - 1) = bitwise.bitxor(val("&h" + hex(MM.byte(IntX - 1))), bitwise.bitxor(memTemp,memY))
+		  next
+		  
+		  return MM2
+		  
+		Exception
+		  Return ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RemoveMIMEType(FileExtension As String)
+		  If MIMETypes.HasKey(FileExtension) Then
+		    MIMETypes.Remove(FileExtension)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function RpcStringFree Lib "Rpcrt4" Alias "RpcStringFreeA" (Addr As Ptr) As Integer
+	#tag EndExternalMethod
+
+	#tag Method, Flags = &h0
 		Function SocketErrorMessage(ErrorCode As Integer) As String
 		  Dim err As String = "socket error " + Str(ErrorCode)
 		  Select Case ErrorCode
@@ -506,6 +490,74 @@ Protected Module HTTP
 		  Return err
 		End Function
 	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UUID() As String
+		  //This function ©2004-2011 Adam Shirey
+		  //http://www.dingostick.com/node.php?id=11
+		  
+		  Dim strUUID As String
+		  
+		  #If TargetMacOS
+		    //see http://developer.apple.com/documentation/CoreFOundation/Reference/CFUUIDRef/Reference/reference.html
+		    Dim pUUID As ptr = CFUUIDCreate(Nil)
+		    StructureInfo = CFUUIDCreateString(Nil, pUUID)
+		    CFRelease(pUUID)
+		    
+		  #ElseIf TargetWin32
+		    //see: http://msdn.microsoft.com/en-us/library/aa379205(VS.85).aspx
+		    //and: http://msdn.microsoft.com/en-us/library/aa379352(VS.85).aspx
+		    Static mb As New MemoryBlock(16)
+		    Call UuidCreate(mb) //can compare to RPC_S_UUID_LOCAL_ONLY and RPC_S_UUID_NO_ADDRESS for more info
+		    Static ptrUUID As New MemoryBlock(16)
+		    Dim ppAddr As ptr
+		    Call UuidToString(mb, ppAddr)
+		    Dim mb2 As MemoryBlock = ppAddr
+		    strUUID = mb2.CString(0)
+		    Call RpcStringFree(ptrUUID)
+		    
+		  #ElseIf TargetLinux
+		    // see http://linux.die.net/man/3/uuid_generate
+		    
+		    // these are soft declared because there's perhaps a smaller chance of libuuid being present on a linux system,
+		    // though I have no evidence to support such a claim. it seems pretty standard.
+		    If System.IsFunctionAvailable("uuid_generate", "libuuid") Then
+		      Static mb As New MemoryBlock( 16 )
+		      Static uu As New MemoryBlock( 36 )
+		      
+		      uuid_generate(mb) // generate the uuid in binary form
+		      uuid_unparse_upper(mb, uu) // convert to a 36-byte string
+		      
+		      strUUID = uu.StringValue(0, 36)
+		    Else
+		      Dim error As String = App.ExecutableFile.Name + ": expected libuuid!"
+		      #If TargetHasGUI Then
+		        System.DebugLog(error)
+		      #Else
+		        StdErr.Write(error)
+		      #endif
+		    End If
+		  #EndIf
+		  
+		  Return strUUID
+		End Function
+	#tag EndMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function UuidCreate Lib "Rpcrt4" (Uuid As Ptr) As Integer
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Function UuidToString Lib "Rpcrt4" Alias "UuidToStringA" (Uuid As Ptr, ByRef p As ptr) As Integer
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Sub uuid_generate Lib "libuuid" (out As ptr)
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h1
+		Protected Soft Declare Sub uuid_unparse_upper Lib "libuuid" (mb As Ptr, uu As Ptr)
+	#tag EndExternalMethod
 
 
 	#tag ComputedProperty, Flags = &h1
@@ -1314,27 +1366,33 @@ Protected Module HTTP
 	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
 	#tag EndConstant
+
+
+	#tag Structure, Name = FILETIME, Flags = &h0
+		HighDateTime As Integer
+		LowDateTime As Integer
+	#tag EndStructure
+
+	#tag Structure, Name = WIN32_FIND_DATA, Flags = &h0
+		Attribs As Integer
+		  CreationTime As FILETIME
+		  LastAccess As FILETIME
+		  LastWrite As FILETIME
+		  sizeHigh As Integer
+		  sizeLow As Integer
+		  Reserved1 As Integer
+		  Reserved2 As Integer
+		  FileName As WString*260
+		AlternateName As String*14
+	#tag EndStructure
 
 
 	#tag Enum, Name = ConnectionTypes, Flags = &h0
 		SSLv3
 		  TLSv1
 		Insecure
-	#tag EndEnum
-
-	#tag Enum, Name = RequestMethod, Flags = &h0
-		GET
-		  HEAD
-		  POST
-		  PUT
-		  DELETE
-		  TRACE
-		  OPTIONS
-		  PATCH
-		  CONNECT
-		InvalidMethod
 	#tag EndEnum
 
 

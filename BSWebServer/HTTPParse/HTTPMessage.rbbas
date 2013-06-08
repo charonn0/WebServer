@@ -3,7 +3,7 @@ Protected Class HTTPMessage
 	#tag Method, Flags = &h1
 		Protected Shared Function ErrorPage(ErrorNumber As Integer, Param As String = "") As String
 		  Dim page As String = BlankErrorPage
-		  page = ReplaceAll(page, "%HTTPERROR%", HTTPReplyString(ErrorNumber))
+		  page = ReplaceAll(page, "%HTTPERROR%", HTTP.ReplyString(ErrorNumber))
 		  
 		  Select Case ErrorNumber
 		  Case 301, 302
@@ -121,7 +121,7 @@ Protected Class HTTPMessage
 	#tag Method, Flags = &h0
 		Function MethodName() As String
 		  If Me.Method <> RequestMethod.InvalidMethod Then
-		    Return HTTPMethodName(Me.Method)
+		    Return HTTP.MethodName(Me.Method)
 		  Else
 		    Return mTrueMethodName
 		  End If
@@ -132,7 +132,7 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub MethodName(Assigns Name As String)
-		  Me.Method = HTTPMethod(Name)
+		  Me.Method = HTTP.Method(Name)
 		  mTrueMethodName = Name
 		  
 		End Sub
@@ -166,15 +166,23 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub SetHeader(Name As String, Value As String)
-		  If Name = "Cookie" Or Name = "Set-Cookie" Then
+		  Select Case Name
+		  Case "Cookie", "Set-Cookie"
 		    Dim n, v As String
 		    n = NthField(Value, "=", 1).Trim
 		    v = NthField(Value, "=", 2).Trim
 		    Me.SetCookie(n) = v
+		    
+		  Case "Accept"
+		    Dim types() As HTTPParse.ContentType = HTTPParse.ContentType.ParseTypes(Value)
+		    For Each t As HTTPParse.ContentType In types
+		      Me.Headers.AcceptableTypes.Append(t)
+		    Next
+		    
 		  Else
 		    RemoveHeader(Name)
 		    Me.Headers.AppendHeader(Name, Value)
-		  End If
+		  End Select
 		End Sub
 	#tag EndMethod
 

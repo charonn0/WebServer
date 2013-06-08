@@ -1,9 +1,8 @@
 #tag Window
 Begin Window DatePicker
-   BackColor       =   &cFFFFFF00
+   BackColor       =   "&cFFFFFF00"
    Backdrop        =   0
    CloseButton     =   False
-   Compatibility   =   ""
    Composite       =   False
    Frame           =   0
    FullScreen      =   False
@@ -36,12 +35,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   0
       InitialParent   =   ""
       Italic          =   False
@@ -74,12 +71,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   1
       InitialParent   =   ""
       Italic          =   False
@@ -112,12 +107,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   2
       InitialParent   =   ""
       Italic          =   False
@@ -150,12 +143,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   3
       InitialParent   =   ""
       Italic          =   False
@@ -188,12 +179,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   4
       InitialParent   =   ""
       Italic          =   False
@@ -226,12 +215,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   5
       InitialParent   =   ""
       Italic          =   False
@@ -264,12 +251,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   6
       InitialParent   =   ""
       Italic          =   False
@@ -302,12 +287,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   7
       InitialParent   =   ""
       Italic          =   False
@@ -340,12 +323,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   8
       InitialParent   =   ""
       Italic          =   False
@@ -378,12 +359,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   9
       InitialParent   =   ""
       Italic          =   False
@@ -416,12 +395,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   10
       InitialParent   =   ""
       Italic          =   False
@@ -454,12 +431,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   11
       InitialParent   =   ""
       Italic          =   False
@@ -492,12 +467,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   12
       InitialParent   =   ""
       Italic          =   False
@@ -530,12 +503,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   13
       InitialParent   =   ""
       Italic          =   False
@@ -568,12 +539,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   14
       InitialParent   =   ""
       Italic          =   False
@@ -606,12 +575,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   15
       InitialParent   =   ""
       Italic          =   False
@@ -644,12 +611,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   16
       InitialParent   =   ""
       Italic          =   False
@@ -682,12 +647,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   17
       InitialParent   =   ""
       Italic          =   False
@@ -720,12 +683,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   18
       InitialParent   =   ""
       Italic          =   False
@@ -758,12 +719,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   19
       InitialParent   =   ""
       Italic          =   False
@@ -796,12 +755,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   20
       InitialParent   =   ""
       Italic          =   False
@@ -834,12 +791,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   21
       InitialParent   =   ""
       Italic          =   False
@@ -872,12 +827,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   22
       InitialParent   =   ""
       Italic          =   False
@@ -910,12 +863,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   23
       InitialParent   =   ""
       Italic          =   False
@@ -948,12 +899,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   24
       InitialParent   =   ""
       Italic          =   False
@@ -986,12 +935,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   25
       InitialParent   =   ""
       Italic          =   False
@@ -1024,12 +971,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   26
       InitialParent   =   ""
       Italic          =   False
@@ -1062,12 +1007,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   27
       InitialParent   =   ""
       Italic          =   False
@@ -1100,12 +1043,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   28
       InitialParent   =   ""
       Italic          =   False
@@ -1138,12 +1079,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   29
       InitialParent   =   ""
       Italic          =   False
@@ -1176,12 +1115,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   30
       InitialParent   =   ""
       Italic          =   False
@@ -1214,12 +1151,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   31
       InitialParent   =   ""
       Italic          =   False
@@ -1252,12 +1187,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   32
       InitialParent   =   ""
       Italic          =   False
@@ -1290,12 +1223,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   33
       InitialParent   =   ""
       Italic          =   False
@@ -1328,12 +1259,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   34
       InitialParent   =   ""
       Italic          =   False
@@ -1358,7 +1287,7 @@ Begin Window DatePicker
    Begin PushButton PushButton1
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -1389,7 +1318,7 @@ Begin Window DatePicker
    Begin PushButton PushButton2
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -1439,9 +1368,9 @@ Begin Window DatePicker
       Selectable      =   True
       TabIndex        =   41
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "DECEMBER"
       TextAlign       =   1
-      TextColor       =   &c0000FF00
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -1473,9 +1402,9 @@ Begin Window DatePicker
       Selectable      =   True
       TabIndex        =   42
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "YEAR"
       TextAlign       =   1
-      TextColor       =   &c0000FF00
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -1496,12 +1425,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   15
       HelpTag         =   "Last Month"
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1534,12 +1461,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   15
       HelpTag         =   "Last Year"
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1572,12 +1497,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   15
       HelpTag         =   "Next month"
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1610,12 +1533,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   15
       HelpTag         =   "Next Year"
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -1648,12 +1569,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   35
       InitialParent   =   ""
       Italic          =   False
@@ -1686,12 +1605,10 @@ Begin Window DatePicker
       Enabled         =   True
       EraseBackground =   False
       Font            =   "System"
-      FontColor       =   &c00000000
       FontSize        =   12
       Height          =   24
       HelpTag         =   ""
       hilightBorder   =   True
-      hilightColor    =   &c0000FF00
       Index           =   36
       InitialParent   =   ""
       Italic          =   False
@@ -1817,7 +1734,7 @@ End
 
 #tag Events Day
 	#tag Event
-		Sub Action(index as Integer)
+		Sub Action()
 		  SelectedDate.Day = Val(Day(index).Caption)
 		  UpdateDate()
 		End Sub
@@ -1896,250 +1813,3 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag ViewBehavior
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Appearance"
-		Type="Picture"
-		EditorType="Picture"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Composite"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=true
-		Group="Appearance"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		InheritedFrom="Window"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"10 - Drawer Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreen"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Position"
-		InitialValue="400"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Visible=true
-		Group="Appearance"
-		InitialValue="0"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Position"
-		InitialValue="32000"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Position"
-		InitialValue="32000"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBar"
-		Visible=true
-		Group="Appearance"
-		Type="MenuBar"
-		EditorType="MenuBar"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Position"
-		InitialValue="64"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Position"
-		InitialValue="64"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		InheritedFrom="Window"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Appearance"
-		InitialValue="Untitled"
-		Type="String"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Visible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Position"
-		InitialValue="600"
-		Type="Integer"
-		InheritedFrom="Window"
-	#tag EndViewProperty
-#tag EndViewBehavior

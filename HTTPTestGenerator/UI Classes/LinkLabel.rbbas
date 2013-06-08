@@ -462,6 +462,7 @@ Inherits Label
 		#tag ViewProperty
 			Name="InitialParent"
 			Group="Initial State"
+			Type="String"
 			InheritedFrom="Label"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -537,6 +538,7 @@ Inherits Label
 			Name="Super"
 			Visible=true
 			Group="ID"
+			Type="String"
 			InheritedFrom="Label"
 		#tag EndViewProperty
 		#tag ViewProperty

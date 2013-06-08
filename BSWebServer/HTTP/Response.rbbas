@@ -20,7 +20,7 @@ Inherits HTTPParse.HTTPMessage
 		  raw = Replace(raw, line + CRLF, "")
 		  raw = Replace(raw, Me.MessageBody, "")
 		  Me.Headers = New Headers(raw)
-		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
+		  Me.Method = HTTP.Method(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
 		  Me.StatusCode = Val(NthField(line, " ", 2))
@@ -148,7 +148,7 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
-		  Return HTTPReplyString(Me.StatusCode) + CRLF + Super.ToString(False)
+		  Return ReplyString(Me.StatusCode) + CRLF + Super.ToString(False)
 		  
 		End Function
 	#tag EndMethod
@@ -231,7 +231,7 @@ Inherits HTTPParse.HTTPMessage
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return HTTPCodeToMessage(Me.StatusCode)
+			  Return CodeToMessage(Me.StatusCode)
 			End Get
 		#tag EndGetter
 		StatusMessage As String

@@ -47,7 +47,7 @@ Inherits HTTPParse.HTTPMessage
 		  End If
 		  
 		  
-		  Me.Method = HTTPParse.HTTPMethod(NthField(line, " ", 1).Trim)
+		  Me.Method = HTTP.Method(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
 		  Me.Path = New URI(NthField(line, " ", 2))

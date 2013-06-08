@@ -3,9 +3,8 @@ Begin ContainerControl MessageView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   BackColor       =   "&cFFFFFF00"
    Backdrop        =   0
-   Compatibility   =   ""
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -21,7 +20,6 @@ Begin ContainerControl MessageView
    TabPanelIndex   =   0
    TabStop         =   True
    Top             =   32
-   Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   569
@@ -43,6 +41,7 @@ Begin ContainerControl MessageView
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -69,9 +68,10 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Message Body:"
          TextAlign       =   0
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -86,7 +86,7 @@ Begin ContainerControl MessageView
          Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   True
-         BackColor       =   &cFFFFFF00
+         BackColor       =   "&cFFFFFF00"
          Bold            =   False
          Border          =   True
          DataField       =   ""
@@ -119,7 +119,7 @@ Begin ContainerControl MessageView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -201,9 +201,10 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
-         TextColor       =   &c00000000
+         TextColor       =   "&c00000000"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -214,7 +215,7 @@ Begin ContainerControl MessageView
          Width           =   569
       End
       Begin LinkLabel LinkLabel1
-         ActiveColor     =   &cFF000000
+         ActiveColor     =   "&cFF000000"
          AltText         =   ""
          AutoDeactivate  =   True
          Bold            =   False
@@ -223,7 +224,7 @@ Begin ContainerControl MessageView
          Draggable       =   False
          Enabled         =   True
          Height          =   20
-         HilightColor    =   &c00FFFF00
+         HilightColor    =   "&c00FFFF00"
          HoverPeriod     =   250
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -240,9 +241,10 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "View as media"
          TextAlign       =   2
-         TextColor       =   &c0000FF00
+         TextColor       =   "&c0000FF00"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -253,7 +255,7 @@ Begin ContainerControl MessageView
          Width           =   137
       End
       Begin LinkLabel PageTitle
-         ActiveColor     =   &cFF000000
+         ActiveColor     =   "&cFF000000"
          AltText         =   ""
          AutoDeactivate  =   True
          Bold            =   False
@@ -262,7 +264,7 @@ Begin ContainerControl MessageView
          Draggable       =   False
          Enabled         =   True
          Height          =   20
-         HilightColor    =   &c00FFFF00
+         HilightColor    =   "&c00FFFF00"
          HoverPeriod     =   250
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -279,9 +281,10 @@ Begin ContainerControl MessageView
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   ""
          TextAlign       =   0
-         TextColor       =   &c0000FF00
+         TextColor       =   "&c0000FF00"
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
@@ -406,7 +409,7 @@ End
 #tag EndEvents
 #tag Events ImagePreview
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics)
 		  #If RBVersion >= 2012 Then 'areas() was added in RS2012 R1
 		    #pragma Unused areas
 		  #endif
@@ -445,226 +448,3 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag ViewBehavior
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Backdrop"
-		Visible=true
-		Group="Appearance"
-		Type="Picture"
-		EditorType="Picture"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Enabled"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Position"
-		InitialValue="300"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		Type="String"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="InitialParent"
-		Group="Position"
-		Type="String"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Left"
-		Visible=true
-		Group="Position"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockBottom"
-		Visible=true
-		Group="Position"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockLeft"
-		Visible=true
-		Group="Position"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockRight"
-		Visible=true
-		Group="Position"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockTop"
-		Visible=true
-		Group="Position"
-		Type="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="PreviewPanel"
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="PreviewPic"
-		Group="Behavior"
-		Type="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="RequestURL"
-		Group="Behavior"
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabIndex"
-		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabStop"
-		Visible=true
-		Group="Position"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Top"
-		Visible=true
-		Group="Position"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Transparent"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Visible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Position"
-		InitialValue="300"
-		Type="Integer"
-		InheritedFrom="ContainerControl"
-	#tag EndViewProperty
-#tag EndViewBehavior
