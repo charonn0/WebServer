@@ -8,6 +8,12 @@ Class ContentType
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Constructor()
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(OfType As FolderItem, Weight As Single = 1.0)
 		  If Not OfType.Directory Then
@@ -59,6 +65,48 @@ Class ContentType
 		  End If
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function ParseTypes(Raw As String) As HTTPParse.ContentType()
+		  Dim fields() As String
+		  If InStr(Raw, ",") > 0 Then 'multiple types
+		    fields = Split(raw, ",")
+		  Else
+		    fields.Append(raw)
+		  End If
+		  Dim types() As HTTPParse.ContentType
+		  For i As Integer = 0 To Ubound(fields)
+		    Dim t As New ContentType
+		    Dim entry As String = fields(i)
+		    Dim type, wght As String
+		    If InStr(entry, ";") > 0 Then 'weight
+		      type = NthField(entry, ";", 1)
+		      wght = NthField(entry, ";", 2)
+		    Else
+		      type = entry.Trim
+		      wght = ""
+		    End If
+		    
+		    If NthField(type, "/", 1).Trim <> "" Then
+		      t.SuperType = NthField(type, "/", 1).Trim
+		    Else
+		      t.SuperType = "*"
+		    End If
+		    
+		    If NthField(type, "/", 2).Trim <> "" Then
+		      t.SubType = NthField(type, "/", 2).Trim
+		    Else
+		      t.SubType = "*"
+		    End If
+		    If NthField(wght, "=", 1).Trim = "q" Then
+		      wght = NthField(wght, "=", 2).Trim
+		      t.Weight = CDbl(wght)
+		    End If
+		    types.Append(t)
+		  Next
+		  Return types
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

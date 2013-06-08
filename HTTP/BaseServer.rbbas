@@ -165,7 +165,7 @@ Inherits ServerSocket
 		  Else
 		    msg = msg + ")"
 		  End If
-		  Me.Log(msg, Log_Debug)
+		  Me.Log(msg, Log_Status)
 		  Dim data As MemoryBlock
 		  Dim la As String = Sender.Lookahead
 		  If AllowPipeLinedRequests And (Left(la, 3) = "GET" or Left(la, 4) = "HEAD") Then
@@ -810,7 +810,7 @@ Inherits ServerSocket
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Log_Error, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = Log_Error, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Log_Request, Type = Double, Dynamic = False, Default = \"0", Scope = Public
@@ -819,7 +819,10 @@ Inherits ServerSocket
 	#tag Constant, Name = Log_Response, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Log_Socket, Type = Double, Dynamic = False, Default = \"-3", Scope = Public
+	#tag Constant, Name = Log_Socket, Type = Double, Dynamic = False, Default = \"-3.0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Log_Status, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-2", Scope = Public

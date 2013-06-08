@@ -887,9 +887,9 @@ End
 		  'Next
 		  'Me.ListIndex = 3
 		  Me.AddRow("Off")
-		  Me.RowTag(0) = 3
+		  Me.RowTag(0) = 4
 		  Me.AddRow("Errors Only")
-		  Me.RowTag(1) = 2
+		  Me.RowTag(1) = 3
 		  Me.AddRow("Normal")
 		  Me.RowTag(2) = 1
 		  Me.AddRow("Debug")
@@ -982,7 +982,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim message As String
-		  Dim severity As Integer
+		  Dim severity As Double
 		  While UBound(messages) > -1
 		    Dim p As Pair = messages.Pop
 		    message = P.Left
@@ -1000,9 +1000,9 @@ End
 		    For i As Integer = 0 To UBound(lines)
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
-		        Case HTTP.BaseServer.Log_Request
+		        Case HTTP.BaseServer.Log_Request, HTTP.BaseServer.Log_Status
 		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Response Then Return
-		          If i = 0 Then
+		          If i = 0 And severity <> HTTP.BaseServer.Log_Status Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request")
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
 		          Else
