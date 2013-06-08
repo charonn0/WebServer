@@ -173,28 +173,12 @@ Inherits HTTP.Response
 
 
 	#tag Property, Flags = &h21
-		Private mTarget As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private RequestPath As HTTP.URI
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mTarget = Nil Then Break
-			  return mTarget
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mTarget = value
-			  If mTarget = Nil Then Break
-			End Set
-		#tag EndSetter
+	#tag Property, Flags = &h0
 		Target As FolderItem
-	#tag EndComputedProperty
+	#tag EndProperty
 
 
 	#tag Constant, Name = IndexPage, Type = String, Dynamic = False, Default = \"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r<html xmlns\x3D\"http://www.w3.org/1999/xhtml\">\r<head>\r<title>%PAGETITLE%</title>\r</head>\r\r<body link\x3D\"#0000FF\" vlink\x3D\"#004080\" alink\x3D\"#FF0000\">\r<h1>%PAGETITLE%</h1><h2>%ITEMCOUNT%</h2>\r<p>%UPLINK%</p>\r<table width\x3D\"90%\" border\x3D\"0\" cellspacing\x3D\"5\" cellpadding\x3D\"1\">\r%TABLE%\r</table>\r<hr />\r<p style\x3D\"font-size: x-small;\">Powered by: %DAEMONVERSION% <br />\r%TIME% <br /> \r%COMPRESSION% <br />\r%SECURITY%\r</p>\r</body>\r</html>", Scope = Private

@@ -39,7 +39,13 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Cookie(Index As Integer = - 1, Assigns NewCookie As Cookie)
+		Function Cookie(Index As Integer) As Cookie
+		  Return Cookies(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Cookie(Index As Integer, Assigns NewCookie As Cookie)
 		  #pragma BreakOnExceptions Off
 		  If NewCookie = Nil Then
 		    Cookies.Remove(Index)
@@ -53,12 +59,6 @@ Inherits InternetHeaders
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Cookie(Index As Integer) As Cookie
-		  Return Cookies(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function CookieCount() As Integer
 		  Return UBound(Cookies) + 1
 		End Function
@@ -68,6 +68,7 @@ Inherits InternetHeaders
 		Sub DeleteAllHeaders()
 		  Super.DeleteAllHeaders
 		  ReDim Cookies(-1)
+		  ReDim AcceptableTypes(-1)
 		End Sub
 	#tag EndMethod
 

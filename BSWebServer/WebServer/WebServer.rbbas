@@ -206,6 +206,27 @@ Protected Module WebServer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetType(File As FolderItem) As ContentType
+		  If File.Directory Then
+		    Return WebServer.MIMETypes.Value("text/html")
+		  Else
+		    Return GetType(File.Name)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetType(FileName As String) As ContentType
+		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
+		  If WebServer.MIMETypes.HasKey(ext) Then
+		    Return New ContentType(WebServer.MIMETypes.Value(ext).StringValue)
+		  End If
+		  Return New ContentType("application/octet-stream")
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GZipPage(MessageBody As String) As String
 		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
 		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.

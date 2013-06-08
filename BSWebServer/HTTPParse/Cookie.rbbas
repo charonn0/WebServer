@@ -3,6 +3,7 @@ Class Cookie
 Inherits Pair
 	#tag Method, Flags = &h1000
 		Sub Constructor(Raw As String)
+		  'accepts a single raw Cookie string (e.g. "SessionID=12345; Port=80; httpOnly")
 		  Dim l, r, m, data As String
 		  
 		  If InStr(Raw, ";") > 0 Then
@@ -27,7 +28,7 @@ Inherits Pair
 		      Case "Path"
 		        Me.Path = v
 		      Case "Expires"
-		        Me.Expiry = HTTPDate(v)
+		        Me.Expires = HTTPDate(v)
 		      Case "Port"
 		        Me.Port = Val(v)
 		      Case "Secure"
@@ -44,31 +45,15 @@ Inherits Pair
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Expires() As Date
-		  Return Me.Expiry
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Expires(Assigns NewDate As Date)
-		  Me.Expiry = NewDate
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Expires(Assigns NewDate As String)
-		  Me.Expiry = HTTPDate(NewDate)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Name() As String
+		  'Returns the cookie name
 		  Return Me.Left.StringValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function OriginCompare(CompareTo As Cookie) As Boolean
+		  'Compares the metadata of the passed cookie to the instant cookie
 		  If CompareTo.Domain <> Me.Domain Then Return False
 		  If CompareTo.Path <> Me.Path Then Return False
 		  If CompareTo.Port <> Me.Port Then Return False
@@ -80,9 +65,10 @@ Inherits Pair
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
+		  'serialize the object
 		  Dim data As String = Me.Name + "=" + Me.Value
 		  
-		  If Me.Expiry <> Nil Then
+		  If Me.Expires <> Nil Then
 		    Dim now As New Date
 		    If Me.Expires.TotalSeconds > now.TotalSeconds Then
 		      data = data + "; expires=" + HTTPDate(Me.Expires)
@@ -107,6 +93,7 @@ Inherits Pair
 
 	#tag Method, Flags = &h0
 		Function Value() As String
+		  'Returns the cookie value
 		  Return Me.Right.StringValue
 		End Function
 	#tag EndMethod
@@ -116,8 +103,8 @@ Inherits Pair
 		Domain As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected Expiry As Date
+	#tag Property, Flags = &h0
+		Expires As Date
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

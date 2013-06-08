@@ -84,14 +84,8 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetHeaders() As String
-		  Return Me.ToString(True)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function HasCookie(CookieName As String) As Boolean
-		  If GetCookie(CookieName) <> "" Then Return True
+		  Return GetCookie(CookieName) <> ""
 		End Function
 	#tag EndMethod
 
@@ -120,18 +114,23 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function MethodName() As String
+		  'If the request method is a member of the RequestMethod enum then this method returns the
+		  'hard-coded name of the method using HTTP.MethodName. 
+		  'If the method is not in the enum, then the Method property will be InvalidMethod and 
+		  'mTrueMethodName will contain the original request verb, which is returned instead.
+		  
 		  If Me.Method <> RequestMethod.InvalidMethod Then
 		    Return HTTP.MethodName(Me.Method)
 		  Else
 		    Return mTrueMethodName
 		  End If
-		  
-		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub MethodName(Assigns Name As String)
+		  'converts a string into an HTTP.RequestMethod. Stores the original string in mTrueMethodName and the 
+		  'HTTP.RequestMethod in the Method Property
 		  Me.Method = HTTP.Method(Name)
 		  mTrueMethodName = Name
 		  

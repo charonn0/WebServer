@@ -1,21 +1,34 @@
 #tag Class
 Class ContentType
 	#tag Method, Flags = &h0
+		Function Acceptance(OtherType As ContentType) As Single
+		  'Returns a Single that is <=1. This is the comparative "weight" of the match between the
+		  'two types. A weight of 1 has the highest Acceptance
+		  If OtherType.SuperType <> Me.SuperType And OtherType.SuperType <> "*" And Me.SuperType <> "*" Then Return 0.0
+		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*" Then Return 0.0
+		  Return (OtherType.Weight + Me.Weight) / 2
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Accepts(OtherType As ContentType) As Boolean
 		  If OtherType.SuperType <> Me.SuperType And OtherType.SuperType <> "*" And Me.SuperType <> "*" Then Return False
-		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*"Then Return False
+		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*" Then Return False
 		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  
+		  'Empty Constructor for the shared method
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(OfType As FolderItem, Weight As Single = 1.0)
+		  'Takes a FolderItem; populates the class based on the FolderItem's file extension
+		  'if no extension then uses "text/html"
+		  
 		  If Not OfType.Directory Then
 		    Me.Constructor(GetType(OfType).ToString)
 		  Else
@@ -27,6 +40,9 @@ Class ContentType
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Raw As String)
+		  'Accepts a single raw ContentType string (e.g. "text/html; CharSet=UTF8")
+		  'For strings that might contain multiple entries, use ContentType.ParseTypes
+		  
 		  If InStr(Raw, ";") > 0 Then
 		    Dim fields() As String = Split(raw, ";")
 		    For i As Integer = 0 To Ubound(fields)
@@ -69,6 +85,8 @@ Class ContentType
 
 	#tag Method, Flags = &h0
 		 Shared Function ParseTypes(Raw As String) As HTTPParse.ContentType()
+		  'parses a multi-field content-type string into and array of ContentType objects
+		  'e.g. "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 		  Dim fields() As String
 		  If InStr(Raw, ",") > 0 Then 'multiple types
 		    fields = Split(raw, ",")
@@ -111,12 +129,11 @@ Class ContentType
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
+		  'serializes the object
 		  Dim data As String = SuperType + "/" + SubType
 		  If Me.Weight < 1 Then
 		    data = data + "; q=" + Format(Me.Weight, ".##")
 		  End If
-		  'If Me.CharSet <> Nil Then
-		  'Select Case
 		  Return Data
 		End Function
 	#tag EndMethod
