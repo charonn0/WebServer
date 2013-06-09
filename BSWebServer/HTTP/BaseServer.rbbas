@@ -405,9 +405,9 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
-		  Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
 		    #If GZIPAvailable Then
+		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
 		      Dim gz As String
 		      Try
