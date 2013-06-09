@@ -478,6 +478,8 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.SetHeader("Connection", "close")
 		  End If
+		  
+		  ResponseDocument.SetHeader("Server", WebServer.DaemonVersion)
 		End Sub
 	#tag EndMethod
 
