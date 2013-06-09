@@ -114,10 +114,6 @@ Inherits HTTPParse.HTTPMessage
 
 
 	#tag Property, Flags = &h0
-		AuthPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		Headers As Headers
 	#tag EndProperty
 

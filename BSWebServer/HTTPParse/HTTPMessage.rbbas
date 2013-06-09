@@ -115,8 +115,8 @@ Protected Class HTTPMessage
 	#tag Method, Flags = &h0
 		Function MethodName() As String
 		  'If the request method is a member of the RequestMethod enum then this method returns the
-		  'hard-coded name of the method using HTTP.MethodName. 
-		  'If the method is not in the enum, then the Method property will be InvalidMethod and 
+		  'hard-coded name of the method using HTTP.MethodName.
+		  'If the method is not in the enum, then the Method property will be InvalidMethod and
 		  'mTrueMethodName will contain the original request verb, which is returned instead.
 		  
 		  If Me.Method <> RequestMethod.InvalidMethod Then
@@ -129,7 +129,7 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub MethodName(Assigns Name As String)
-		  'converts a string into an HTTP.RequestMethod. Stores the original string in mTrueMethodName and the 
+		  'converts a string into an HTTP.RequestMethod. Stores the original string in mTrueMethodName and the
 		  'HTTP.RequestMethod in the Method Property
 		  Me.Method = HTTP.Method(Name)
 		  mTrueMethodName = Name
@@ -201,6 +201,10 @@ Protected Class HTTPMessage
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		AuthPassword As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		AuthRealm As String

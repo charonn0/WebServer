@@ -182,11 +182,7 @@ Protected Class Session
 		#tag Getter
 			Get
 			  If mSessionID = "" Then
-			    If SessionKey <> "" Then
-			      mSessionID = EncodeHex(MD5(RC4(HTTPDate(Me.LastActive), Me.SessionKey)))
-			    Else
-			      mSessionID = EncodeHex(MD5(UUID))
-			    End If
+			    mSessionID = EncodeHex(MD5(UUID))
 			    Me.NewSession = True
 			  End If
 			  Return mSessionID
@@ -200,10 +196,6 @@ Protected Class Session
 		#tag EndSetter
 		SessionID As String
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h0
-		SessionKey As String
-	#tag EndProperty
 
 
 	#tag ViewBehavior

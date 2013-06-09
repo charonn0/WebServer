@@ -148,58 +148,58 @@ Protected Module WebServer
 		  
 		  Select Case ext
 		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/bin.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/bin.png"
 		    
 		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/script.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/script.png"
 		    
 		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xojo.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/xojo.png"
 		    
 		  Case "folder"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/dir.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/dir.png"
 		    
 		  Case "txt", "md"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/txt.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/txt.png"
 		    
 		  Case "htm", "html"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/html.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/html.png"
 		    
 		  Case "css"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/css.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/css.png"
 		    
 		  Case "xml", "xsl"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xml.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/xml.png"
 		    
 		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/image.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/image.png"
 		    
 		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mov.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/mov.png"
 		    
 		  Case "ttf", "otf", "pfb", "pfm"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/font.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/font.png"
 		    
 		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/zip.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/zip.png"
 		    
 		  Case "wav"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/wav.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/wav.png"
 		    
 		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/mus.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/mus.png"
 		    
 		  Case "pdf", "ps"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/pdf.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/pdf.png"
 		    
 		  Case "xls", "xlsx"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/xls.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/xls.png"
 		    
 		  Case "doc", "docx"
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/doc.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/doc.png"
 		    
 		  Else ' This returns the default icon
-		    Return "/" + HTTP.BaseServer.VirtualRoot + "/img/unknown.png"
+		    Return "/" + WebServer.VirtualRoot + "/img/unknown.png"
 		    
 		  End Select
 		End Function
@@ -360,54 +360,6 @@ Protected Module WebServer
 		  Next
 		  
 		  Return funcTypes
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RC4(strData As String, strKey As String) As String
-		  //Credit: http://forums.realsoftware.com/viewtopic.php?f=1&t=19930
-		  //Encodes or decodes the strData string with the RC4 symmetric ciper, using the strKey as the key.
-		  //On success, returns the En/Decoded string. On error, returns an empty string.
-		  
-		  Dim MM As MemoryBlock = strData
-		  Dim MM2 As New MemoryBlock(LenB(strData))
-		  Dim memAsciiArray(255), memKeyArray(255), memJump, memTemp, memY, intKeyLength, intIndex, intT, intX As integer
-		  
-		  intKeyLength = len(strKey)
-		  
-		  For intIndex = 0 to 255
-		    memKeyArray(intIndex) = asc(mid(strKey, ((intIndex) mod (intKeyLength)) + 1, 1))
-		  next
-		  
-		  For intIndex = 0 to 255
-		    memAsciiArray(intIndex) = intIndex
-		  next
-		  
-		  For intIndex = 0 to 255
-		    memJump = (memJump + memAsciiArray(intIndex) + memKeyArray(intIndex)) mod 256
-		    memTemp = memAsciiArray(intIndex)
-		    memAsciiArray(intIndex) = memAsciiArray(memJump)
-		    memAsciiArray(memJump) = memTemp
-		  next
-		  
-		  intIndex = 0
-		  memJump = 0
-		  
-		  For intX = 1 to MM2.Size
-		    intIndex = (intIndex + 1) mod 256
-		    memJump = (memJump + memAsciiArray(intIndex)) mod 256
-		    intT = (memAsciiArray(intIndex) + memAsciiArray(memJump)) mod 256
-		    memTemp = memAsciiArray(intIndex)
-		    memAsciiArray(intIndex) = memAsciiArray(memJump)
-		    memAsciiArray(memJump) = memTemp
-		    memY = memAsciiArray(intT)
-		    mm2.Byte(intX - 1) = bitwise.bitxor(val("&h" + hex(MM.byte(IntX - 1))), bitwise.bitxor(memTemp,memY))
-		  next
-		  
-		  return MM2
-		  
-		Exception
-		  Return ""
 		End Function
 	#tag EndMethod
 
@@ -1325,6 +1277,9 @@ Protected Module WebServer
 	#tag EndConstant
 
 	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = VirtualRoot, Type = String, Dynamic = False, Default = \"_bsdaemon", Scope = Public
 	#tag EndConstant
 
 

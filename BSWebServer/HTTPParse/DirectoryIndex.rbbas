@@ -137,16 +137,16 @@ Inherits HTTP.Response
 		  Next
 		  If RequestPath.ServerPath <> "/" Then
 		    Dim s As String = RequestPath.Parent.ServerPath
-		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""/" + HTTP.BaseServer.VirtualRoot + "/img/upicon.png"" width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
+		    PageData = ReplaceAll(PageData, "%UPLINK%", "<img src=""/" + WebServer.VirtualRoot + "/img/upicon.png"" width=22 height=22 /><a href=""" + s + """>Parent Directory</a>")
 		  Else
 		    PageData = ReplaceAll(PageData, "%UPLINK%", "")
 		  End If
 		  Dim head As String = TableHeader
 		  If dir = 0 Then
-		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sorticon.png")
+		    head = ReplaceAll(head, "%SORTICON%", "/" + WebServer.VirtualRoot + "/img/sorticon.png")
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=1")
 		  Else
-		    head = ReplaceAll(head, "%SORTICON%", "/" + HTTP.BaseServer.VirtualRoot + "/img/sortup.png")
+		    head = ReplaceAll(head, "%SORTICON%", "/" + WebServer.VirtualRoot + "/img/sortup.png")
 		    head = ReplaceAll(head, "%DIRECTION%", "&dir=0")
 		  End If
 		  pagedata = Replace(pagedata, "%TABLE%", head + Join(lines, EndOfLine))

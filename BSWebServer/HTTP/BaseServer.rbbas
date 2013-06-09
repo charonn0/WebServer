@@ -841,9 +841,6 @@ Inherits ServerSocket
 	#tag Constant, Name = Log_Trace, Type = Double, Dynamic = False, Default = \"-2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = VirtualRoot, Type = String, Dynamic = False, Default = \"_bsdaemon", Scope = Public
-	#tag EndConstant
-
 
 	#tag ViewBehavior
 		#tag ViewProperty
