@@ -419,12 +419,15 @@ Inherits ServerSocket
 		      Catch Error
 		        'Just send the uncompressed data
 		      End Try
-		      ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		    #else
+		      ResponseDocument.SetHeader("Content-Encoding", "Identity")
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
 		    #endif
 		  Else
 		    ResponseDocument.SetHeader("Content-Encoding", "Identity")
+		  End If
+		  If Not ResponseDocument.HasHeader("Content-Length") Then
+		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
 		  End If
 		End Sub
 	#tag EndMethod
