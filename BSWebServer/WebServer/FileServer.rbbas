@@ -17,7 +17,7 @@ Inherits HTTP.BaseServer
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
 		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
-		    ElseIf ClientRequest.Path.ToString = "/" And Not item.Directory Then
+		    ElseIf ClientRequest.Path.ServerPath = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
 		      Dim location As String
 		      If Me.ConnectionType = ConnectionTypes.Insecure Then
@@ -30,16 +30,12 @@ Inherits HTTP.BaseServer
 		    Else
 		      '200 OK
 		      'Me.Log("Found page", Log_Debug)
-		      Dim args As String
-		      If UBound(ClientRequest.Path.Arguments) > -1 Then
-		        args = "?" + Join(ClientRequest.Path.Arguments, "&")
-		      End If
 		      If item.Directory Then
 		        Me.Log("Generating new directory index", Log_Trace)
-		        doc = New DirectoryIndex(item, ClientRequest.Path.ServerPath + args)
+		        doc = New DirectoryIndex(item, ClientRequest.Path)
 		        HTTPParse.DirectoryIndex(doc).Populate
 		      Else
-		        doc = doc.GetFileResponse(item, ClientRequest.Path.ServerPath + args)
+		        doc = doc.GetFileResponse(item, ClientRequest.Path)
 		      End If
 		    End If
 		  End Select

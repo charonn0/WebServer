@@ -6,6 +6,12 @@ Protected Class URI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function Operator_Convert() As String
+		  Return Me.ToString
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Parent() As HTTP.URI
 		  Dim parent() As String = Split(ServerPath, "/")
