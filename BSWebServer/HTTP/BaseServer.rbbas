@@ -19,9 +19,9 @@ Inherits ServerSocket
 		  Case ConnectionTypes.Insecure
 		    sock.Secure = False
 		  End Select
-		  AddHandler sock.DataAvailable, AddressOf Me.DataAvailable
-		  AddHandler sock.Error, AddressOf Me.ClientErrorHandler
-		  AddHandler sock.SendComplete, AddressOf Me.SendCompleteHandler
+		  AddHandler sock.DataAvailable, WeakAddressOf Me.DataAvailable
+		  AddHandler sock.Error, WeakAddressOf Me.ClientErrorHandler
+		  AddHandler sock.SendComplete, WeakAddressOf Me.SendCompleteHandler
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -119,11 +119,15 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckRedirect(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
-		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
+		  While Not RedirectsLock.TrySignal
+		    App.YieldToNextThread
+		  Wend
 		  Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
+		  RedirectsLock.Release
 		  If redir <> Nil Then Me.Log("Using redirect.", Log_Debug)
 		  Return redir
+		  
 		End Function
 	#tag EndMethod
 
@@ -177,6 +181,19 @@ Inherits ServerSocket
 		    msg = msg + ")"
 		  End If
 		  Me.Log(msg, Log_Status)
+		  If Me.Threading Then
+		    Dim worker As New Thread
+		    Threads.Value(worker) = Sender
+		    AddHandler worker.Run, WeakAddressOf Me.ThreadRun
+		    worker.Run
+		  Else
+		    DefaultHandler(Sender)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DefaultHandler(Sender As SSLSocket)
 		  Dim data As MemoryBlock
 		  Dim la As String = Sender.Lookahead
 		  If AllowPipeLinedRequests And (Left(la, 3) = "GET" or Left(la, 4) = "HEAD") Then
@@ -204,7 +221,6 @@ Inherits ServerSocket
 		        Sockets.Value(Sender) = Session.SessionID
 		      End If
 		      clientrequest.SessionID = Session.SessionID
-		      
 		    End If
 		    
 		    
@@ -231,7 +247,35 @@ Inherits ServerSocket
 		      Me.Log("Running HandleRequest event", Log_Debug)
 		      doc = HandleRequest(clientrequest)
 		    End If
-		    If doc = Nil Then doc = DefaultHandler(clientrequest, Data)
+		    If doc = Nil Then
+		      Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
+		      Select Case clientrequest.Method
+		      Case RequestMethod.HEAD, RequestMethod.GET
+		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
+		      Case RequestMethod.TRACE
+		        doc = doc.GetErrorResponse(200, "")
+		        doc.SetHeader("Content-Length", Str(Data.Size))
+		        doc.SetHeader("Content-Type", "message/http")
+		        doc.MessageBody = Data
+		      Case RequestMethod.OPTIONS
+		        doc = doc.GetErrorResponse(200, "")
+		        doc.MessageBody = ""
+		        doc.SetHeader("Content-Length", "0")
+		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
+		        doc.SetHeader("Accept-Ranges", "bytes")
+		      Else
+		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
+		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		          Me.Log("Request is not implemented", Log_Error)
+		        ElseIf clientrequest.MethodName = "" Then
+		          doc = doc.GetErrorResponse(400, "") 'bad request
+		          Me.Log("Request is malformed", Log_Error)
+		        ElseIf clientrequest.MethodName <> "" Then
+		          doc = doc.GetErrorResponse(405, clientrequest.MethodName)
+		          Me.Log("Request is a NOT ALLOWED", Log_Error)
+		        End If
+		      End Select
+		    End If
 		    
 		    doc.Path = clientrequest.Path
 		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
@@ -283,44 +327,7 @@ Inherits ServerSocket
 		  errpage = doc.GetErrorResponse(500, htmlstack)
 		  
 		  Me.SendResponse(Sender, errpage)
-		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DefaultHandler(ClientRequest As HTTP.Request, Data As MemoryBlock) As HTTP.Response
-		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
-		  Dim doc As HTTP.Response
-		  Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
-		  Select Case clientrequest.Method
-		  Case RequestMethod.HEAD, RequestMethod.GET
-		    doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
-		  Case RequestMethod.TRACE
-		    doc = doc.GetErrorResponse(200, "")
-		    doc.SetHeader("Content-Length", Str(Data.Size))
-		    doc.SetHeader("Content-Type", "message/http")
-		    doc.MessageBody = Data
-		  Case RequestMethod.OPTIONS
-		    doc = doc.GetErrorResponse(200, "")
-		    doc.MessageBody = ""
-		    doc.SetHeader("Content-Length", "0")
-		    doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
-		    doc.SetHeader("Accept-Ranges", "bytes")
-		  Else
-		    If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		      doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
-		      Me.Log("Request is not implemented", Log_Error)
-		    ElseIf clientrequest.MethodName = "" Then
-		      doc = doc.GetErrorResponse(400, "") 'bad request
-		      Me.Log("Request is malformed", Log_Error)
-		    ElseIf clientrequest.MethodName <> "" Then
-		      doc = doc.GetErrorResponse(405, clientrequest.MethodName)
-		      Me.Log("Request is a NOT ALLOWED", Log_Error)
-		    End If
-		  End Select
-		  
-		  Return doc
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -373,33 +380,61 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Function GetSession(Socket As SSLSocket) As HTTP.Session
 		  Me.Log(CurrentMethodName + "(0x" + Left(Hex(Socket.Handle) + "0000", 4) + ")", Log_Trace)
+		  Dim Session As HTTP.Session
 		  If UseSessions Then
 		    If Me.Sockets.HasKey(Socket) Then
-		      Return Me.GetSession(Me.Sockets.Value(Socket).StringValue)
+		      Session = Me.GetSession(Me.Sockets.Value(Socket).StringValue)
 		    Else
-		      Dim s As HTTP.Session = Me.GetSession("New_Session")
-		      Sockets.Value(Socket) = s.SessionID
-		      Return s
+		      Session = Me.GetSession("New_Session")
+		      Sockets.Value(Socket) = Session.SessionID
 		    End If
 		  End If
+		  Return Session
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function GetSession(SessionID As String) As HTTP.Session
 		  Me.Log(CurrentMethodName + "(" + SessionID + ")", Log_Trace)
+		  Dim session As HTTP.Session
 		  If UseSessions Then
 		    If Me.Sessions.HasKey(SessionID) Then
 		      Me.Log("Session found: " + SessionID, Log_Debug)
-		      Return Me.Sessions.Value(SessionID)
+		      While Not SessionsLock.TrySignal
+		        App.YieldToNextThread
+		      Wend
+		      Session = Me.Sessions.Value(SessionID)
+		      SessionsLock.Release
 		    Else
-		      Dim s As New HTTP.Session
-		      s.NewSession = True
-		      Sessions.Value(s.SessionID) = s
-		      Me.Log("Session created: " + s.SessionID, Log_Debug)
-		      Return s
+		      session = New HTTP.Session
+		      Session.NewSession = True
+		      While Not SessionsLock.TrySignal
+		        App.YieldToNextThread
+		      Wend
+		      Sessions.Value(Session.SessionID) = Session
+		      SessionsLock.Release
+		      Me.Log("Session created: " + Session.SessionID, Log_Debug)
 		    End If
 		  End If
+		  Return session
+		  
+		Finally
+		  SessionsLock.Release
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetSocket(ClientThread As Thread) As SSLSocket
+		  Me.Log(CurrentMethodName + "Thread: " + Str(ClientThread.ThreadID), Log_Trace)
+		  Dim Socket As SSLSocket
+		  If UseSessions Then
+		    If Me.Threads.HasKey(ClientThread) Then
+		      Socket = Me.Threads.Value(ClientThread)
+		    Else
+		      Raise New IllegalLockingException
+		    End If
+		  End If
+		  Return Socket
 		End Function
 	#tag EndMethod
 
@@ -450,7 +485,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub Log(Message As String, Type As Integer)
 		  #If DebugBuild Then
-		    System.DebugLog(Str(Type) + " " + Message)
+		    System.DebugLog(Str(Type) + " " + Message.Trim)
 		  #endif
 		  RaiseEvent Log(Message.Trim + EndofLine, Type)
 		End Sub
@@ -567,6 +602,14 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ThreadRun(Sender As Thread)
+		  If Me.Threading Then Me.Log("Your server today is ThreadID#" + Str(Sender.ThreadID), Log_Trace)
+		  
+		  DefaultHandler(GetSocket(Sender))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TimeOutHandler(Sender As Timer)
 		  #pragma Unused Sender
 		  Dim d As New Date
@@ -580,10 +623,17 @@ Inherits ServerSocket
 		  
 		  For Each Socket As SSLSocket In Me.Sockets.Keys
 		    If Not Sessions.HasKey(Me.Sockets.Value(Socket)) Or Not Socket.IsConnected Then
+		      Me.Log("Socket destroyed", Log_Socket)
 		      Me.Sockets.Remove(Socket)
 		    End If
 		  Next
 		  
+		  For Each t As Thread In Me.Threads.Keys
+		    If t.State <> 0 Then
+		      Me.Log("Thread destroyed", Log_Trace)
+		      Me.Threads.Remove(t)
+		    End If
+		  Next
 		  
 		End Sub
 	#tag EndMethod
@@ -750,12 +800,24 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRedirectsLock As Semaphore
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSessionsLock As Semaphore
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		#tag Note
 			The number of seconds of inactivity after which the session is deemed inactive. The default is 10 minutes (600 seconds.)
 			Actual timeout periods have a resolution of ±5 seconds. Setting this value to <=5 will result in all sessions being
 			timedout at the next run of the TimeOutTimer action event.
 		#tag EndNote
 		Private mSessionTimeout As Integer = 600
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreads As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -781,9 +843,39 @@ Inherits ServerSocket
 		Protected Redirects As Dictionary
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  If mRedirectsLock = Nil Then mRedirectsLock = New Semaphore
+			  return mRedirectsLock
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mRedirectsLock = value
+			End Set
+		#tag EndSetter
+		Private RedirectsLock As Semaphore
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h1
 		Protected Sessions As Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  If mSessionsLock = Nil Then mSessionsLock = New Semaphore
+			  return mSessionsLock
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSessionsLock = value
+			End Set
+		#tag EndSetter
+		Private SessionsLock As Semaphore
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -807,6 +899,25 @@ Inherits ServerSocket
 	#tag Property, Flags = &h1
 		Protected Sockets As Dictionary
 	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Threading As Boolean = True
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  If mThreads = Nil Then mThreads = New Dictionary
+			  return mThreads
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mThreads = value
+			End Set
+		#tag EndSetter
+		Private Threads As Dictionary
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -941,6 +1052,12 @@ Inherits ServerSocket
 			Group="ID"
 			Type="String"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Threading"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
