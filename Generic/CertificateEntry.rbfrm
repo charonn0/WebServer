@@ -1,8 +1,9 @@
 #tag Window
 Begin Window CertificateEntry
-   BackColor       =   "&cFFFFFF00"
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
+   Compatibility   =   ""
    Composite       =   False
    Frame           =   3
    FullScreen      =   False
@@ -29,6 +30,7 @@ Begin Window CertificateEntry
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       DataField       =   ""
@@ -60,6 +62,7 @@ Begin Window CertificateEntry
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -74,6 +77,7 @@ Begin Window CertificateEntry
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       DataField       =   ""
@@ -105,6 +109,7 @@ Begin Window CertificateEntry
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -119,6 +124,7 @@ Begin Window CertificateEntry
       Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -145,6 +151,7 @@ Begin Window CertificateEntry
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -176,9 +183,9 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Certificate"
       TextAlign       =   0
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -210,9 +217,9 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "RSA Private Key Block"
       TextAlign       =   0
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -244,9 +251,9 @@ Begin Window CertificateEntry
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Certificate Password"
       TextAlign       =   2
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
@@ -259,7 +266,7 @@ Begin Window CertificateEntry
    Begin PushButton PushButton1
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -290,7 +297,7 @@ Begin Window CertificateEntry
    Begin PushButton PushButton2
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   0
+      ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -323,10 +330,10 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Function GetCert(OldCert As FolderItem, OldPassword As String) As String
+		Function GetCert(ByRef OldCert As FolderItem, OldPassword As String) As String
 		  Dim pk, cert As String
 		  Dim bs As BinaryStream
-		  If OldCert.Exists Then
+		  If OldCert <> Nil And OldCert.Exists Then
 		    bs = BinaryStream.Open(OldCert)
 		    Dim data As String = bs.Read(bs.Length)
 		    bs.Close

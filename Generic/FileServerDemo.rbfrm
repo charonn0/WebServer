@@ -776,7 +776,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Begin()
 		  If Sock.IsListening Then
-		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") = 6 Then Return
+		    If MsgBox("This will reset all open sockets. Proceed?", 36, "Change Network Interface") <> 6 Then Return
 		  End If
 		  Sock.StopListening
 		  If nic.Text.Trim <> "" Then
@@ -922,15 +922,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events CheckBox2
-	#tag Event
-		Sub Open()
-		  'Me.Value = Sock.Authenticate
-		  'Username.Enabled = Me.Value
-		  'Password.Enabled = Me.Value
-		  'realmtext.Enabled = Me.Value
-		  
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub Action()
 		  Username.Enabled = Me.Value
@@ -1115,15 +1106,6 @@ End
 #tag EndEvents
 #tag Events CheckBox4
 	#tag Event
-		Sub Open()
-		  'Me.Value = Sock.Authenticate
-		  'Username.Enabled = Me.Value
-		  'Password.Enabled = Me.Value
-		  'realmtext.Enabled = Me.Value
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Action()
 		  If Sock.IsListening Then
 		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Interface Security") = 6 Then Return
@@ -1131,7 +1113,6 @@ End
 		  Sock.StopListening
 		  If Me.Value Then
 		    Dim f As FolderItem = Sock.CertificateFile
-		    If f = Nil Then f = SpecialFolder.Temporary.Child("cert.rbcert." + Str(Microseconds))
 		    Dim s As String = CertificateEntry.GetCert(f, "")
 		    If s <> "" And f.Exists Then
 		      Sock.CertificateFile = f
