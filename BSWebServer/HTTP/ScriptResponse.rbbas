@@ -17,7 +17,7 @@ Inherits HTTP.Response
 		  Super.Constructor(200, GetType("text/html"), RequestMethod.GET)
 		  Me.ScriptHost = New RbScript
 		  Me.ScriptHost.Context = Me
-		  Me.Compressable = False
+		  Me.Compressible = False
 		  AddHandler ScriptHost.CompilerError, AddressOf Me.CompilerError
 		  AddHandler ScriptHost.Input, AddressOf Me.InputHandler
 		  AddHandler ScriptHost.Print, AddressOf Me.PrintHandler
@@ -226,7 +226,7 @@ Inherits HTTP.Response
 		Function ToString(HeadersOnly As Boolean = False) As String
 		  Me.ScriptHost.Source = RaiseEvent GetSource()
 		  ScriptHost.Run
-		  Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
+		  Me.SetHeader("Content-Length") = Str(Me.MessageBody.LenB)
 		  Return Super.ToString(HeadersOnly)
 		End Function
 	#tag EndMethod
@@ -259,6 +259,13 @@ Inherits HTTP.Response
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AuthPassword"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"

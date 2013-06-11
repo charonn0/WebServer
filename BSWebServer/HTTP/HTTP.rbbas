@@ -343,34 +343,6 @@ Protected Module HTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function MethodName(Method As RequestMethod) As String
-		  Select Case Method
-		  Case RequestMethod.GET
-		    Return "GET"
-		  Case RequestMethod.HEAD
-		    Return "HEAD"
-		  Case RequestMethod.DELETE
-		    Return "DELETE"
-		  Case RequestMethod.POST
-		    Return "POST"
-		  Case RequestMethod.PUT
-		    Return "PUT"
-		  Case RequestMethod.TRACE
-		    Return "TRACE"
-		  Case RequestMethod.OPTIONS
-		    Return "OPTIONS"
-		  Case RequestMethod.PATCH
-		    Return "PATCH"
-		  Case RequestMethod.CONNECT
-		    Return "CONNECT"
-		  Else
-		    Return ""
-		    
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function ReplyString(Code As Integer) As String
 		  'Returns the properly formatted HTTP response line for a given HTTP status code.
 		  'e.g. HTTP.Response(404) = "HTTP/1.1 404 Not Found"

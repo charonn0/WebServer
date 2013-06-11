@@ -101,9 +101,9 @@ Inherits HTTPParse.HTTPMessage
 		  End If
 		  Dim data As String = MethodName + " " + URLEncode(Path.ServerPath) + args + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
-		    Me.SetHeader("Content-Type", "multipart/form-data; boundary=" + Me.MultiPart.Boundary)
+		    Me.SetHeader("Content-Type") = "multipart/form-data; boundary=" + Me.MultiPart.Boundary
 		    Me.MessageBody = Me.MultiPart.ToString
-		    Me.SetHeader("Content-Length", Str(Me.MessageBody.LenB))
+		    Me.SetHeader("Content-Length") = Str(Me.MessageBody.LenB)
 		  End If
 		  data = data + Super.ToString(False)
 		  
@@ -112,10 +112,6 @@ Inherits HTTPParse.HTTPMessage
 		End Function
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h0
-		Headers As Headers
-	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		MultiPart As MultipartForm
@@ -128,6 +124,7 @@ Inherits HTTPParse.HTTPMessage
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"

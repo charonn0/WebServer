@@ -114,16 +114,33 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function MethodName() As String
-		  'If the request method is a member of the RequestMethod enum then this method returns the
-		  'hard-coded name of the method using HTTP.MethodName.
-		  'If the method is not in the enum, then the Method property will be InvalidMethod and
-		  'mTrueMethodName will contain the original request verb, which is returned instead.
-		  
-		  If Me.Method <> RequestMethod.InvalidMethod Then
-		    Return HTTP.MethodName(Me.Method)
+		  Select Case Me.Method
+		  Case RequestMethod.GET
+		    Return "GET"
+		    
+		  Case RequestMethod.DELETE
+		    Return "DELETE"
+		    
+		  Case RequestMethod.HEAD
+		    Return "HEAD"
+		    
+		  Case RequestMethod.POST
+		    Return "POST"
+		    
+		  Case RequestMethod.PUT
+		    Return "PUT"
+		    
+		  Case RequestMethod.TRACE
+		    Return "TRACE"
+		    
+		  Case RequestMethod.OPTIONS
+		    Return "OPTIONS"
+		    
 		  Else
 		    Return mTrueMethodName
-		  End If
+		  End Select
+		  
+		  
 		End Function
 	#tag EndMethod
 
@@ -164,7 +181,7 @@ Protected Class HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetHeader(Name As String, Value As String)
+		Sub SetHeader(Name As String, Assigns Value As String)
 		  Select Case Name
 		  Case "Cookie", "Set-Cookie"
 		    Dim n, v As String
@@ -189,7 +206,7 @@ Protected Class HTTPMessage
 		Protected Function ToString(HeadersOnly As Boolean) As String
 		  Dim data As String
 		  If Not HeadersOnly Then data = Me.MessageBody
-		  If Not Me IsA HTTP.Request Then SetHeader("Content-Type", Me.MIMEType.ToString)
+		  If Not Me IsA HTTP.Request Then SetHeader("Content-Type") = Me.MIMEType.ToString
 		  If Headers.Count > 0 Then
 		    If Me IsA HTTP.Request Then
 		      data = Me.Headers.Source + CRLF + CRLF + data
@@ -211,10 +228,6 @@ Protected Class HTTPMessage
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		AuthSecure As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		AuthUsername As String
 	#tag EndProperty
 
@@ -230,7 +243,7 @@ Protected Class HTTPMessage
 		#tag Setter
 			Set
 			  If value <> Nil Then
-			    Me.SetHeader("Expires", HTTPDate(value))
+			    Me.SetHeader("Expires") = HTTPDate(value)
 			  Else
 			    Me.RemoveHeader("Expires")
 			  End If
@@ -243,9 +256,45 @@ Protected Class HTTPMessage
 		MessageBody As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Method As HTTP.RequestMethod
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mMethod
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mMethod = value
+			  
+			  Select Case Me.Method
+			  Case RequestMethod.GET
+			    mTrueMethodName = "GET"
+			    
+			  Case RequestMethod.DELETE
+			    mTrueMethodName = "DELETE"
+			    
+			  Case RequestMethod.HEAD
+			    mTrueMethodName = "HEAD"
+			    
+			  Case RequestMethod.POST
+			    mTrueMethodName = "POST"
+			    
+			  Case RequestMethod.PUT
+			    mTrueMethodName = "PUT"
+			    
+			  Case RequestMethod.TRACE
+			    mTrueMethodName = "TRACE"
+			    
+			  Case RequestMethod.OPTIONS
+			    mTrueMethodName = "OPTIONS"
+			    
+			  End Select
+			  
+			  
+			End Set
+		#tag EndSetter
+		Method As RequestMethod
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mHeaders As Headers
@@ -272,6 +321,10 @@ Protected Class HTTPMessage
 		#tag EndSetter
 		MIMEType As ContentType
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mMethod As RequestMethod
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMIMEType As ContentType
@@ -316,6 +369,12 @@ Protected Class HTTPMessage
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AuthPassword"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"

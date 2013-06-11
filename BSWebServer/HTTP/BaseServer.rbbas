@@ -57,7 +57,7 @@ Inherits ServerSocket
 		    If Not Authenticate(clientrequest) Then
 		      Me.Log("Authentication failed", Log_Error)
 		      doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
-		      doc.SetHeader("WWW-Authenticate", "Basic realm=""" + clientrequest.AuthRealm + """")
+		      doc.SetHeader("WWW-Authenticate") = "Basic realm=""" + clientrequest.AuthRealm + """"
 		    Else
 		      Me.Log("Authentication Successful", Log_Debug)
 		    End If
@@ -83,7 +83,7 @@ Inherits ServerSocket
 		      cache = GetCache(Session, clientRequest.Path.ToString)
 		    End If
 		    If cache <> Nil Then
-		      cache.Compressable = False
+		      cache.Compressible = False
 		      Me.Log("Page from cache", Log_Debug)
 		      Cache.Expires = New Date
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
@@ -136,10 +136,10 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  #If GZIPAvailable Then
 		    Dim types() As String = Split(ClientRequest.GetHeader("Accept-Encoding"), ",")
-		    doc.Compressable = False
+		    doc.Compressible = False
 		    For i As Integer = 0 To UBound(types)
 		      If types(i).Trim = "gzip" Then
-		        doc.Compressable = True
+		        doc.Compressible = True
 		        Exit For
 		      End If
 		    Next
@@ -254,15 +254,15 @@ Inherits ServerSocket
 		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
 		      Case RequestMethod.TRACE
 		        doc = doc.GetErrorResponse(200, "")
-		        doc.SetHeader("Content-Length", Str(Data.Size))
-		        doc.SetHeader("Content-Type", "message/http")
+		        doc.SetHeader("Content-Length") = Str(Data.Size)
+		        doc.SetHeader("Content-Type") = "message/http"
 		        doc.MessageBody = Data
 		      Case RequestMethod.OPTIONS
 		        doc = doc.GetErrorResponse(200, "")
 		        doc.MessageBody = ""
-		        doc.SetHeader("Content-Length", "0")
-		        doc.SetHeader("Allow", "GET, HEAD, POST, TRACE, OPTIONS")
-		        doc.SetHeader("Accept-Ranges", "bytes")
+		        doc.SetHeader("Content-Length") = "0"
+		        doc.SetHeader("Allow") = "GET, HEAD, POST, TRACE, OPTIONS"
+		        doc.SetHeader("Accept-Ranges") = "bytes"
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
 		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
@@ -279,9 +279,9 @@ Inherits ServerSocket
 		    
 		    doc.Path = clientrequest.Path
 		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
-		      doc.SetHeader("Connection", "keep-alive")
+		      doc.SetHeader("Connection") = "keep-alive"
 		    Else
-		      doc.SetHeader("Connection", "close")
+		      doc.SetHeader("Connection") = "close"
 		    End If
 		    
 		    CheckType(clientrequest, doc)
@@ -291,7 +291,7 @@ Inherits ServerSocket
 		      doc = doc.GetErrorResponse(101, "") 'Switch protocols
 		      doc.MessageBody = ""
 		      doc.Headers.DeleteAllHeaders
-		      doc.SetHeader("Upgrade", "HTTP/1.0")
+		      doc.SetHeader("Upgrade") = "HTTP/1.0"
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    Else
 		      doc = doc.GetErrorResponse(400, "") 'bad request
@@ -440,7 +440,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
-		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressable Then
+		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
 		    #If GZIPAvailable Then
 		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
@@ -455,14 +455,14 @@ Inherits ServerSocket
 		        'Just send the uncompressed data
 		      End Try
 		    #else
-		      ResponseDocument.SetHeader("Content-Encoding", "Identity")
+		      ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
 		    #endif
 		  Else
-		    ResponseDocument.SetHeader("Content-Encoding", "Identity")
+		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		  End If
 		  If Not ResponseDocument.HasHeader("Content-Length") Then
-		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -497,11 +497,11 @@ Inherits ServerSocket
 		  If UseSessions Then logID = ResponseDocument.SessionID + ")"
 		  Me.Log(CurrentMethodName + "(" + logID + ")", Log_Trace)
 		  If ResponseDocument.Method = RequestMethod.HEAD Then
-		    ResponseDocument.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		    ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		    ResponseDocument.MessageBody = ""
 		  End If
 		  If ResponseDocument.StatusCode = 405 Then 'Method not allowed
-		    ResponseDocument.SetHeader("Allow", "GET, HEAD, POST, TRACE")
+		    ResponseDocument.SetHeader("Allow") = "GET, HEAD, POST, TRACE"
 		  End If
 		  If Socket.SSLConnected Then
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")'</acronym>")
@@ -509,12 +509,12 @@ Inherits ServerSocket
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
 		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
-		    ResponseDocument.SetHeader("Connection", "keep-alive")
+		    ResponseDocument.SetHeader("Connection") = "keep-alive"
 		  Else
-		    ResponseDocument.SetHeader("Connection", "close")
+		    ResponseDocument.SetHeader("Connection") = "close"
 		  End If
 		  
-		  ResponseDocument.SetHeader("Server", WebServer.DaemonVersion)
+		  ResponseDocument.SetHeader("Server") = WebServer.DaemonVersion
 		End Sub
 	#tag EndMethod
 

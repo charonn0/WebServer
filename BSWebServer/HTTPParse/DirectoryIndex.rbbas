@@ -164,7 +164,7 @@ Inherits HTTP.Response
 		  pagedata = Replace(pagedata, "%TIME%", timestamp)
 		  
 		  Me.MessageBody = pagedata
-		  Me.SetHeader("Content-Length", Str(pagedata.LenB))
+		  Me.SetHeader("Content-Length") = Str(pagedata.LenB)
 		  
 		  
 		  
@@ -207,6 +207,13 @@ Inherits HTTP.Response
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AuthPassword"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"

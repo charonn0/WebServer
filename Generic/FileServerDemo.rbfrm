@@ -890,7 +890,7 @@ End
 		    Dim p As Dictionary = messages.Pop
 		    message = P.Value("Message")
 		    severity = p.Value("Severity")
-		    If p.Value("ThreadID") <> 0 Then 
+		    If p.Value("ThreadID") <> 0 Then
 		      ThreadID = "0x" + Left(Hex(p.Value("ThreadID")) + "00000000", 8)
 		    Else
 		      ThreadID = "Main Thread"
@@ -1007,11 +1007,11 @@ End
 	#tag Event
 		Function TamperResponse(ByRef Response As HTTP.Response) As Boolean
 		  If Response.StatusCode = 200 Then
-		    Response.SetHeader("X-Judgement-Render", "Your request is granted.")
+		    Response.SetHeader("X-Judgement-Render") = "Your request is granted."
 		  ElseIf Response.StatusCode = 302 Then
-		    Response.SetHeader("X-Judgement-Render", "Your request is pending.")
+		    Response.SetHeader("X-Judgement-Render") = "Your request is pending."
 		  Else
-		    Response.SetHeader("X-Judgement-Render", "Your request is denied.")
+		    Response.SetHeader("X-Judgement-Render") = "Your request is denied."
 		  End If
 		  Return True
 		  

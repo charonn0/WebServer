@@ -104,11 +104,11 @@ Inherits HTTP.BaseServer
 		          'Just send the uncompressed data
 		        End Try
 		      #endif
-		      icon.SetHeader("Content-Length", Str(icon.MessageBody.LenB))
+		      icon.SetHeader("Content-Length") = Str(icon.MessageBody.LenB)
 		      icon.MIMEType = New ContentType("image/png")
 		      icon.StatusCode = 200
 		      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
-		      icon.Compressable = False
+		      icon.Compressible = False
 		      icon.Path = New URI(img)
 		      GlobalRedirects.Value(img) = icon
 		      'AddRedirect(icon)
@@ -119,7 +119,7 @@ Inherits HTTP.BaseServer
 		  
 		  Dim redirect As HTTP.Response
 		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
-		  redirect.Compressable = False
+		  redirect.Compressible = False
 		  Me.AddRedirect(redirect)
 		  
 		  Dim doc As HTTP.Response
@@ -127,7 +127,7 @@ Inherits HTTP.BaseServer
 		  doc.Path = New URI("/robots.txt")
 		  doc.MIMEType = New ContentType("text/html")
 		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
-		  doc.Compressable = False
+		  doc.Compressible = False
 		  AddRedirect(doc)
 		  
 		  Dim tmp As FolderItem = GetTemporaryFolderItem()
@@ -136,7 +136,7 @@ Inherits HTTP.BaseServer
 		  bs.Close
 		  doc = doc.GetFileResponse(tmp, "/favicon.ico")
 		  doc.MIMEType = New ContentType("image/x-icon")
-		  doc.Compressable = False
+		  doc.Compressible = False
 		  AddRedirect(doc)
 		  
 		  doc = New HelloWorld
@@ -340,6 +340,13 @@ Inherits HTTP.BaseServer
 			Group="ID"
 			Type="String"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Threading"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			InheritedFrom="HTTP.BaseServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

@@ -1283,25 +1283,6 @@ Protected Module WebServer
 	#tag EndConstant
 
 
-	#tag Structure, Name = FILETIME, Flags = &h0
-		HighDateTime As Integer
-		LowDateTime As Integer
-	#tag EndStructure
-
-	#tag Structure, Name = WIN32_FIND_DATA, Flags = &h0
-		Attribs As Integer
-		  CreationTime As FILETIME
-		  LastAccess As FILETIME
-		  LastWrite As FILETIME
-		  sizeHigh As Integer
-		  sizeLow As Integer
-		  Reserved1 As Integer
-		  Reserved2 As Integer
-		  FileName As WString*260
-		AlternateName As String*14
-	#tag EndStructure
-
-
 	#tag Enum, Name = ConnectionTypes, Flags = &h0
 		SSLv3
 		  TLSv1

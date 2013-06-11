@@ -21,7 +21,7 @@ Inherits HTTPParse.HTTPMessage
 		  raw = Replace(raw, Me.MessageBody, "")
 		  Me.Headers = New Headers(raw)
 		  Me.Method = HTTP.Method(NthField(line, " ", 1).Trim)
-		  If Me.Method = RequestMethod.InvalidMethod Then mTrueMethodName = NthField(line, " ", 1).Trim
+		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  Me.ProtocolVersion = CDbl(Replace(NthField(line, " ", 1).Trim, "HTTP/", ""))
 		  Me.StatusCode = Val(NthField(line, " ", 2))
 		End Sub
@@ -49,7 +49,7 @@ Inherits HTTPParse.HTTPMessage
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = ErrorCode
 		  Dim data As String = ErrorPage(ErrorCode, Param)
-		  rply.SetHeader("Content-Length", Str(data.LenB))
+		  rply.SetHeader("Content-Length") = Str(data.LenB)
 		  rply.MIMEType = New ContentType("text/html")
 		  rply.StatusCode = ErrorCode
 		  rply.MessageBody = data
@@ -69,7 +69,7 @@ Inherits HTTPParse.HTTPMessage
 		    bs.Close
 		    rply.MIMEType = New ContentType(page)
 		  End If
-		  rply.SetHeader("Content-Length", Str(rply.MessageBody.LenB))
+		  rply.SetHeader("Content-Length") = Str(rply.MessageBody.LenB)
 		  If rply.MIMEType = Nil Then
 		    rply.MIMEType = New ContentType("text/html")
 		  End If
@@ -103,7 +103,7 @@ Inherits HTTPParse.HTTPMessage
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  rply.StatusCode = 302
 		  rply.Path = New HTTP.URI(Path)
-		  rply.SetHeader("Location", RedirectURL)
+		  rply.SetHeader("Location") = RedirectURL
 		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
 		  rply.MessageBody = ErrorPage(302, RedirectURL)
 		  rply.MIMEType = New ContentType("text/html")
@@ -111,38 +111,6 @@ Inherits HTTPParse.HTTPMessage
 		    rply.MIMEType = New ContentType("text/html")
 		  End If
 		  Return rply
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MethodName() As String
-		  Select Case Me.Method
-		  Case RequestMethod.GET
-		    Return "GET"
-		    
-		  Case RequestMethod.DELETE
-		    Return "DELETE"
-		    
-		  Case RequestMethod.HEAD
-		    Return "HEAD"
-		    
-		  Case RequestMethod.POST
-		    Return "POST"
-		    
-		  Case RequestMethod.PUT
-		    Return "PUT"
-		    
-		  Case RequestMethod.TRACE
-		    Return "TRACE"
-		    
-		  Case RequestMethod.OPTIONS
-		    Return "OPTIONS"
-		    
-		  Else
-		    Return mTrueMethodName
-		  End Select
-		  
-		  
 		End Function
 	#tag EndMethod
 
@@ -165,63 +133,11 @@ Inherits HTTPParse.HTTPMessage
 
 
 	#tag Property, Flags = &h0
-		Compressable As Boolean = True
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		GZipped As Boolean
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  return mMethod
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mMethod = value
-			  
-			  Select Case Me.Method
-			  Case RequestMethod.GET
-			    mTrueMethodName = "GET"
-			    
-			  Case RequestMethod.DELETE
-			    mTrueMethodName = "DELETE"
-			    
-			  Case RequestMethod.HEAD
-			    mTrueMethodName = "HEAD"
-			    
-			  Case RequestMethod.POST
-			    mTrueMethodName = "POST"
-			    
-			  Case RequestMethod.PUT
-			    mTrueMethodName = "PUT"
-			    
-			  Case RequestMethod.TRACE
-			    mTrueMethodName = "TRACE"
-			    
-			  Case RequestMethod.OPTIONS
-			    mTrueMethodName = "OPTIONS"
-			    
-			  End Select
-			  
-			  
-			End Set
-		#tag EndSetter
-		Method As RequestMethod
-	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mMethod As RequestMethod
+		Compressible As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mStatusMessage As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTrueMethodName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -239,6 +155,13 @@ Inherits HTTPParse.HTTPMessage
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AuthPassword"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+			InheritedFrom="HTTPParse.HTTPMessage"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"
