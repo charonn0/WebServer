@@ -170,12 +170,6 @@ Inherits HTTPParse.HTTPMessage
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AuthSecure"
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="HTTPParse.HTTPMessage"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
@@ -183,14 +177,9 @@ Inherits HTTPParse.HTTPMessage
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Compressable"
+			Name="Compressible"
 			Group="Behavior"
 			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GZipped"
-			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty

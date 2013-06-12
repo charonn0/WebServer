@@ -334,14 +334,13 @@ Inherits ServerSocket
 		Private Function GetCache(Sender As HTTP.Session, Path As String) As HTTP.Response
 		  Dim logID As String = "NO_SESSION"
 		  If UseSessions Then logID = Sender.SessionID
-		  Me.Log(CurrentMethodName + logID, Log_Trace)
 		  If UseSessions Then
 		    If Sender.GetCacheItem(Path) <> Nil Then
 		      Me.Log("(hit!) Get cache item: " + Path, Log_Debug)
 		      Return Sender.GetCacheItem(Path)
 		    End If
 		  End If
-		  Me.Log("(miss!) Get cache item: " + Path, Log_Debug)
+		  Me.Log("(miss!) Get cache item: " + Path, Log_Trace)
 		End Function
 	#tag EndMethod
 
@@ -425,14 +424,10 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSocket(ClientThread As Thread) As SSLSocket
-		  Me.Log(CurrentMethodName + "Thread: " + Str(ClientThread.ThreadID), Log_Trace)
+		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim Socket As SSLSocket
-		  If UseSessions Then
-		    If Me.Threads.HasKey(ClientThread) Then
-		      Socket = Me.Threads.Value(ClientThread)
-		    Else
-		      Raise New IllegalLockingException
-		    End If
+		  If Me.Threads.HasKey(ClientThread) Then
+		    Socket = Me.Threads.Value(ClientThread)
 		  End If
 		  Return Socket
 		End Function
@@ -602,8 +597,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub ThreadRun(Sender As Thread)
-		  If Me.Threading Then Me.Log("Your server today is ThreadID#" + Str(Sender.ThreadID), Log_Trace)
-		  
+		  If Me.Threading Then Me.Log("Your server today is 0x" + Left(Hex(Sender.ThreadID) + "00000000", 8), Log_Trace)
 		  DefaultHandler(GetSocket(Sender))
 		End Sub
 	#tag EndMethod
@@ -926,9 +920,13 @@ Inherits ServerSocket
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mUseSessions = value
-			  
 			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			  mUseSessions = value
+			  'If Me.Threading And Not value Then
+			  'Me.Log(CurrentMethodName + ": disabling Threading since UseSessions=False!", Log_Debug)
+			  'Me.Threading = value
+			  'End If
+			  
 			End Set
 		#tag EndSetter
 		UseSessions As Boolean
