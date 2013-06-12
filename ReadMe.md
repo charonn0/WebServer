@@ -25,4 +25,4 @@ Some of the implemented features include:
 * [HTTP Responses](https://github.com/charonn0/WebServer/wiki/HTTP.Response)
 
 ### Example Subclasses
-*[File Server](https://github.com/charonn0/WebServer/wiki/Webserver.fileserver)
+* [File Server](https://github.com/charonn0/WebServer/wiki/Webserver.fileserver)
