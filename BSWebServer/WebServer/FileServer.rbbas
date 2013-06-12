@@ -5,9 +5,9 @@ Inherits HTTP.BaseServer
 		Function HandleRequest(ClientRequest As HTTP.Request) As HTTP.Response
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response 'The response object
-		  Dim item As FolderItem = FindItem(ClientRequest.Path.ServerPath)
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
+		    Dim item As FolderItem = FindItem(ClientRequest.Path.ServerPath)
 		    If item = Nil Then
 		      '404 Not found
 		      'Me.Log("Page not found", Log_Debug)

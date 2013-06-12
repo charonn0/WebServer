@@ -53,7 +53,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If AuthenticationRequired Then
-		    Me.Log("Authenticating", Log_Debug)
+		    Me.Log("Authenticating", Log_Trace)
 		    If Not Authenticate(clientrequest) Then
 		      Me.Log("Authentication failed", Log_Error)
 		      doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
@@ -76,7 +76,7 @@ Inherits ServerSocket
 		    If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
 		      Select Case clientrequest.CacheDirective
 		      Case "no-cache", "max-age=0"
-		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Debug)
+		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Trace)
 		        cache = Nil
 		      End Select
 		    Else
@@ -125,7 +125,7 @@ Inherits ServerSocket
 		  Wend
 		  Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
 		  RedirectsLock.Release
-		  If redir <> Nil Then Me.Log("Using redirect.", Log_Debug)
+		  If redir <> Nil Then Me.Log("Using redirect.", Log_Trace)
 		  Return redir
 		  
 		End Function
@@ -146,7 +146,7 @@ Inherits ServerSocket
 		  #endif
 		  
 		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 Then
-		    Me.Log("Checking Accepts", Log_Debug)
+		    Me.Log("Checking Accepts", Log_Trace)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
 		        Me.Log("Response is a Acceptable", Log_Debug)
@@ -163,7 +163,11 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub ClientErrorHandler(Sender As SSLSocket)
-		  Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
+		  If Sender.LastErrorCode = 102 Then
+		    Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
+		  Else
+		    Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Error)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -201,7 +205,7 @@ Inherits ServerSocket
 		    data = Sender.Read(length + 3)
 		    Me.Log("HTTP Pipelining mode is selected", Log_Debug)
 		  Else
-		    Me.Log("HTTP Pipelining mode is NOT selected", Log_Debug)
+		    Me.Log("HTTP Pipelining mode is NOT selected", Log_Trace)
 		    data = Sender.ReadAll
 		  End If
 		  
@@ -372,7 +376,7 @@ Inherits ServerSocket
 		    Return Me.GlobalRedirects.Value(Path)
 		  End If
 		  
-		  Me.Log("(miss!) Get redirect: " + Path, Log_Debug)
+		  Me.Log("(miss!) Get redirect: " + Path, Log_Trace)
 		End Function
 	#tag EndMethod
 
@@ -521,7 +525,7 @@ Inherits ServerSocket
 		  If UseSessions Then
 		    Session.ExtendSession
 		    If Session.NewSession Then
-		      Me.Log("Set session cookie: " + Session.SessionID, Log_Debug)
+		      Me.Log("Set session cookie: " + Session.SessionID, Log_Trace)
 		      Dim c As New Cookie("SessionID=" + Session.SessionID)
 		      c.Secure = (Me.ConnectionType <> ConnectionTypes.Insecure)
 		      c.Path = "/"
@@ -541,8 +545,8 @@ Inherits ServerSocket
 		Sub RemoveRedirect(HTTPpath As String)
 		  Me.Log(CurrentMethodName + "(" + HTTPpath + ")", Log_Trace)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Remove redirect: " + HTTPPath, Log_Debug)
 		  If Redirects.HasKey(HTTPpath) Then
+		    Me.Log("Removed redirect: " + HTTPPath, Log_Debug)
 		    Redirects.Remove(HTTPpath)
 		  End If
 		End Sub
@@ -553,10 +557,10 @@ Inherits ServerSocket
 		  #pragma Unused UserAborted
 		  Me.Log("Send complete", Log_Socket)
 		  If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
-		    Me.Log("Socket kept alive", Log_Debug)
+		    Me.Log("Socket kept alive", Log_Trace)
 		  Else
 		    Sender.Close
-		    Me.Log("Socket closed", Log_Debug)
+		    Me.Log("Socket closed", Log_Trace)
 		  End If
 		End Sub
 	#tag EndMethod
