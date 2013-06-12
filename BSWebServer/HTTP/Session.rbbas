@@ -44,12 +44,6 @@ Protected Class Session
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Destructor()
-		  Break
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ExtendSession()
 		  Me.LastActive = New Date
 		End Sub
@@ -122,10 +116,6 @@ Protected Class Session
 
 	#tag Property, Flags = &h21
 		Private CacheTimer As Timer
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		KeepAlive As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
