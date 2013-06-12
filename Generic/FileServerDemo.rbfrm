@@ -64,7 +64,7 @@ Begin Window FileServerDemo
       Left            =   545
       LockedInPosition=   False
       Mode            =   2
-      Period          =   1
+      Period          =   10
       Scope           =   0
       TabPanelIndex   =   0
       Top             =   478

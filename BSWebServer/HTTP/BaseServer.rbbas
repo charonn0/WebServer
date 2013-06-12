@@ -586,9 +586,8 @@ Inherits ServerSocket
 		  GZipResponse(ResponseDocument)
 		  
 		  Me.Log("Sending data", Log_Socket)
-		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
-		  
 		  Socket.Write(ResponseDocument.ToString)
+		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
 		  Socket.Flush
 		End Sub
 	#tag EndMethod
