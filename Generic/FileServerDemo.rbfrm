@@ -1084,9 +1084,6 @@ End
 #tag Events CheckBox3
 	#tag Event
 		Sub Action()
-		  If Sock.IsListening Then
-		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then Return
-		  End If
 		  Sock.DirectoryBrowsing = Me.Value
 		  If Sock.IsListening Then
 		    Sock.StopListening
@@ -1156,14 +1153,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  If Sock.UseSessions <> Me.Value Then
-		    If Sock.IsListening Then
-		      If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change socket variable") = 6 Then
-		        Return
-		      End If
-		    End If
-		    Sock.UseSessions = Me.Value
-		  End If
+		  Sock.UseSessions = Me.Value
 		  
 		End Sub
 	#tag EndEvent
@@ -1193,9 +1183,6 @@ End
 #tag Events CheckBox4
 	#tag Event
 		Sub Action()
-		  If Sock.IsListening Then
-		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Interface Security") = 6 Then Return
-		  End If
 		  Sock.StopListening
 		  If Me.Value Then
 		    Dim f As FolderItem = Sock.CertificateFile
@@ -1222,9 +1209,6 @@ End
 #tag Events CheckBox5
 	#tag Event
 		Sub Action()
-		  If Sock.IsListening Then
-		    If Not MsgBox("This will reset all open sockets. Proceed?", 36, "Change Interface Security") = 6 Then Return
-		  End If
 		  Sock.StopListening
 		  Sock.Threading = Me.Value
 		  Sock.Listen

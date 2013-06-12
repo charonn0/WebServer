@@ -259,7 +259,7 @@ Inherits ServerSocket
 		      Case RequestMethod.TRACE
 		        doc = doc.GetErrorResponse(200, "")
 		        doc.SetHeader("Content-Length") = Str(Data.Size)
-		        doc.SetHeader("Content-Type") = "message/http"
+		        doc.MIMEType = New ContentType("message/http")
 		        doc.MessageBody = Data
 		      Case RequestMethod.OPTIONS
 		        doc = doc.GetErrorResponse(200, "")
