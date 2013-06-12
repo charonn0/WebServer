@@ -364,7 +364,7 @@ Begin Window FileServerDemo
       Bold            =   False
       Border          =   True
       ColumnCount     =   4
-      ColumnsResizable=   False
+      ColumnsResizable=   True
       ColumnWidths    =   "60%,20%,10%"
       DataField       =   ""
       DataSource      =   ""
@@ -1114,6 +1114,12 @@ End
 		  #pragma Unused x
 		  #pragma Unused y
 		  #pragma Unused row
+		  #pragma Unused column
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function HeaderPressed(column as Integer) As Boolean
 		  #pragma Unused column
 		  Return True
 		End Function

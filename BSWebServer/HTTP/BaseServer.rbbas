@@ -174,7 +174,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "0000", 4)
+		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "00000000", 8)
 		  If Sender.Secure Then
 		    If Me.ConnectionType = ConnectionTypes.SSLv3 Then
 		      msg = msg + ") security=SSLv3"
@@ -382,7 +382,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSession(Socket As SSLSocket) As HTTP.Session
-		  Me.Log(CurrentMethodName + "(0x" + Left(Hex(Socket.Handle) + "0000", 4) + ")", Log_Trace)
+		  Me.Log(CurrentMethodName + "(0x" + Left(Hex(Socket.Handle) + "00000000", 8) + ")", Log_Trace)
 		  Dim Session As HTTP.Session
 		  If UseSessions Then
 		    If Me.Sockets.HasKey(Socket) Then
