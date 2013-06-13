@@ -92,26 +92,12 @@ Inherits HTTP.BaseServer
 		      Dim tmp As FolderItem = GetTemporaryFolderItem
 		      p.Save(tmp, Picture.SaveAsPNG)
 		      icon = icon.GetFileResponse(tmp, img)
-		      #If GZIPAvailable Then
-		        icon.SetHeader("Content-Encoding", "gzip")
-		        Dim gz As String
-		        Try
-		          Dim size As Integer = icon.MessageBody.LenB
-		          gz = GZipPage(icon.MessageBody)
-		          icon.MessageBody = gz
-		          size = gz.LenB * 100 / size
-		        Catch Error
-		          'Just send the uncompressed data
-		        End Try
-		      #endif
 		      icon.SetHeader("Content-Length") = Str(icon.MessageBody.LenB)
 		      icon.MIMEType = New ContentType("image/png")
 		      icon.StatusCode = 200
 		      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
-		      icon.Compressible = False
 		      icon.Path = New URI(img)
 		      GlobalRedirects.Value(img) = icon
-		      'AddRedirect(icon)
 		    Next
 		  #else
 		    #pragma Warning "MIME icons will not be available in console applications"

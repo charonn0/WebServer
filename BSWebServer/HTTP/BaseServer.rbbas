@@ -442,12 +442,13 @@ Inherits ServerSocket
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
 		    #If GZIPAvailable Then
 		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
-		      ResponseDocument.SetHeader("Content-Encoding", "gzip")
-		      Dim gz As String
+		      Dim gz As MemoryBlock = ResponseDocument.MessageBody
+		      If gz.Byte(0) = &h1F And gz.Byte(1) = &h8B Then Return
 		      Try
 		        Dim size As Integer = ResponseDocument.MessageBody.LenB
 		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
 		        ResponseDocument.MessageBody = gz
+		        ResponseDocument.SetHeader("Content-Encoding") ="gzip"
 		        size = gz.LenB * 100 / size
 		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
 		      Catch Error
@@ -460,9 +461,7 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		  End If
-		  If Not ResponseDocument.HasHeader("Content-Length") Then
-		    ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
-		  End If
+		  ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		End Sub
 	#tag EndMethod
 
