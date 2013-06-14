@@ -73,7 +73,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim cache As HTTP.Response
 		  If UseSessions Then
-		    If clientrequest.CacheDirective <> "" Or clientrequest.Path.Arguments.Ubound > -1 Then
+		    If clientrequest.CacheDirective <> "" Then
 		      Select Case clientrequest.CacheDirective
 		      Case "no-cache", "max-age=0"
 		        Me.Log("Cache control override: " + clientrequest.CacheDirective, Log_Trace)
@@ -585,7 +585,7 @@ Inherits ServerSocket
 		  Me.Log("Sending data", Log_Socket)
 		  Socket.Write(ResponseDocument.ToString)
 		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
-		  If UseSessions Then
+		  If UseSessions And ResponseDocument.Method = RequestMethod.GET And ResponseDocument.StatusCode < 400 Then
 		    Session.AddCacheItem(ResponseDocument)
 		  End If
 		  Socket.Flush

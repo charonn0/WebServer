@@ -382,11 +382,6 @@ Protected Class HTTPMessage
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AuthSecure"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"

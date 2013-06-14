@@ -10,7 +10,7 @@ Protected Class Session
 		  End If
 		  
 		  If Me.Cacheable Then
-		    Me.PageCache.Value(Page.Path.ServerPath) = Page
+		    Me.PageCache.Value(Page.Path.ToString) = Page
 		  End If
 		  
 		End Sub
