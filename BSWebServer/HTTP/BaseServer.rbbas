@@ -372,7 +372,6 @@ Inherits ServerSocket
 		  
 		  If Me.GlobalRedirects.HasKey(Path) Then
 		    Me.Log("(GLOBAL hit!) Get redirect: " + Path, Log_Debug)
-		    If Sender <> Nil Then Sender.AddCacheItem(Me.GlobalRedirects.Value(Path))
 		    Return Me.GlobalRedirects.Value(Path)
 		  End If
 		  
@@ -586,6 +585,9 @@ Inherits ServerSocket
 		  Me.Log("Sending data", Log_Socket)
 		  Socket.Write(ResponseDocument.ToString)
 		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
+		  If UseSessions Then
+		    Session.AddCacheItem(ResponseDocument)
+		  End If
 		  Socket.Flush
 		End Sub
 	#tag EndMethod

@@ -4,6 +4,11 @@ Protected Class Session
 		Sub AddCacheItem(Page As HTTP.Response)
 		  If Page = Nil Then Return
 		  If Page.Path = Nil Then Return
+		  If Page.Expires = Nil Then
+		    Page.Expires = New Date
+		    Page.Expires.TotalSeconds = Page.Expires.TotalSeconds + 60
+		  End If
+		  
 		  If Me.Cacheable Then
 		    Me.PageCache.Value(Page.Path.ServerPath) = Page
 		  End If

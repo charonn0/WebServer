@@ -176,8 +176,8 @@ Inherits HTTP.Response
 		Private RequestPath As HTTP.URI
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Target As FolderItem
+	#tag Property, Flags = &h21
+		Private Target As FolderItem
 	#tag EndProperty
 
 
@@ -222,12 +222,6 @@ Inherits HTTP.Response
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AuthSecure"
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="HTTPParse.HTTPMessage"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
@@ -235,17 +229,11 @@ Inherits HTTP.Response
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Compressable"
+			Name="Compressible"
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
 			InheritedFrom="HTTP.Response"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GZipped"
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="HTTPParse.Response"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
