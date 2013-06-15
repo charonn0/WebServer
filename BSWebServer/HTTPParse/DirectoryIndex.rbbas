@@ -6,6 +6,9 @@ Inherits HTTP.Response
 		  Me.Target = Target
 		  Me.RequestPath = New URI(ServerPath)
 		  Super.Constructor(200, New ContentType("text/html"), HTTP.RequestMethod.GET, "")
+		  Dim d As New Date
+		  d.TotalSeconds = d.TotalSeconds + 60
+		  Me.Expires = d
 		End Sub
 	#tag EndMethod
 
