@@ -72,6 +72,7 @@ Window=FileServerDemo;Generic/FileServerDemo.rbfrm;&h22A967FF;&h4F7DAFFF;false
 Window=CertificateEntry;Generic/CertificateEntry.rbfrm;&h36516FFF;&h4F7DAFFF;false
 Class=HelloWorld;Generic/HelloWorld.rbbas;&h644E07FF;&h4F7DAFFF;false
 RawData=favicon;BSWebServer/MIMEIcons/favicon.ico;&h3F5B67FF;&h2A028FFF;false
+Class=HeaderList;HTTPTestGenerator/UI Classes/HeaderList.rbbas;&h52F71FFF;&h12A8DFFF;false
 DefaultWindow=FileServerDemo
 MajorVersion=1
 MinorVersion=0
