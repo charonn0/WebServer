@@ -17,3 +17,17 @@ all copies or substantial portions of the Software.
 	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
+	
+	
+	
+	
+	
+---------------------------------
+MIME Icon licenses
+
+The MIMEtype icons in this project are dual licensed under the 
+Creative Commons Attribution-Sharealike 3.0 or the LGPL. They were
+shamelessly borrowed from the Oxygen project: 
+
+http://www.oxygen-icons.org/
+Downloaded from: http://openiconlibrary.sourceforge.net/gallery2/?./Icons/mimetypes/oxygen-style
