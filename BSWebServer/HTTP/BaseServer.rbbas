@@ -451,6 +451,7 @@ Inherits ServerSocket
 		        ResponseDocument.SetHeader("Content-Encoding") ="gzip"
 		        size = gz.LenB * 100 / size
 		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
+		        ResponseDocument.SetHeader("Content-Length") = Str(gz.LenB)
 		      Catch Error
 		        'Just send the uncompressed data
 		      End Try
@@ -461,7 +462,6 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		  End If
-		  ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		End Sub
 	#tag EndMethod
 
