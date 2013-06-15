@@ -53,55 +53,44 @@ Inherits HTTP.BaseServer
 
 	#tag Method, Flags = &h1000
 		Sub Constructor()
-		  #If TargetHasGUI Then
-		    Dim icons As New Dictionary( _
-		    "/" + VirtualRoot + "/img/bin.png":MIMEbin, _
-		    "/" + VirtualRoot + "/img/script.png":MIMEScript, _
-		    "/" + VirtualRoot + "/img/xojo.png":MIMERBP, _
-		    "/" + VirtualRoot + "/img/dir.png":MIMEdir, _
-		    "/" + VirtualRoot + "/img/txt.png":MIMETxt, _
-		    "/" + VirtualRoot + "/img/html.png":MIMEHTML, _
-		    "/" + VirtualRoot + "/img/css.png":MIMECSS, _
-		    "/" + VirtualRoot + "/img/xml.png":MIMEXML, _
-		    "/" + VirtualRoot + "/img/image.png":MIMEImage, _
-		    "/" + VirtualRoot + "/img/mov.png":MIMEMov, _
-		    "/" + VirtualRoot + "/img/font.png":MIMEFont, _
-		    "/" + VirtualRoot + "/img/zip.png":MIMEZip, _
-		    "/" + VirtualRoot + "/img/wav.png":MIMEWAV, _
-		    "/" + VirtualRoot + "/img/mus.png":MIMEMus, _
-		    "/" + VirtualRoot + "/img/pdf.png":MIMEPDF, _
-		    "/" + VirtualRoot + "/img/xls.png":MIMEXLS, _
-		    "/" + VirtualRoot + "/img/doc.png":MIMEDOC, _
-		    "/" + VirtualRoot + "/img/unknown.png":MIMEUnknown, _
-		    "/" + VirtualRoot + "/img/upicon.png":upIcon, _
-		    "/" + VirtualRoot + "/img/sorticon.png":sortIcon, _
-		    "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
-		    
-		    For Each img As String In icons.Keys
-		      Me.Log("Add virtual file '" + img, Log_Trace)
-		      Dim icon As HTTP.Response
-		      Dim p As Picture
-		      #If RBVersion >= 2011.4 Then
-		        App.UseGDIPlus = True
-		        p = New Picture(MIMEbin.Width, MIMEbin.Height)
-		      #Else
-		        p = New Picture(MIMEbin.Width, MIMEbin.Height, 32)
-		        p.Transparent = 1
-		      #endif
-		      p.Graphics.DrawPicture(icons.Value(img), 0, 0)
-		      Dim tmp As FolderItem = GetTemporaryFolderItem
-		      p.Save(tmp, Picture.SaveAsPNG)
-		      icon = icon.GetFileResponse(tmp, img)
-		      icon.SetHeader("Content-Length") = Str(icon.MessageBody.LenB)
-		      icon.MIMEType = New ContentType("image/png")
-		      icon.StatusCode = 200
-		      icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
-		      icon.Path = New URI(img)
-		      GlobalRedirects.Value(img) = icon
-		    Next
-		  #else
-		    #pragma Warning "MIME icons will not be available in console applications"
-		  #endif
+		  Dim icons As New Dictionary( _
+		  "/" + VirtualRoot + "/img/bin.png":MIMEbin, _
+		  "/" + VirtualRoot + "/img/script.png":MIMEScript, _
+		  "/" + VirtualRoot + "/img/xojo.png":MIMERBP, _
+		  "/" + VirtualRoot + "/img/dir.png":MIMEdir, _
+		  "/" + VirtualRoot + "/img/txt.png":MIMETxt, _
+		  "/" + VirtualRoot + "/img/html.png":MIMEHTML, _
+		  "/" + VirtualRoot + "/img/css.png":MIMECSS, _
+		  "/" + VirtualRoot + "/img/xml.png":MIMEXML, _
+		  "/" + VirtualRoot + "/img/image.png":MIMEImage, _
+		  "/" + VirtualRoot + "/img/mov.png":MIMEMov, _
+		  "/" + VirtualRoot + "/img/font.png":MIMEFont, _
+		  "/" + VirtualRoot + "/img/zip.png":MIMEZip, _
+		  "/" + VirtualRoot + "/img/wav.png":MIMEWAV, _
+		  "/" + VirtualRoot + "/img/mus.png":MIMEMus, _
+		  "/" + VirtualRoot + "/img/pdf.png":MIMEPDF, _
+		  "/" + VirtualRoot + "/img/xls.png":MIMEXLS, _
+		  "/" + VirtualRoot + "/img/doc.png":MIMEDOC, _
+		  "/" + VirtualRoot + "/img/unknown.png":MIMEUnknown, _
+		  "/" + VirtualRoot + "/img/upicon.png":upIcon, _
+		  "/" + VirtualRoot + "/img/sorticon.png":sortIcon, _
+		  "/" + VirtualRoot + "/img/sortup.png":sortupIcon)
+		  
+		  For Each img As String In icons.Keys
+		    Me.Log("Add virtual file '" + img, Log_Trace)
+		    Dim icon As HTTP.Response
+		    Dim tmp As FolderItem = GetTemporaryFolderItem
+		    Dim bs As BinaryStream = BinaryStream.Open(tmp, True)
+		    bs.Write(icons.Value(img))'.Save(tmp, Picture.SaveAsPNG)
+		    bs.Close
+		    icon = icon.GetFileResponse(tmp, img)
+		    icon.SetHeader("Content-Length") = Str(icon.MessageBody.LenB)
+		    icon.MIMEType = New ContentType("image/png")
+		    icon.StatusCode = 200
+		    icon.Expires = New Date(2033, 12, 31, 23, 59, 59)
+		    icon.Path = New URI(img)
+		    GlobalRedirects.Value(img) = icon
+		  Next
 		  
 		  Dim redirect As HTTP.Response
 		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
