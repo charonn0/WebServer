@@ -359,7 +359,7 @@ Protected Class HTTPMessage
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Me.SetHeader("Range") = Format(Me.RangeStart, "###################0") + "-" + Format(value, "###################0")
+			  Me.SetHeader("Range") = "bytes=" + Format(Me.RangeStart, "###################0") + "-" + Format(value, "###################0")
 			End Set
 		#tag EndSetter
 		RangeEnd As Int64
@@ -378,7 +378,7 @@ Protected Class HTTPMessage
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Me.SetHeader("Range") = Format(value, "###################0") + "-" + Format(Me.RangeEnd, "###################0")
+			  Me.SetHeader("Range") = "bytes=" + Format(value, "###################0") + "-" + Format(Me.RangeEnd, "###################0")
 			End Set
 		#tag EndSetter
 		RangeStart As Int64
