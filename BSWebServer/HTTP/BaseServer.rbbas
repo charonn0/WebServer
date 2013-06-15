@@ -266,7 +266,6 @@ Inherits ServerSocket
 		        doc.MessageBody = ""
 		        doc.SetHeader("Content-Length") = "0"
 		        doc.SetHeader("Allow") = "GET, HEAD, POST, TRACE, OPTIONS"
-		        doc.SetHeader("Accept-Ranges") = "bytes"
 		      Else
 		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
 		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
@@ -511,7 +510,7 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.SetHeader("Connection") = "close"
 		  End If
-		  
+		  ResponseDocument.SetHeader("Accept-Ranges") = "bytes"
 		  ResponseDocument.SetHeader("Server") = WebServer.DaemonVersion
 		End Sub
 	#tag EndMethod

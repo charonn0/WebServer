@@ -60,12 +60,18 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function GetFileResponse(page As FolderItem, Path As String) As HTTP.Response
+		 Shared Function GetFileResponse(page As FolderItem, Path As String, RangeStart As Integer = 0, RangeEnd As Integer = -1) As HTTP.Response
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  If Not page.Directory Then
-		    Dim bs As BinaryStream = BinaryStream.Open(page)
-		    rply.MessageBody = bs.Read(bs.Length)
+		    Dim bs As BinaryStream
+		    If rangeend = -1 Then rangeend = page.Length
+		    If rangestart < 0 Or rangeend > page.Length Or rangeStart > page.Length Or rangeEnd < 0 Then
+		      Return GetErrorResponse(416, "")
+		    End If
+		    bs = BinaryStream.Open(page)
+		    bs.Position = RangeStart
+		    rply.MessageBody = bs.Read(rangeEnd - Rangestart)
 		    bs.Close
 		    rply.MIMEType = New ContentType(page)
 		  End If

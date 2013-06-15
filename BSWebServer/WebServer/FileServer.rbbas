@@ -34,6 +34,8 @@ Inherits HTTP.BaseServer
 		        Me.Log("Generating new directory index", Log_Trace)
 		        doc = New DirectoryIndex(item, ClientRequest.Path)
 		        HTTPParse.DirectoryIndex(doc).Populate
+		      ElseIf ClientRequest.HasHeader("Range") Then
+		        doc = doc.GetFileResponse(item, ClientRequest.Path, ClientRequest.RangeStart, ClientRequest.RangeEnd)
 		      Else
 		        doc = doc.GetFileResponse(item, ClientRequest.Path)
 		      End If

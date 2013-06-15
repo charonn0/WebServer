@@ -349,6 +349,44 @@ Protected Class HTTPMessage
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  If Me.HasHeader("Range") Then
+			    Dim range As String = Me.GetHeader("Range")
+			    range = NthField(range, "=", 2)
+			    Dim stop As Integer = Val(NthField(range, "-", 2).Trim)
+			    Return stop
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.SetHeader("Range") = Format(Me.RangeStart, "###################0") + "-" + Format(value, "###################0")
+			End Set
+		#tag EndSetter
+		RangeEnd As Int64
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Me.HasHeader("Range") Then
+			    Dim range As String = Me.GetHeader("Range")
+			    range = NthField(range, "=", 2)
+			    Dim start As Integer = Val(NthField(range, "-", 1).Trim)
+			    Return start
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.SetHeader("Range") = Format(value, "###################0") + "-" + Format(Me.RangeEnd, "###################0")
+			End Set
+		#tag EndSetter
+		RangeStart As Int64
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  If mSessionID = "" Then
 			    If HasCookie("SessionID") Then mSessionID = GetCookie("SessionID")
 			  End If
