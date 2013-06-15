@@ -230,7 +230,7 @@ Protected Module WebServer
 		Function GZipPage(MessageBody As String) As String
 		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
 		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.
-		  #If GZipAvailable Then'
+		  #If GZipAvailable And TargetHasGUI Then'
 		    Dim size As Single = MessageBody.LenB
 		    If size > 2^26 Then Return MessageBody 'if bigger than 64MB, don't try compressing it.
 		    MessageBody = GZip.Compress(MessageBody)

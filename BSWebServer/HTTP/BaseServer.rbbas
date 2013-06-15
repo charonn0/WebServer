@@ -440,7 +440,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
-		    #If GZIPAvailable Then
+		    #If GZIPAvailable And TargetHasGUI Then
 		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		      Dim gz As MemoryBlock = ResponseDocument.MessageBody
 		      If gz.Byte(0) = &h1F And gz.Byte(1) = &h8B Then Return
@@ -605,6 +605,11 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Super.StopListening
 		  Me.Log("Server stopped listening.", Log_Socket)
+		  
+		  Me.Sessions = New Dictionary
+		  Me.Sockets = New Dictionary
+		  Me.Threads = New Dictionary
+		  
 		End Sub
 	#tag EndMethod
 

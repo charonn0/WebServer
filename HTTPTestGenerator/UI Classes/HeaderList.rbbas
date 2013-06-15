@@ -9,24 +9,10 @@ Inherits ListBox
 		    Return True
 		  ElseIf row < Me.ListCount And column = Me.ColumnCount - 1 Then
 		    g.ForeColor = &c80808000
-		    Dim strWidth As Double = g.StringWidth("Remove")
 		    g.DrawString("Remove", 0, g.Height)
 		    Return True
 		  End If
 		  
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
-		  '#pragma Unused row
-		  '#pragma Unused X
-		  'If Column = 2 Then
-		  'g.ForeColor = &c80808000
-		  'g.Underline = True
-		  'Dim strWidth As Double = g.StringWidth("Remove")
-		  'g.DrawString("Remove", g.Width - (strWidth + 5), Y)
-		  'End If
 		End Function
 	#tag EndEvent
 
