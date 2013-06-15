@@ -10,6 +10,7 @@ Protected Class Session
 		  End If
 		  
 		  If Me.Cacheable Then
+		    Log(CurrentMethodName + " '" + Page.Path.ToString + "' (" + Me.SessionID + ")", BaseServer.Log_Trace)
 		    Me.PageCache.Value(Page.Path.ToString) = Page
 		  End If
 		  
@@ -18,7 +19,8 @@ Protected Class Session
 
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTP.Response)
-		  Me.Redirects.Value(Page.Path.ServerPath) = Page
+		  Me.Redirects.Value(Page.Path) = Page
+		  Log(CurrentMethodName + " '" + Page.Path.ToString + "' (" + Me.SessionID + ")", BaseServer.Log_Trace)
 		  
 		  
 		End Sub
@@ -30,6 +32,7 @@ Protected Class Session
 		  For Each Path As String In PageCache.Keys
 		    Dim doc As HTTP.Response = PageCache.Value(Path)
 		    Dim d As New Date
+		    d.GMTOffset = doc.Expires.GMTOffset
 		    If doc.Expires.TotalSeconds < d.TotalSeconds Then
 		      PageCache.Remove(Path)
 		    End If
@@ -51,6 +54,7 @@ Protected Class Session
 	#tag Method, Flags = &h0
 		Sub ExtendSession()
 		  Me.LastActive = New Date
+		  Log(CurrentMethodName + "(" + Me.SessionID + ")", BaseServer.Log_Trace)
 		End Sub
 	#tag EndMethod
 
@@ -92,6 +96,7 @@ Protected Class Session
 		Sub RemoveCacheItem(HTTPpath As String)
 		  // Part of the StoredItem interface.
 		  If PageCache.HasKey(HTTPpath) Then
+		    Log(CurrentMethodName + " '" + HTTPPath + "' (" + Me.SessionID + ")", BaseServer.Log_Trace)
 		    PageCache.Remove(HTTPpath)
 		  End If
 		  
@@ -103,6 +108,7 @@ Protected Class Session
 	#tag Method, Flags = &h0
 		Sub RemoveRedirect(HTTPpath As String)
 		  If Redirects.HasKey(HTTPpath) Then
+		    Log(CurrentMethodName + "'" + HTTPpath + "' (" + Me.SessionID + ")", BaseServer.Log_Trace)
 		    Redirects.Remove(HTTPpath)
 		  End If
 		  
@@ -111,7 +117,7 @@ Protected Class Session
 
 
 	#tag Hook, Flags = &h0
-		Event GetCache(Path As String) As HTTP.Response
+		Event Log(Message As String, Severity As Integer)
 	#tag EndHook
 
 
@@ -178,6 +184,7 @@ Protected Class Session
 			Get
 			  If mSessionID = "" Then
 			    mSessionID = EncodeHex(MD5(UUID))
+			    Log("Generated new session id: " + mSessionID, BaseServer.Log_Trace)
 			    Me.NewSession = True
 			  End If
 			  Return mSessionID

@@ -409,6 +409,7 @@ Inherits ServerSocket
 		      SessionsLock.Release
 		    Else
 		      session = New HTTP.Session
+		      AddHandler session.Log, WeakAddressOf Me.SessionLog
 		      Session.NewSession = True
 		      While Not SessionsLock.TrySignal
 		        App.YieldToNextThread
@@ -589,6 +590,13 @@ Inherits ServerSocket
 		    Session.AddCacheItem(ResponseDocument)
 		  End If
 		  Socket.Flush
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SessionLog(Sender As HTTP.Session, Message As String, Severity As Integer)
+		  #pragma Unused Sender
+		  Me.Log(Message, Severity)
 		End Sub
 	#tag EndMethod
 
