@@ -1039,7 +1039,7 @@ End
 		  Response = New HTTP.Response(Raw)
 		  Code.Text = Str(Response.StatusCode)'NthField(response, " ", 2)
 		  Select Case Response.StatusCode
-		  Case 200
+		  Case 200, 206
 		    Code.TextColor = &c00808000
 		    CodeName.TextColor = &c00808000
 		  Case 301, 302, 304

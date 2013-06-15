@@ -27,6 +27,9 @@ Protected Class HTTPMessage
 		  Case 410
 		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', is no longer available.")
 		    
+		  Case 416
+		    page = ReplaceAll(page, "%DOCUMENT%", "The resource does not contain the requested range.")
+		    
 		  Case 418
 		    page = ReplaceAll(page, "%DOCUMENT%", "I'm a little teapot, short and stout; here is my handle, here is my spout.")
 		    

@@ -79,7 +79,11 @@ Inherits HTTPParse.HTTPMessage
 		  If rply.MIMEType = Nil Then
 		    rply.MIMEType = New ContentType("text/html")
 		  End If
-		  rply.StatusCode = 200
+		  If RangeStart = 0 And RangeEnd = page.Length Then
+		    rply.StatusCode = 200
+		  Else
+		    rply.StatusCode = 206 'partial content
+		  End If
 		  rply.Path = New HTTP.URI(Path)
 		  Dim d As New Date
 		  d.TotalSeconds = d.TotalSeconds + 601

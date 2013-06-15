@@ -585,7 +585,7 @@ Inherits ServerSocket
 		  Me.Log("Sending data", Log_Socket)
 		  Socket.Write(ResponseDocument.ToString)
 		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
-		  If UseSessions And ResponseDocument.Method = RequestMethod.GET And ResponseDocument.StatusCode < 400 Then
+		  If UseSessions And ResponseDocument.Method = RequestMethod.GET And ResponseDocument.StatusCode = 200 Then
 		    Session.AddCacheItem(ResponseDocument)
 		  End If
 		  Socket.Flush
