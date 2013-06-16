@@ -677,9 +677,20 @@ Inherits ServerSocket
 	#tag EndHook
 
 
-	#tag Property, Flags = &h0
-		AllowPipeLinedRequests As Boolean = False
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mAllowPipeLinedRequests
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			  mAllowPipeLinedRequests = value
+			End Set
+		#tag EndSetter
+		AllowPipeLinedRequests As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -748,9 +759,29 @@ Inherits ServerSocket
 		CertificatePassword As String
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		ConnectionType As ConnectionTypes = ConnectionTypes.Insecure
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mConnectionType
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Select Case value
+			  Case ConnectionTypes.Insecure
+			    Me.Log(CurrentMethodName + "=Insecure", Log_Trace)
+			  Case ConnectionTypes.SSLv3
+			    Me.Log(CurrentMethodName + "=SSLv3", Log_Trace)
+			  Case ConnectionTypes.TLSv1
+			    Me.Log(CurrentMethodName + "=TLSv1", Log_Trace)
+			  Else
+			    Me.Log(CurrentMethodName + "=Unknown!", Log_Trace)
+			  End Select
+			  mConnectionType = value
+			End Set
+		#tag EndSetter
+		ConnectionType As ConnectionTypes
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -793,6 +824,10 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mAllowPipeLinedRequests As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mAuthenticationRealm As String = """Restricted Area"""
 	#tag EndProperty
 
@@ -806,6 +841,10 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h21
 		Private mCertificatePassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConnectionType As ConnectionTypes = ConnectionTypes.Insecure
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -835,6 +874,10 @@ Inherits ServerSocket
 			timedout at the next run of the TimeOutTimer action event.
 		#tag EndNote
 		Private mSessionTimeout As Integer = 600
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mThreading As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -921,9 +964,20 @@ Inherits ServerSocket
 		Protected Sockets As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Threading As Boolean = True
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mThreading
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			  mThreading = value
+			End Set
+		#tag EndSetter
+		Threading As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter

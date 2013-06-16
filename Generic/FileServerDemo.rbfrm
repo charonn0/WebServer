@@ -1085,10 +1085,6 @@ End
 	#tag Event
 		Sub Action()
 		  Sock.DirectoryBrowsing = Me.Value
-		  If Sock.IsListening Then
-		    Sock.StopListening
-		    Sock.Listen
-		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1132,8 +1128,6 @@ End
 		  Password.Enabled = Me.Value
 		  realmtext.Enabled = Me.Value
 		  sock.AuthenticationRequired = Me.Value
-		  Sock.StopListening
-		  Sock.Listen
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1189,35 +1183,48 @@ End
 #tag Events CheckBox4
 	#tag Event
 		Sub Action()
-		  Sock.StopListening
-		  If Me.Value Then
-		    Dim f As FolderItem = Sock.CertificateFile
-		    Dim s As String = CertificateEntry.GetCert(f, "")
-		    If s <> "" And f.Exists Then
-		      Sock.CertificateFile = f
-		      Sock.CertificatePassword = s
-		      If SecurityLevel.Text = "TLS" Then
-		        Sock.ConnectionType = ConnectionTypes.TLSv1
-		      Else
-		        Sock.ConnectionType = ConnectionTypes.SSLv3
-		      End If
+		  If sock.IsListening Then
+		    If MsgBox("This will reset all open connections. Proceed?", 52, "Confirm socket reset") <> 6 Then
+		      Me.Value = (sock.ConnectionType = ConnectionTypes.Insecure)
 		    Else
-		      Sock.ConnectionType = ConnectionTypes.Insecure
-		      Me.State = CheckBox.CheckedStates.Unchecked
+		      Sock.StopListening
+		      If Me.Value Then
+		        Dim f As FolderItem = Sock.CertificateFile
+		        Dim s As String = CertificateEntry.GetCert(f, "")
+		        If s <> "" And f.Exists Then
+		          Sock.CertificateFile = f
+		          Sock.CertificatePassword = s
+		          If SecurityLevel.Text = "TLS" Then
+		            Sock.ConnectionType = ConnectionTypes.TLSv1
+		          Else
+		            Sock.ConnectionType = ConnectionTypes.SSLv3
+		          End If
+		        Else
+		          Sock.ConnectionType = ConnectionTypes.Insecure
+		          Me.State = CheckBox.CheckedStates.Unchecked
+		        End If
+		      Else
+		        Sock.ConnectionType = ConnectionTypes.Insecure
+		      End If
+		      Sock.Listen
 		    End If
-		  Else
-		    Sock.ConnectionType = ConnectionTypes.Insecure
 		  End If
-		  Sock.Listen
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CheckBox5
 	#tag Event
 		Sub Action()
-		  Sock.StopListening
-		  Sock.Threading = Me.Value
-		  Sock.Listen
+		  If sock.IsListening Then
+		    If MsgBox("This will reset all open connections. Proceed?", 52, "Confirm socket reset") <> 6 Then
+		      Me.Value = sock.Threading
+		    Else
+		      Sock.StopListening
+		      Sock.Threading = Me.Value
+		      Sock.Listen
+		    End If
+		  End If
 		  
 		  If Me.Value Then
 		    Listbox1.ColumnWidths = "60%, 20%, 10%, *"
