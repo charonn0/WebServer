@@ -41,12 +41,8 @@ Inherits HTTP.BaseServer
 		      End If
 		    End If
 		  End Select
-		  If doc <> Nil Then
-		    doc.Method = ClientRequest.Method
-		    'Me.Log(HTTPReplyString(doc.StatusCode), Log_Debug)
-		  Else
-		    Me.Log("The document is Nil", Log_Debug)
-		  End If
+		  If doc <> Nil Then doc.Method = ClientRequest.Method
+		  
 		  Return doc
 		  
 		End Function

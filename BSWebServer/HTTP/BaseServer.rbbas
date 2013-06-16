@@ -22,6 +22,14 @@ Inherits ServerSocket
 		  AddHandler sock.DataAvailable, WeakAddressOf Me.DataAvailable
 		  AddHandler sock.Error, WeakAddressOf Me.ClientErrorHandler
 		  AddHandler sock.SendComplete, WeakAddressOf Me.SendCompleteHandler
+		  
+		  If Me.Threading Then
+		    Me.Log("Create idle worker thread", Log_Trace)
+		    Dim worker As New Thread
+		    AddHandler worker.Run, WeakAddressOf Me.ThreadRun
+		    IdleThreads.Insert(0, worker)
+		  End If
+		  
 		  Return sock
 		End Function
 	#tag EndEvent
@@ -186,9 +194,8 @@ Inherits ServerSocket
 		  End If
 		  Me.Log(msg, Log_Status)
 		  If Me.Threading Then
-		    Dim worker As New Thread
+		    Dim worker As Thread = IdleThreads.Pop
 		    Threads.Value(worker) = Sender
-		    AddHandler worker.Run, WeakAddressOf Me.ThreadRun
 		    worker.Run
 		  Else
 		    DefaultHandler(Sender)
@@ -608,7 +615,7 @@ Inherits ServerSocket
 		  Me.Sessions = New Dictionary
 		  Me.Sockets = New Dictionary
 		  Me.Threads = New Dictionary
-		  
+		  ReDim IdleThreads(-1)
 		End Sub
 	#tag EndMethod
 
@@ -779,6 +786,10 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h1
 		Protected Shared GlobalsInited As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private IdleThreads() As Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
