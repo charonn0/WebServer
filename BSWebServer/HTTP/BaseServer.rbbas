@@ -181,6 +181,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
+		  If InStr(Sender.Lookahead, CRLF + CRLF) <= 0 Then Return 'not a full buffer
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "00000000", 8)
 		  If Sender.Secure Then
@@ -732,11 +733,15 @@ Inherits ServerSocket
 			Set
 			  mCertificateFile = value
 			  Dim valpath As String
-			  #If RBVersion >= 2013 Then
-			    valpath = value.NativePath
-			  #Else
-			    valpath = value.AbsolutePath
-			  #endif
+			  If value <> Nil Then
+			    #If RBVersion >= 2013 Then
+			      valpath = value.NativePath
+			    #Else
+			      valpath = value.AbsolutePath
+			    #endif
+			  Else
+			    valPath = "Nil"
+			  End If
 			  
 			  Me.Log(CurrentMethodName + "=" + valPath, Log_Trace)
 			End Set
@@ -753,7 +758,7 @@ Inherits ServerSocket
 		#tag Setter
 			Set
 			  mCertificatePassword = value
-			  Me.Log(CurrentMethodName + "=" + value, Log_Trace)
+			  Me.Log(CurrentMethodName + "=""" + value + """", Log_Trace)
 			End Set
 		#tag EndSetter
 		CertificatePassword As String
@@ -1004,11 +1009,6 @@ Inherits ServerSocket
 			Set
 			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
 			  mUseSessions = value
-			  'If Me.Threading And Not value Then
-			  'Me.Log(CurrentMethodName + ": disabling Threading since UseSessions=False!", Log_Debug)
-			  'Me.Threading = value
-			  'End If
-			  
 			End Set
 		#tag EndSetter
 		UseSessions As Boolean
