@@ -111,11 +111,6 @@ Inherits HTTP.BaseServer
 		  doc.MIMEType = New ContentType("image/x-icon")
 		  doc.Compressible = False
 		  AddRedirect(doc)
-		  
-		  doc = New HelloWorld
-		  doc.Path = New URI("/script.bas")
-		  doc.MIMEType = New ContentType("text/html")
-		  AddRedirect(doc)
 		End Sub
 	#tag EndMethod
 
