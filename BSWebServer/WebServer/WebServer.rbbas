@@ -1272,6 +1272,27 @@ Protected Module WebServer
 		Private mMIMETypes As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mVirtualRoot As String
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mVirtualRoot = "" Then
+			    VirtualRoot = EncodeHex(MD5(UUID))
+			  End If
+			  return mVirtualRoot
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mVirtualRoot = value
+			End Set
+		#tag EndSetter
+		VirtualRoot As String
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"BoredomServe/1.0 (Mac OS X)"
@@ -1280,9 +1301,6 @@ Protected Module WebServer
 	#tag EndConstant
 
 	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = VirtualRoot, Type = String, Dynamic = False, Default = \"_bsdaemon", Scope = Public
 	#tag EndConstant
 
 
