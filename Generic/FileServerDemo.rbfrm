@@ -895,6 +895,7 @@ End
 		    Else
 		      ThreadID = "Main Thread"
 		    End If
+		    message = ReplaceAll(message, WebServer.VirtualRoot, "virtual_root")
 		    Dim lines() As String = Split(Message, EndOfLine)
 		    Dim squelch As Integer
 		    #pragma BreakOnExceptions Off
