@@ -1258,7 +1258,7 @@ End
 		  Generate()
 		  If CheckBox1.Value Then
 		    Dim raw As String = RawEditor.EditRaw(Self.Request)
-		    RawText = raw.Trim
+		    RawText = raw
 		  End If
 		  Sock.Close
 		  Sock.Address = theURL.FQDN
