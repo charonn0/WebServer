@@ -153,7 +153,7 @@ Inherits ServerSocket
 		    Next
 		  #endif
 		  
-		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 Then
+		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 And doc.StatusCode < 300 And doc.StatusCode >= 200 Then
 		    Me.Log("Checking Accepts", Log_Trace)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
