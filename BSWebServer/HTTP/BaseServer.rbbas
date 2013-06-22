@@ -328,8 +328,8 @@ Inherits ServerSocket
 		      htmlstack = Join(s, "<br />    ")
 		      logstack = Join(s, EndOfLine + "    ")
 		    End If
-		    htmlstack = "<b>Exception<b>: " + funcName + "<br />Error Number: " + Str(Err.ErrorNumber) + "<br />Message: " _
-		    + Err.Message + "<br />Stack trace:<blockquote>    " + htmlstack + "</blockquote>" + EndOfLine
+		    htmlstack = "<b>Exception</b>: " + funcName + "<br /><b>Error Number</b>: " + Str(Err.ErrorNumber) + "<br /><b>Message</b>: " _
+		    + Err.Message + "<br /><b>Stack trace</b>:<blockquote>    " + htmlstack + "</blockquote>" + EndOfLine
 		    
 		    logstack = "Exception: " + funcName + EndOfLine + "Error Number: " + Str(Err.ErrorNumber) + EndOfLine + "Message: " _
 		    + Err.Message + EndOfLine + "Stack trace:" + EndOfLine + "    " + logstack
