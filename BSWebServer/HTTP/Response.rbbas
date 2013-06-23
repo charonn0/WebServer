@@ -60,7 +60,7 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function GetFileResponse(page As FolderItem, Path As String, RangeStart As Integer = 0, RangeEnd As Integer = -1) As HTTP.Response
+		 Shared Function GetFileResponse(page As FolderItem, Path As String, RangeStart As Integer = 0, RangeEnd As Integer = - 1) As HTTP.Response
 		  'Use this constructor to create a Document from a FolderItem (file or directory)
 		  Dim rply As HTTP.Response = GetNewResponse("")
 		  If Not page.Directory Then
@@ -129,7 +129,7 @@ Inherits HTTPParse.HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function ToString() As String
-		  Return ReplyString(Me.StatusCode) + CRLF + Super.ToString(False)
+		  Return ReplyString(Me.StatusCode) + CRLF + Super.ToString(False)'
 		  
 		End Function
 	#tag EndMethod

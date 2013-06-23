@@ -134,12 +134,6 @@ Inherits HTTPParse.HTTPMessage
 			InheritedFrom="HTTPParse.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AuthSecure"
-			Group="Behavior"
-			Type="Boolean"
-			InheritedFrom="HTTPParse.HTTPMessage"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
