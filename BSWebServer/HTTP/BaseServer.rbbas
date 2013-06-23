@@ -206,16 +206,6 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub DefaultHandler(Sender As SSLSocket)
 		  Dim data As MemoryBlock
-		  Dim la As String = Sender.Lookahead
-		  If AllowPipeLinedRequests And (Left(la, 3) = "GET" or Left(la, 4) = "HEAD") Then
-		    Dim length As Integer = InStr(la, CRLF + CRLF)
-		    data = Sender.Read(length + 3)
-		    Me.Log("HTTP Pipelining mode is selected", Log_Debug)
-		  Else
-		    Me.Log("HTTP Pipelining mode is NOT selected", Log_Trace)
-		    data = Sender.ReadAll
-		  End If
-		  
 		  Dim clientrequest As HTTP.Request
 		  Dim doc As HTTP.Response
 		  Dim session As HTTP.Session
@@ -288,11 +278,7 @@ Inherits ServerSocket
 		    End If
 		    
 		    doc.Path = clientrequest.Path
-		    If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
-		      doc.SetHeader("Connection") = "keep-alive"
-		    Else
-		      doc.SetHeader("Connection") = "close"
-		    End If
+		    doc.SetHeader("Connection") = "close"
 		    
 		    CheckType(clientrequest, doc)
 		    
@@ -512,11 +498,7 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
-		  If Socket.Lookahead <> "" And AllowPipeLinedRequests Then
-		    ResponseDocument.SetHeader("Connection") = "keep-alive"
-		  Else
-		    ResponseDocument.SetHeader("Connection") = "close"
-		  End If
+		  ResponseDocument.SetHeader("Connection") = "close"
 		  ResponseDocument.SetHeader("Accept-Ranges") = "bytes"
 		  ResponseDocument.SetHeader("Server") = WebServer.DaemonVersion
 		End Sub
@@ -561,12 +543,8 @@ Inherits ServerSocket
 		Private Sub SendCompleteHandler(Sender As SSLSocket, UserAborted As Boolean)
 		  #pragma Unused UserAborted
 		  Me.Log("Send complete", Log_Socket)
-		  If Sender.Lookahead.Trim <> "" And AllowPipeLinedRequests Then
-		    Me.Log("Socket kept alive", Log_Trace)
-		  Else
-		    Sender.Close
-		    Me.Log("Socket closed", Log_Trace)
-		  End If
+		  Sender.Close
+		  Me.Log("Socket closed", Log_Trace)
 		End Sub
 	#tag EndMethod
 
@@ -676,21 +654,6 @@ Inherits ServerSocket
 		Event TamperResponse(ByRef Response As HTTP.Response) As Boolean
 	#tag EndHook
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  return mAllowPipeLinedRequests
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
-			  mAllowPipeLinedRequests = value
-			End Set
-		#tag EndSetter
-		AllowPipeLinedRequests As Boolean
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -825,10 +788,6 @@ Inherits ServerSocket
 
 	#tag Property, Flags = &h21
 		Private IdleThreads() As Thread
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mAllowPipeLinedRequests As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
