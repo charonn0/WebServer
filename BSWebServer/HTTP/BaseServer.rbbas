@@ -336,7 +336,7 @@ Inherits ServerSocket
 		  #endif
 		  Me.Log("Runtime exception!" + EndOfLine + logstack , Log_Error)
 		  errpage = doc.GetErrorResponse(500, htmlstack)
-		  
+		  errpage.Compressible = False
 		  Me.SendResponse(Sender, errpage)
 		End Sub
 	#tag EndMethod
