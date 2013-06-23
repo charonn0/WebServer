@@ -181,7 +181,6 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
-		  If InStr(Sender.Lookahead, CRLF + CRLF) <= 0 Then Return 'not a full buffer
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "00000000", 8)
 		  If Sender.Secure Then
