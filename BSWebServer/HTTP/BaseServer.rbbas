@@ -205,7 +205,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub DefaultHandler(Sender As SSLSocket)
-		  Dim data As MemoryBlock
+		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTP.Request
 		  Dim doc As HTTP.Response
 		  Dim session As HTTP.Session
@@ -996,13 +996,6 @@ Inherits ServerSocket
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AllowPipeLinedRequests"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRealm"
 			Visible=true
