@@ -67,6 +67,7 @@ Protected Class URI
 		    ElseIf URL.Trim <> "" Then
 		      ServerPath = URL.Trim
 		    End If
+		    ServerPath = ReplaceAll(ServerPath, "/..", "") 'prevent directory traversal
 		  Else
 		    Protocol = "mailto"
 		    URL = Replace(URL, "mailto:", "")
