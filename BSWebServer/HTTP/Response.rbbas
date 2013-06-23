@@ -67,7 +67,9 @@ Inherits HTTPParse.HTTPMessage
 		    Dim bs As BinaryStream
 		    If rangeend = -1 Then rangeend = page.Length
 		    If rangestart < 0 Or rangeend > page.Length Or rangeStart > page.Length Or rangeEnd < 0 Then
-		      Return GetErrorResponse(416, "")
+		      rply = GetErrorResponse(416, "")
+		      rply.SetHeader("Content-Range") = "bytes */" + Str(Page.Length)
+		      Return rply
 		    End If
 		    bs = BinaryStream.Open(page)
 		    bs.Position = RangeStart
@@ -83,6 +85,7 @@ Inherits HTTPParse.HTTPMessage
 		    rply.StatusCode = 200
 		  Else
 		    rply.StatusCode = 206 'partial content
+		    rply.SetHeader("Content-Range") = "bytes " + Str(RangeStart) + "-" + Str(RangeEnd) + "/" + Str(Page.Length)
 		  End If
 		  rply.Path = New HTTP.URI(Path)
 		  Dim d As New Date
