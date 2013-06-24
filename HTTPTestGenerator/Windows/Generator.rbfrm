@@ -169,40 +169,6 @@ Begin Window Generator
          Visible         =   True
          Width           =   22
       End
-      Begin Label CodeName
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox3"
-         Italic          =   False
-         Left            =   960
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   0
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         Text            =   ""
-         TextAlign       =   0
-         TextColor       =   &c0000FF00
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   29
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   0
-      End
       Begin Label Label3
          AutoDeactivate  =   True
          Bold            =   False
@@ -464,7 +430,7 @@ Begin Window Generator
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      Text            =   "Status Code:"
+      Text            =   "Status:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -474,7 +440,7 @@ Begin Window Generator
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   87
+      Width           =   55
    End
    Begin Label Code
       AutoDeactivate  =   True
@@ -487,7 +453,7 @@ Begin Window Generator
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   724
+      Left            =   700
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -508,7 +474,7 @@ Begin Window Generator
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   138
+      Width           =   360
    End
    Begin GroupBox GroupBox1
       AutoDeactivate  =   True
@@ -1003,21 +969,17 @@ End
 	#tag Method, Flags = &h1000
 		Sub Update(Raw As String)
 		  Response = New HTTP.Response(Raw)
-		  Code.Text = Str(Response.StatusCode)'NthField(response, " ", 2)
+		  Code.Text = Str(Response.StatusCode) + " " + HTTP.CodeToMessage(Response.StatusCode)
 		  Select Case Response.StatusCode
 		  Case 200, 206
 		    Code.TextColor = &c00808000
-		    CodeName.TextColor = &c00808000
 		  Case 301, 302, 304
 		    Code.TextColor = &c00800000
-		    CodeName.TextColor = &c00800000
 		  Case 204, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 422, 426, 500, 501, 502, 503, 504, 505, 506, 509
 		    Code.TextColor = &cFF000000
-		    CodeName.TextColor = &cFF000000
 		    
 		  End Select
 		  ResponseHeaders.DeleteAllRows
-		  CodeName.Text = HTTP.CodeToMessage(Response.StatusCode)
 		  For i As Integer = 0 To Response.Headers.Count - 1
 		    Dim n, v As String
 		    n = Response.Headers.Name(i)
@@ -1163,7 +1125,6 @@ End
 		    MessageView1.Message.Text = ""
 		    MessageView1.PagePanel1.Value = 3
 		    Code.Text = ""
-		    CodeName.Text = ""
 		    
 		  Else
 		    IPAddress1.Text = "Socket error: " + Str(Me.LastErrorCode)
