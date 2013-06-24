@@ -285,16 +285,8 @@ Inherits ServerSocket
 		    CheckType(clientrequest, doc)
 		    
 		  Catch err As UnsupportedFormatException
-		    If err.ErrorNumber = 1 Then 'ssl?
-		      doc = doc.GetErrorResponse(101, "") 'Switch protocols
-		      doc.MessageBody = ""
-		      doc.Headers.DeleteAllHeaders
-		      doc.SetHeader("Upgrade") = "HTTP/1.0"
-		      Me.Log("Request is NOT well formed", Log_Error)
-		    Else
-		      doc = doc.GetErrorResponse(400, "") 'bad request
-		      Me.Log("Request is NOT well formed", Log_Error)
-		    End If
+		    doc = doc.GetErrorResponse(400, "") 'bad request
+		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
 		  SendResponse(Sender, doc)
 		  

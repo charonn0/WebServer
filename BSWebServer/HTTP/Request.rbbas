@@ -20,13 +20,8 @@ Inherits HTTPParse.HTTPMessage
 		  line = NthField(data, CRLF, 1)
 		  
 		  If CountFields(line.Trim, " ") <> 3 Then
-		    Dim err As New UnsupportedFormatException
-		    Dim mb As MemoryBlock = line
-		    If mb.Byte(0) = &h16 And mb.Byte(1) = &h03 Then 'ssl?
-		      err.ErrorNumber = 1
-		    End If
 		    #pragma BreakOnExceptions Off
-		    Raise err
+		    Raise New UnsupportedFormatException
 		  End If
 		  
 		  data = Replace(data, line + CRLF, "")
