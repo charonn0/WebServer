@@ -235,20 +235,20 @@ Inherits ServerSocket
 		    Do
 		      doc = CheckAuth(clientrequest)
 		      If doc <> Nil Then Exit Do
+		      
 		      doc = CheckProtocol(clientrequest)
 		      If doc <> Nil Then Exit Do
+		      
 		      doc = CheckCache(clientrequest, session)
 		      If doc <> Nil Then Exit Do
+		      
 		      doc = CheckRedirect(clientrequest, session)
 		      If doc <> Nil Then Exit Do
-		      Exit Do
-		    Loop
-		    
-		    If doc = Nil Then
+		      
 		      Me.Log("Running HandleRequest event", Log_Debug)
 		      doc = HandleRequest(clientrequest)
-		    End If
-		    If doc = Nil Then
+		      If doc <> Nil Then Exit Do
+		      
 		      Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
 		      Select Case clientrequest.Method
 		      Case RequestMethod.HEAD, RequestMethod.GET
@@ -275,7 +275,9 @@ Inherits ServerSocket
 		          Me.Log("Request is a NOT ALLOWED", Log_Error)
 		        End If
 		      End Select
-		    End If
+		      
+		      Exit Do
+		    Loop
 		    
 		    doc.Path = clientrequest.Path
 		    doc.SetHeader("Connection") = "close"

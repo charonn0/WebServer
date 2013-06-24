@@ -8,11 +8,8 @@ Inherits HTTP.BaseServer
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    Dim item As FolderItem = FindItem(ClientRequest.Path.ServerPath)
-		    If item = Nil Then
-		      '404 Not found
-		      'Me.Log("Page not found", Log_Debug)
-		      doc = doc.GetErrorResponse(404, ClientRequest.Path.ServerPath)
-		    ElseIf item.Directory And Not Me.DirectoryBrowsing Then
+		    If item = Nil Then Return Nil '404 Not found
+		    If item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
 		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
@@ -202,14 +199,6 @@ Inherits HTTP.BaseServer
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AllowPipeLinedRequests"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			InheritedFrom="HTTP.BaseServer"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthenticationRealm"
 			Visible=true
