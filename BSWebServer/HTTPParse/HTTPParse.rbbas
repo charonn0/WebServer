@@ -8,7 +8,7 @@ Protected Module HTTPParse
 
 	#tag Method, Flags = &h0
 		Function DecodeFormData(PostData As String) As Dictionary
-		  Dim items() As String = Split(PostData, "&")
+		  Dim items() As String = Split(PostData.Trim, "&")
 		  Dim form As New Dictionary
 		  For i As Integer = 0 To UBound(items)
 		    form.Value(DecodeURLComponent(NthField(items(i), "=", 1))) = DecodeURLComponent(NthField(items(i), "=", 2))

@@ -1350,6 +1350,12 @@ Protected Module WebServer
 			Type="Integer"
 			InheritedFrom="Object"
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="VirtualRoot"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module
 #tag EndModule
