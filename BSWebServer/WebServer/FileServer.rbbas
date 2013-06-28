@@ -114,11 +114,19 @@ Inherits HTTP.BaseServer
 	#tag Method, Flags = &h21
 		Private Function FindItem(Path As String) As FolderItem
 		  Dim origpath As String = Path.Trim
+		  Dim pathsep As String
+		  #If TargetWin32 Then
+		    pathsep = "\"
+		    Path = Path.ReplaceAll("/", "\")
+		  #Else
+		    pathsep = "/"
+		  #endif
 		  If origpath = "" Then origpath = "/"
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
-		  Path = DecodeURLComponent(Path.ReplaceAll("/", "\"))
 		  
-		  If Not DocumentRoot.Directory And "\" + DocumentRoot.Name = path Then
+		  Path = DecodeURLComponent(Path)
+		  
+		  If Not DocumentRoot.Directory And pathsep + DocumentRoot.Name = path Then
 		    Return DocumentRoot
 		  End If
 		  #If RBVersion >= 2013 Then
