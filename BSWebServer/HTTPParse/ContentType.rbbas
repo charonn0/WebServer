@@ -59,10 +59,22 @@ Class ContentType
 		        Else
 		          SubType = "*"
 		        End If
-		      ElseIf NthField(entry, "=", 1).Trim = "q" Then
-		        Weight = CDbl(NthField(entry, "=", 2))
-		        
+		      Else
+		        Select Case NthField(entry, "=", 1).Trim
+		        Case "q"
+		          Weight = CDbl(NthField(entry, "=", 2))
+		        Case "charset"
+		          Dim nm As String = NthField(entry, "=", 2)
+		          For e As Integer = 0 To Encodings.Count' - 1
+		            If Encodings.Item(e).internetName = nm Then 
+		              Me.CharSet = Encodings.Item(e)
+		              Continue
+		            End If
+		          Next
+		          
+		        End Select
 		      End If
+		      
 		    Next
 		    
 		  Else
@@ -133,6 +145,9 @@ Class ContentType
 		  Dim data As String = SuperType + "/" + SubType
 		  If Me.Weight < 1 Then
 		    data = data + "; q=" + Format(Me.Weight, ".##")
+		  End If
+		  If Me.CharSet <> Nil Then
+		    data = data + "; CharSet=" + Me.CharSet.internetName
 		  End If
 		  Return Data
 		End Function

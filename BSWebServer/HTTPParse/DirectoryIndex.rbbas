@@ -167,6 +167,7 @@ Inherits HTTP.Response
 		  pagedata = Replace(pagedata, "%TIME%", timestamp)
 		  
 		  Me.MessageBody = pagedata
+		  Me.MIMEType = New ContentType("text/html; CharSet=UTF-8")
 		  Me.SetHeader("Content-Length") = Str(pagedata.LenB)
 		  
 		  
