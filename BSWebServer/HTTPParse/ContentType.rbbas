@@ -4,8 +4,7 @@ Class ContentType
 		Function Acceptance(OtherType As ContentType) As Single
 		  'Returns a Single that is <=1. This is the comparative "weight" of the match between the
 		  'two types. A weight of 1 has the highest Acceptance
-		  If OtherType.SuperType <> Me.SuperType And OtherType.SuperType <> "*" And Me.SuperType <> "*" Then Return 0.0
-		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*" Then Return 0.0
+		  If Not OtherType.Accepts(Me) Then Return 0.0
 		  Return (OtherType.Weight + Me.Weight) / 2
 		End Function
 	#tag EndMethod
