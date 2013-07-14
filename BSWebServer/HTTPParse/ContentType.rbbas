@@ -65,9 +65,9 @@ Class ContentType
 		        Case "charset"
 		          Dim nm As String = NthField(entry, "=", 2)
 		          For e As Integer = 0 To Encodings.Count' - 1
-		            If Encodings.Item(e).internetName = nm Then 
+		            If Encodings.Item(e).internetName = nm Then
 		              Me.CharSet = Encodings.Item(e)
-		              Continue
+		              Exit For e
 		            End If
 		          Next
 		          
