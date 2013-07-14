@@ -1030,17 +1030,14 @@ End
 #tag Events CheckBox1
 	#tag Event
 		Sub Open()
-		  Me.Value = GZIPAvailable
+		  Me.Value = Sock.UseCompression
 		  Me.Enabled = GZIPAvailable
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #pragma Unused X
-		  #pragma Unused Y
-		  MsgBox("Must be (en/dis)abled at compile time.")
-		  Return True
-		End Function
+		Sub Action()
+		  Sock.UseCompression = Me.Value
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events port

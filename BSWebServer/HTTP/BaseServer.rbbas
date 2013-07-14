@@ -50,6 +50,12 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h0
 		Sub AddRedirect(Page As HTTP.Response)
+		  ' This method adds the passed HTTP.Response ("Page") to the list of server-wide redirects.
+		  ' Set the Path property of the Page to the path you want redirection from.
+		  ' When a request is made against the redirected path, the server responds with the
+		  ' Page object and does *not* pass the request on to the HandleRequest event.
+		  ' See also: RemoveRedirect
+		  
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Me.Log("Add redirect for " + page.Path.ServerPath, Log_Debug)
 		  Redirects.Value(page.Path.ServerPath) = Page
@@ -58,6 +64,12 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckAuth(ClientRequest As HTTP.Request) As HTTP.Response
+		  ' If AuthenticationRequired is True, all HTTP requests must present their credentials
+		  ' in the "WWW-Authenticate" header. This method raises the Authenticate event. If the
+		  ' Authenticate event returns False (not authenticated) then an error (HTTP 401 Unauthorized) 
+		  ' is returned to client.
+		  ' On success, or if AuthenticationRequired is False, then this method returns Nil
+		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If AuthenticationRequired Then
@@ -65,7 +77,7 @@ Inherits ServerSocket
 		    If Not Authenticate(clientrequest) Then
 		      Me.Log("Authentication failed", Log_Error)
 		      doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
-		      doc.SetHeader("WWW-Authenticate") = "Basic realm=""" + clientrequest.AuthRealm + """"
+		      doc.SetHeader("WWW-Authenticate") = "Basic realm=""" + AuthenticationRealm + """"
 		    Else
 		      Me.Log("Authentication Successful", Log_Debug)
 		    End If
@@ -78,6 +90,10 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckCache(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  ' This method checks the session cache for cached responses. If a cached response
+		  ' is found, then it is returned to the client. If no cached response is found, or 
+		  ' if the request explicitly overrides the cache then this function returns Nil. 
+		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim cache As HTTP.Response
 		  If UseSessions Then
@@ -112,6 +128,12 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckProtocol(ClientRequest As HTTP.Request) As HTTP.Response
+		  ' This method verifies that the request was made using a supported version
+		  ' of the HTTP protocol. This server implementation supports HTTP 1.0 and 1.1
+		  ' If the request specifies an unsupported protocol version, an HTTP 505 error 
+		  ' is returned to the client. If the specified version is supported, this function
+		  ' returns Nil.
+		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
@@ -127,6 +149,10 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckRedirect(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
+		  ' This method checks the session and server-wide redirects for redirected responses. 
+		  ' If a redirected response is found, then it is returned to the client. If no redirected 
+		  ' response is found then this function returns Nil.
+		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  While Not RedirectsLock.TrySignal
 		    App.YieldToNextThread
@@ -135,14 +161,18 @@ Inherits ServerSocket
 		  RedirectsLock.Release
 		  If redir <> Nil Then Me.Log("Using redirect.", Log_Trace)
 		  Return redir
-		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckType(ClientRequest As HTTP.Request, ByRef doc As HTTP.Response)
+		  ' This method verifies that the response is proper for a given response.
+		  ' On success this method returns Nil. On error, it returns an error page document.
+		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  #If GZIPAvailable Then
+		    ' If the GZip plugin is used, we must confirm that the client has requested
+		    ' gzip-encoded responses. Compression only takes place if the client asks for it.
 		    Dim types() As String = Split(ClientRequest.GetHeader("Accept-Encoding"), ",")
 		    doc.Compressible = False
 		    For i As Integer = 0 To UBound(types)
@@ -153,6 +183,11 @@ Inherits ServerSocket
 		    Next
 		  #endif
 		  
+		  ' If the request uses HTTP 1.1 or newer and EnforceContentType is True
+		  ' the server will check the request for an "Accept" header, and then confirm
+		  ' that the requested document's actual MIMEType is acceptable. If the
+		  ' response is not acceptable, an error (HTTP 406 Nat Acceptable) is returned to
+		  ' client.
 		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 And doc.StatusCode < 300 And doc.StatusCode >= 200 Then
 		    Me.Log("Checking Accepts", Log_Trace)
 		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
@@ -194,10 +229,15 @@ Inherits ServerSocket
 		  End If
 		  Me.Log(msg, Log_Status)
 		  If Me.Threading Then
+		    ' Grab a thread from the pool and associate it with the requesting socket.
+		    ' The ThreadRun method handles the Thread.Run event of the worker thread,
+		    ' which in turn calls the DefaultHandler method within the thread's context.
+		    
 		    Dim worker As Thread = IdleThreads.Pop
 		    Threads.Value(worker) = Sender
 		    worker.Run
 		  Else
+		    ' Just call the DefaultHandler method on the current thread.
 		    DefaultHandler(Sender)
 		  End If
 		End Sub
@@ -205,6 +245,9 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub DefaultHandler(Sender As SSLSocket)
+		  ' This method receives and processes all requests made to the server, 
+		  ' raises the HandleRequest event, and sends the response to the client.
+		  
 		  Dim data As MemoryBlock = Sender.ReadAll
 		  Dim clientrequest As HTTP.Request
 		  Dim doc As HTTP.Response
@@ -213,42 +256,44 @@ Inherits ServerSocket
 		    clientrequest = New HTTP.Request(data, UseSessions)
 		    Me.Log("Request is well formed", Log_Debug)
 		    Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
+		    
 		    If UseSessions Then
-		      Dim ID As String = clientrequest.GetCookie("SessionID")
+		      Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
 		      If ID = "" Then
-		        Session = GetSession(Sender)
+		        Session = GetSession(Sender) ' No session ID, generate a new one
 		      Else
-		        Session = GetSession(ID)
-		        Sockets.Value(Sender) = Session.SessionID
+		        Session = GetSession(ID) ' the session ID is there, find the session
+		        Sockets.Value(Sender) = Session.SessionID ' associate the session ID with the socket
 		      End If
-		      clientrequest.SessionID = Session.SessionID
+		      clientrequest.SessionID = Session.SessionID ' assign the session ID to the request
 		    End If
 		    
 		    
 		    
 		    Dim tmp As HTTP.Request = clientrequest
-		    If TamperRequest(tmp) Then
+		    If TamperRequest(tmp) Then ' allows subclasses to modify requests before they are processed
 		      clientrequest = tmp
 		    End If
 		    
-		    
+		    ' start processing the request. As soon as doc <> Nil, we're done.
 		    Do
 		      doc = CheckAuth(clientrequest)
-		      If doc <> Nil Then Exit Do
+		      If doc <> Nil Then Exit Do ' Bad auth, done.
 		      
 		      doc = CheckProtocol(clientrequest)
-		      If doc <> Nil Then Exit Do
+		      If doc <> Nil Then Exit Do ' Bad protocol, done.
 		      
 		      doc = CheckCache(clientrequest, session)
-		      If doc <> Nil Then Exit Do
+		      If doc <> Nil Then Exit Do ' Cache hit, done.
 		      
 		      doc = CheckRedirect(clientrequest, session)
-		      If doc <> Nil Then Exit Do
+		      If doc <> Nil Then Exit Do ' Redirected, done.
 		      
 		      Me.Log("Running HandleRequest event", Log_Debug)
-		      doc = HandleRequest(clientrequest)
-		      If doc <> Nil Then Exit Do
+		      doc = HandleRequest(clientrequest) ' Ask the subclass to handle it
+		      If doc <> Nil Then Exit Do ' Subclass handled it, done.
 		      
+		      ' No one handled the request, so we send an error message of some sort
 		      Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
 		      Select Case clientrequest.Method
 		      Case RequestMethod.HEAD, RequestMethod.GET
@@ -275,8 +320,7 @@ Inherits ServerSocket
 		          Me.Log("Request is a NOT ALLOWED", Log_Error)
 		        End If
 		      End Select
-		      
-		      Exit Do
+		      Exit Do 'Done constructing the error message
 		    Loop
 		    
 		    doc.Path = clientrequest.Path
@@ -288,6 +332,8 @@ Inherits ServerSocket
 		    doc = doc.GetErrorResponse(400, "") 'bad request
 		    Me.Log("Request is NOT well formed", Log_Error)
 		  End Try
+		  
+		  ' Finally, send the response to the client
 		  SendResponse(Sender, doc)
 		  
 		  
@@ -427,6 +473,12 @@ Inherits ServerSocket
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
 		    #If GZIPAvailable And TargetHasGUI Then
+		      If Not Me.UseCompression Then
+		        If Not ResponseDocument.HasHeader("Content-Encoding") Then ResponseDocument.SetHeader("Content-Encoding") = "Identity"
+		        ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		        Return
+		      End If
+		      
 		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
 		      Dim gz As MemoryBlock = ResponseDocument.MessageBody
 		      If gz.Byte(0) = &h1F And gz.Byte(1) = &h8B Then Return
@@ -524,6 +576,9 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h0
 		Sub RemoveRedirect(HTTPpath As String)
+		  ' This method removes the passed path from the list of server-wide redirects.
+		  ' See also: AddRedirect
+		  
 		  Me.Log(CurrentMethodName + "(" + HTTPpath + ")", Log_Trace)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  If Redirects.HasKey(HTTPpath) Then
@@ -842,6 +897,10 @@ Inherits ServerSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mUseCompression As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUseSessions As Boolean = True
 	#tag EndProperty
 
@@ -949,6 +1008,23 @@ Inherits ServerSocket
 			End Set
 		#tag EndSetter
 		Private Threads As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mUseCompression
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Me.StopListening()
+			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			  mUseCompression = value
+			  Me.Listen()
+			End Set
+		#tag EndSetter
+		UseCompression As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
