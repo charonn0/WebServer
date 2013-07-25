@@ -124,7 +124,7 @@ Inherits HTTP.BaseServer
 		  If origpath = "" Then origpath = "/"
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  
-		  Path = DecodeURLComponent(Path)
+		  Path = URLDecode(Path)
 		  
 		  If Not DocumentRoot.Directory And pathsep + DocumentRoot.Name = path Then
 		    Return DocumentRoot

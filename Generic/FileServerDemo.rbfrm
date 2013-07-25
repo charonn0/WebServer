@@ -535,37 +535,6 @@ Begin Window FileServerDemo
       Visible         =   True
       Width           =   162
    End
-   Begin PushButton PushButton4
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Generator"
-      Default         =   False
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   10
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   0
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   487
-      Underline       =   False
-      Visible         =   True
-      Width           =   97
-   End
    Begin Label Label1
       AutoDeactivate  =   True
       Bold            =   False
@@ -1121,13 +1090,6 @@ End
 	#tag Event
 		Sub TextChange()
 		  Sock.AuthenticationRealm = Me.Text
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PushButton4
-	#tag Event
-		Sub Action()
-		  Generator.Show
 		End Sub
 	#tag EndEvent
 #tag EndEvents

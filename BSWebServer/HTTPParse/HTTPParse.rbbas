@@ -11,7 +11,7 @@ Protected Module HTTPParse
 		  Dim items() As String = Split(PostData.Trim, "&")
 		  Dim form As New Dictionary
 		  For i As Integer = 0 To UBound(items)
-		    form.Value(DecodeURLComponent(NthField(items(i), "=", 1))) = DecodeURLComponent(NthField(items(i), "=", 2))
+		    form.Value(URLDecode(NthField(items(i), "=", 1))) = URLDecode(NthField(items(i), "=", 2))
 		  Next
 		  
 		  Return form
@@ -187,6 +187,38 @@ Protected Module HTTPParse
 		    d = New Date(year, mon, dom, h, m, s, tz)
 		  End If
 		  Return d
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function URLDecode(s as String) As String
+		  'This method is from here: https://github.com/bskrtich/RBHTTPServer
+		  // takes a Unix-encoded string and decodes it to the standard text encoding.
+		  
+		  // By Sascha RenÃ© Leib, published 11/08/2003 on the Athenaeum
+		  
+		  Dim r As String
+		  Dim c As Integer ' current char
+		  Dim i As Integer ' loop var
+		  
+		  // first, remove the unix-path-encoding:
+		  
+		  For i= 1 To LenB(s)
+		    c = AscB(MidB(s, i, 1))
+		    
+		    If c = 37 Then ' %
+		      r = r + ChrB(Val("&h" + MidB(s, i+1, 2)))
+		      i = i + 2
+		    Else
+		      r = r + ChrB(c)
+		    End If
+		    
+		  Next
+		  
+		  r = ReplaceAll(r,"+"," ")
+		  
+		  Return r
+		  
 		End Function
 	#tag EndMethod
 
