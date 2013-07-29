@@ -174,6 +174,12 @@ Inherits HTTP.BaseServer
 			InheritedFrom="TCPSocket"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="UseCompression"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTP.BaseServer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="UseSessions"
 			Visible=true
 			Group="Behavior"

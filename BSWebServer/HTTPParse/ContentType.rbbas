@@ -44,7 +44,8 @@ Class ContentType
 		  
 		  If InStr(Raw, ";") > 0 Then
 		    Dim fields() As String = Split(raw, ";")
-		    For i As Integer = 0 To Ubound(fields)
+		    Dim fcount As Integer = Ubound(fields)
+		    For i As Integer = 0 To fcount
 		      Dim entry As String = fields(i)
 		      If InStr(entry, "/") > 0 Then
 		        If NthField(entry, "/", 1).Trim <> "" Then
@@ -105,7 +106,8 @@ Class ContentType
 		    fields.Append(raw)
 		  End If
 		  Dim types() As HTTPParse.ContentType
-		  For i As Integer = 0 To Ubound(fields)
+		  Dim fcount As Integer = Ubound(fields)
+		  For i As Integer = 0 To fcount
 		    Dim t As New ContentType
 		    Dim entry As String = fields(i)
 		    Dim type, wght As String

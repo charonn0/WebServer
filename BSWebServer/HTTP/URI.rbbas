@@ -113,7 +113,8 @@ Protected Class URI
 		  
 		  If Arguments.Ubound > -1 Then
 		    Dim args As String = "?"
-		    For i As Integer = 0 To UBound(Arguments)
+		    Dim acount As Integer = UBound(Arguments)
+		    For i As Integer = 0 To acount
 		      If i > 0 Then args = args + "&"
 		      args = args + URLEncode(Arguments(i))
 		    Next

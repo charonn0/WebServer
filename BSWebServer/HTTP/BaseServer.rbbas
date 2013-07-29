@@ -66,7 +66,7 @@ Inherits ServerSocket
 		Private Function CheckAuth(ClientRequest As HTTP.Request) As HTTP.Response
 		  ' If AuthenticationRequired is True, all HTTP requests must present their credentials
 		  ' in the "WWW-Authenticate" header. This method raises the Authenticate event. If the
-		  ' Authenticate event returns False (not authenticated) then an error (HTTP 401 Unauthorized) 
+		  ' Authenticate event returns False (not authenticated) then an error (HTTP 401 Unauthorized)
 		  ' is returned to client.
 		  ' On success, or if AuthenticationRequired is False, then this method returns Nil
 		  
@@ -91,8 +91,8 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Function CheckCache(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
 		  ' This method checks the session cache for cached responses. If a cached response
-		  ' is found, then it is returned to the client. If no cached response is found, or 
-		  ' if the request explicitly overrides the cache then this function returns Nil. 
+		  ' is found, then it is returned to the client. If no cached response is found, or
+		  ' if the request explicitly overrides the cache then this function returns Nil.
 		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim cache As HTTP.Response
@@ -130,7 +130,7 @@ Inherits ServerSocket
 		Private Function CheckProtocol(ClientRequest As HTTP.Request) As HTTP.Response
 		  ' This method verifies that the request was made using a supported version
 		  ' of the HTTP protocol. This server implementation supports HTTP 1.0 and 1.1
-		  ' If the request specifies an unsupported protocol version, an HTTP 505 error 
+		  ' If the request specifies an unsupported protocol version, an HTTP 505 error
 		  ' is returned to the client. If the specified version is supported, this function
 		  ' returns Nil.
 		  
@@ -149,8 +149,8 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function CheckRedirect(ClientRequest As HTTP.Request, Session As HTTP.Session) As HTTP.Response
-		  ' This method checks the session and server-wide redirects for redirected responses. 
-		  ' If a redirected response is found, then it is returned to the client. If no redirected 
+		  ' This method checks the session and server-wide redirects for redirected responses.
+		  ' If a redirected response is found, then it is returned to the client. If no redirected
 		  ' response is found then this function returns Nil.
 		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
@@ -175,7 +175,8 @@ Inherits ServerSocket
 		    ' gzip-encoded responses. Compression only takes place if the client asks for it.
 		    Dim types() As String = Split(ClientRequest.GetHeader("Accept-Encoding"), ",")
 		    doc.Compressible = False
-		    For i As Integer = 0 To UBound(types)
+		    Dim tcount As Integer = UBound(types)
+		    For i As Integer = 0 To tcount
 		      If types(i).Trim = "gzip" Then
 		        doc.Compressible = True
 		        Exit For
@@ -190,7 +191,8 @@ Inherits ServerSocket
 		  ' client.
 		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 And doc.StatusCode < 300 And doc.StatusCode >= 200 Then
 		    Me.Log("Checking Accepts", Log_Trace)
-		    For i As Integer = 0 To UBound(clientrequest.Headers.AcceptableTypes)
+		    Dim tcount As Integer = UBound(clientrequest.Headers.AcceptableTypes)
+		    For i As Integer = 0 To tcount
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
 		        Me.Log("Response is a Acceptable", Log_Debug)
 		        Return
@@ -245,7 +247,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub DefaultHandler(Sender As SSLSocket)
-		  ' This method receives and processes all requests made to the server, 
+		  ' This method receives and processes all requests made to the server,
 		  ' raises the HandleRequest event, and sends the response to the client.
 		  
 		  Dim data As MemoryBlock = Sender.ReadAll
@@ -1165,6 +1167,11 @@ Inherits ServerSocket
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseCompression"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseSessions"

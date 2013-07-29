@@ -89,7 +89,8 @@ Inherits HTTPParse.HTTPMessage
 		  Dim args As String
 		  If Me.Path.Arguments.Ubound > -1 Then
 		    args = "?"
-		    For i As Integer = 0 To UBound(Me.Path.Arguments)
+		    Dim acount As Integer = UBound(Me.Path.Arguments)
+		    For i As Integer = 0 To acount
 		      If i > 0 Then args = args + "&"
 		      args = args + URLEncode(Me.Path.Arguments(i))
 		    Next

@@ -66,7 +66,8 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Function GetCookie(Name As String) As String
-		  For i As Integer = Me.Headers.CookieCount - 1 DownTo 0
+		  Dim ccount As Integer = Me.Headers.CookieCount - 1
+		  For i As Integer = ccount DownTo 0
 		    If Me.Headers.Cookie(i).Name = Name Then
 		      Return Me.Headers.Cookie(i).Value
 		    End If
@@ -159,7 +160,8 @@ Protected Class HTTPMessage
 
 	#tag Method, Flags = &h0
 		Sub RemoveCookie(Name As String)
-		  For i As Integer = Me.Headers.CookieCount - 1 DownTo 0
+		  Dim ccount As Integer = Me.Headers.CookieCount - 1
+		  For i As Integer = ccount DownTo 0
 		    If Me.Headers.Cookie(i).Name = Name Then
 		      Me.Headers.Cookie(i) = Nil
 		    End If

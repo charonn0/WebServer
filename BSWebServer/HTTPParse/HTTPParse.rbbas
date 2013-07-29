@@ -10,7 +10,8 @@ Protected Module HTTPParse
 		Function DecodeFormData(PostData As String) As Dictionary
 		  Dim items() As String = Split(PostData.Trim, "&")
 		  Dim form As New Dictionary
-		  For i As Integer = 0 To UBound(items)
+		  Dim dcount As Integer = UBound(items)
+		  For i As Integer = 0 To dcount
 		    form.Value(URLDecode(NthField(items(i), "=", 1))) = URLDecode(NthField(items(i), "=", 2))
 		  Next
 		  

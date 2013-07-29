@@ -315,6 +315,7 @@ Begin Window ShortURLDemo
       Width           =   34
    End
    Begin Timer LogTimer
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   455
@@ -322,14 +323,18 @@ Begin Window ShortURLDemo
       Mode            =   2
       Period          =   10
       Scope           =   0
+      TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   489
+      Visible         =   True
       Width           =   32
    End
    Begin WebServer.URLShortener Sock
       AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
       CertificatePassword=   ""
+      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -341,10 +346,13 @@ Begin Window ShortURLDemo
       Port            =   0
       Scope           =   0
       SessionTimeout  =   600
+      TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Threading       =   True
       Top             =   492
       UseSessions     =   True
+      Visible         =   True
       Width           =   32
    End
 End
@@ -533,7 +541,8 @@ End
 		    End Try
 		    #pragma BreakOnExceptions default
 		    Dim now As New Date
-		    For i As Integer = 0 To UBound(lines)
+		    Dim lcount As Integer = UBound(lines)
+		    For i As Integer = 0 To lcount
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
 		        Case HTTP.BaseServer.Log_Request, HTTP.BaseServer.Log_Status

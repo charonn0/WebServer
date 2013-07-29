@@ -873,7 +873,8 @@ End
 		    End Try
 		    #pragma BreakOnExceptions default
 		    Dim now As New Date
-		    For i As Integer = 0 To UBound(lines)
+		    Dim lcount As Integer = UBound(lines)
+		    For i As Integer = 0 To lcount
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
 		        Case HTTP.BaseServer.Log_Request, HTTP.BaseServer.Log_Status

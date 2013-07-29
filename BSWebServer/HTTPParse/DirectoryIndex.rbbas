@@ -54,12 +54,14 @@ Inherits HTTP.Response
 		  'Next
 		  Dim ret() As FolderItem
 		  If Direction = 0 Then
-		    For i As Integer = 0 To UBound(items)
+		    Dim icount As Integer = UBound(items)
+		    For i As Integer = 0 To icount
 		      Dim item As FolderItem = items(sorter(i))
 		      ret.Append(item)
 		    Next
 		  Else
-		    For i As Integer = UBound(items) DownTo 0
+		    Dim icount As Integer = UBound(items)
+		    For i As Integer = icount DownTo 0
 		      Dim item As FolderItem = items(sorter(i))
 		      ret.Append(item)
 		    Next
@@ -77,7 +79,8 @@ Inherits HTTP.Response
 		  Dim Items() As FolderItem
 		  Dim dir As Integer
 		  If Me.RequestPath.Arguments.IndexOf("dir=1") > -1 Then dir = 1
-		  For i As Integer = 0 To UBound(RequestPath.Arguments)
+		  Dim aCount As Integer = UBound(RequestPath.Arguments)
+		  For i As Integer = 0 To aCount
 		    Dim k, v As String
 		    k = NthField(RequestPath.Arguments(i), "=", 1)
 		    v = NthField(RequestPath.Arguments(i), "=", 2)
@@ -101,7 +104,8 @@ Inherits HTTP.Response
 		  If Items.Ubound = -1 Then Items = DoSorts(Sort_Alpha, dir)
 		  Dim lines() As String
 		  
-		  For i As Integer = 0 To UBound(Items)
+		  Dim icount As Integer = UBound(Items)
+		  For i As Integer = 0 To icount
 		    Dim item As FolderItem = items(i)
 		    Dim line As String = TableRow
 		    Dim name, href, icon As String

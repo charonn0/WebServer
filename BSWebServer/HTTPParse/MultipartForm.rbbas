@@ -6,7 +6,8 @@ Protected Class MultipartForm
 		  Dim elements() As String = Split(Data, Boundary + CRLF)
 		  form.Boundary = Boundary
 		  
-		  For i As Integer = 1 To UBound(elements)
+		  Dim ecount As Integer = UBound(elements)
+		  For i As Integer = 1 To ecount
 		    elements(i) = Replace(elements(i), Boundary + "--", "")
 		    Dim line As String = NthField(elements(i), CRLF, 1)
 		    Dim name As String = NthField(line, ";", 2)
