@@ -796,6 +796,9 @@ End
 		  Sock.DocumentRoot = SharedFile
 		  Sock.UseSessions = UseSessions.Value
 		  sock.Listen
+		  Dim script As New HTTP.ScriptDocument
+		  script.Path = New HTTP.URI("/scripts/helloworld.bs")
+		  Sock.AddRedirect(script)
 		  If Sock.ConnectionType = ConnectionTypes.Insecure Then
 		    ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
 		  Else

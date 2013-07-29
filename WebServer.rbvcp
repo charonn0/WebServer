@@ -54,6 +54,7 @@ Picture=socketIcon;Generic/Icons/socketIcon.png;&h714A37FF;&h6473B7FF;false;0;&h
 Picture=debugIcon;Generic/Icons/debugIcon.png;&h4FB19FFF;&h6473B7FF;false;0;&h0
 Picture=blue_left_arrow;Generic/Icons/blue_left_arrow.png;&h5C406FFF;&h6473B7FF;false;1;&h0
 Picture=greenarrowright;Generic/Icons/green-arrow-right.png;&h47427FF;&h6473B7FF;false;1;&h0
+Class=ScriptDocument;BSWebServer/HTTP/ScriptDocument.rbbas;&h49C1B7FF;&h5F07DFFF;false
 DefaultWindow=FileServerDemo
 MajorVersion=1
 MinorVersion=0
