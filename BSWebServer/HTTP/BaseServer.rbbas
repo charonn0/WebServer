@@ -235,7 +235,7 @@ Inherits ServerSocket
 		    ' The ThreadRun method handles the Thread.Run event of the worker thread,
 		    ' which in turn calls the DefaultHandler method within the thread's context.
 		    Dim worker As Thread = GetThread(Sender)
-		    If worker = Nil Then 
+		    If worker = Nil Then
 		      worker = IdleThreads.Pop
 		      Threads.Value(worker) = Sender
 		    End If
@@ -263,8 +263,9 @@ Inherits ServerSocket
 		      Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
 		      Dim msglen As Integer = Val(clientrequest.GetHeader("Content-Length"))
 		      If msglen <> 0 Then
-		        clientrequest.MessageBody = clientrequest.MessageBody + Sender.Read(msglen)
+		        data = data + Sender.Read(msglen + 4)
 		      End If
+		      clientrequest.MessageBody = Data
 		      
 		      If UseSessions Then
 		        Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
