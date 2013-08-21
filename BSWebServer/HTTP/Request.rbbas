@@ -17,7 +17,7 @@ Inherits HTTPParse.HTTPMessage
 	#tag Method, Flags = &h0
 		Sub Constructor(Data As String, UseSessions As Boolean = False)
 		  Dim line As String
-		  line = NthField(data, CRLF, 1)
+		  line = NthField(data.Trim, CRLF, 1)
 		  
 		  If CountFields(line.Trim, " ") <> 3 Then
 		    #pragma BreakOnExceptions Off

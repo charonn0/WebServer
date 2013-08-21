@@ -234,10 +234,13 @@ Inherits ServerSocket
 		    ' Grab a thread from the pool and associate it with the requesting socket.
 		    ' The ThreadRun method handles the Thread.Run event of the worker thread,
 		    ' which in turn calls the DefaultHandler method within the thread's context.
+		    Dim worker As Thread = GetThread(Sender)
+		    If worker = Nil Then 
+		      worker = IdleThreads.Pop
+		      Threads.Value(worker) = Sender
+		    End If
+		    If worker.State <> Thread.Running Then worker.Run
 		    
-		    Dim worker As Thread = IdleThreads.Pop
-		    Threads.Value(worker) = Sender
-		    worker.Run
 		  Else
 		    ' Just call the DefaultHandler method on the current thread.
 		    DefaultHandler(Sender)
@@ -249,94 +252,99 @@ Inherits ServerSocket
 		Private Sub DefaultHandler(Sender As SSLSocket)
 		  ' This method receives and processes all requests made to the server,
 		  ' raises the HandleRequest event, and sends the response to the client.
-		  
-		  Dim data As MemoryBlock = Sender.ReadAll
-		  Dim clientrequest As HTTP.Request
 		  Dim doc As HTTP.Response
-		  Dim session As HTTP.Session
-		  Try
-		    clientrequest = New HTTP.Request(data, UseSessions)
-		    Me.Log("Request is well formed", Log_Debug)
-		    Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
-		    
-		    If UseSessions Then
-		      Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
-		      If ID = "" Then
-		        Session = GetSession(Sender) ' No session ID, generate a new one
-		      Else
-		        Session = GetSession(ID) ' the session ID is there, find the session
-		        Sockets.Value(Sender) = Session.SessionID ' associate the session ID with the socket
+		  Do Until InStr(Sender.Lookahead, CRLF + CRLF) = 0
+		    Dim data As MemoryBlock = Sender.Read(InStr(Sender.Lookahead, CRLF + CRLF))
+		    Dim clientrequest As HTTP.Request
+		    Dim session As HTTP.Session
+		    Try
+		      clientrequest = New HTTP.Request(data, UseSessions)
+		      Me.Log("Request is well formed", Log_Debug)
+		      Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
+		      Dim msglen As Integer = Val(clientrequest.GetHeader("Content-Length"))
+		      If msglen <> 0 Then
+		        clientrequest.MessageBody = clientrequest.MessageBody + Sender.Read(msglen)
 		      End If
-		      clientrequest.SessionID = Session.SessionID ' assign the session ID to the request
-		    End If
-		    
-		    
-		    
-		    Dim tmp As HTTP.Request = clientrequest
-		    If TamperRequest(tmp) Then ' allows subclasses to modify requests before they are processed
-		      clientrequest = tmp
-		    End If
-		    
-		    ' start processing the request. As soon as doc <> Nil, we're done.
-		    Do
-		      doc = CheckAuth(clientrequest)
-		      If doc <> Nil Then Exit Do ' Bad auth, done.
 		      
-		      doc = CheckProtocol(clientrequest)
-		      If doc <> Nil Then Exit Do ' Bad protocol, done.
-		      
-		      doc = CheckCache(clientrequest, session)
-		      If doc <> Nil Then Exit Do ' Cache hit, done.
-		      
-		      doc = CheckRedirect(clientrequest, session)
-		      If doc <> Nil Then Exit Do ' Redirected, done.
-		      
-		      Me.Log("Running HandleRequest event", Log_Debug)
-		      doc = HandleRequest(clientrequest) ' Ask the subclass to handle it
-		      If doc <> Nil Then Exit Do ' Subclass handled it, done.
-		      
-		      ' No one handled the request, so we send an error message of some sort
-		      Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
-		      Select Case clientrequest.Method
-		      Case RequestMethod.HEAD, RequestMethod.GET
-		        doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
-		      Case RequestMethod.TRACE
-		        doc = doc.GetErrorResponse(200, "")
-		        doc.SetHeader("Content-Length") = Str(Data.Size)
-		        doc.MIMEType = New ContentType("message/http")
-		        doc.MessageBody = Data
-		      Case RequestMethod.OPTIONS
-		        doc = doc.GetErrorResponse(200, "")
-		        doc.MessageBody = ""
-		        doc.SetHeader("Content-Length") = "0"
-		        doc.SetHeader("Allow") = "GET, HEAD, POST, TRACE, OPTIONS"
-		      Else
-		        If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		          doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
-		          Me.Log("Request is not implemented", Log_Error)
-		        ElseIf clientrequest.MethodName = "" Then
-		          doc = doc.GetErrorResponse(400, "") 'bad request
-		          Me.Log("Request is malformed", Log_Error)
-		        ElseIf clientrequest.MethodName <> "" Then
-		          doc = doc.GetErrorResponse(405, clientrequest.MethodName)
-		          Me.Log("Request is a NOT ALLOWED", Log_Error)
+		      If UseSessions Then
+		        Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
+		        If ID = "" Then
+		          Session = GetSession(Sender) ' No session ID, generate a new one
+		        Else
+		          Session = GetSession(ID) ' the session ID is there, find the session
+		          Sockets.Value(Sender) = Session.SessionID ' associate the session ID with the socket
 		        End If
-		      End Select
-		      Exit Do 'Done constructing the error message
-		    Loop
+		        clientrequest.SessionID = Session.SessionID ' assign the session ID to the request
+		      End If
+		      
+		      
+		      
+		      Dim tmp As HTTP.Request = clientrequest
+		      If TamperRequest(tmp) Then ' allows subclasses to modify requests before they are processed
+		        clientrequest = tmp
+		      End If
+		      
+		      ' start processing the request. As soon as doc <> Nil, we're done.
+		      Do
+		        doc = CheckAuth(clientrequest)
+		        If doc <> Nil Then Exit Do ' Bad auth, done.
+		        
+		        doc = CheckProtocol(clientrequest)
+		        If doc <> Nil Then Exit Do ' Bad protocol, done.
+		        
+		        doc = CheckCache(clientrequest, session)
+		        If doc <> Nil Then Exit Do ' Cache hit, done.
+		        
+		        doc = CheckRedirect(clientrequest, session)
+		        If doc <> Nil Then Exit Do ' Redirected, done.
+		        
+		        Me.Log("Running HandleRequest event", Log_Debug)
+		        doc = HandleRequest(clientrequest) ' Ask the subclass to handle it
+		        If doc <> Nil Then Exit Do ' Subclass handled it, done.
+		        
+		        ' No one handled the request, so we send an error message of some sort
+		        Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
+		        Select Case clientrequest.Method
+		        Case RequestMethod.HEAD, RequestMethod.GET
+		          doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
+		        Case RequestMethod.TRACE
+		          doc = doc.GetErrorResponse(200, "")
+		          doc.SetHeader("Content-Length") = Str(Data.Size)
+		          doc.MIMEType = New ContentType("message/http")
+		          doc.MessageBody = Data
+		        Case RequestMethod.OPTIONS
+		          doc = doc.GetErrorResponse(200, "")
+		          doc.MessageBody = ""
+		          doc.SetHeader("Content-Length") = "0"
+		          doc.SetHeader("Allow") = "GET, HEAD, POST, TRACE, OPTIONS"
+		        Else
+		          If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
+		            doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		            Me.Log("Request is not implemented", Log_Error)
+		          ElseIf clientrequest.MethodName = "" Then
+		            doc = doc.GetErrorResponse(400, "") 'bad request
+		            Me.Log("Request is malformed", Log_Error)
+		          ElseIf clientrequest.MethodName <> "" Then
+		            doc = doc.GetErrorResponse(405, clientrequest.MethodName)
+		            Me.Log("Request is a NOT ALLOWED", Log_Error)
+		          End If
+		        End Select
+		        Exit Do 'Done constructing the error message
+		      Loop
+		      
+		      doc.Path = clientrequest.Path
+		      'doc.SetHeader("Connection") = "close"
+		      
+		      CheckType(clientrequest, doc)
+		      
+		    Catch err As UnsupportedFormatException
+		      doc = doc.GetErrorResponse(400, "") 'bad request
+		      Me.Log("Request is NOT well formed", Log_Error)
+		    End Try
 		    
-		    doc.Path = clientrequest.Path
-		    doc.SetHeader("Connection") = "close"
-		    
-		    CheckType(clientrequest, doc)
-		    
-		  Catch err As UnsupportedFormatException
-		    doc = doc.GetErrorResponse(400, "") 'bad request
-		    Me.Log("Request is NOT well formed", Log_Error)
-		  End Try
-		  
-		  ' Finally, send the response to the client
-		  SendResponse(Sender, doc)
+		    ' Finally, send the response to the client
+		    SendResponse(Sender, doc)
+		  Loop
 		  
 		  
 		  
@@ -472,6 +480,17 @@ Inherits ServerSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function GetThread(Sender As SSLSocket) As Thread
+		  Me.Log(CurrentMethodName, Log_Trace)
+		  For Each w As Thread In Threads.Keys
+		    If Threads.Value(w) Is Sender Then
+		      Return w
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
 		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
 		    #If GZIPAvailable And TargetHasGUI Then
@@ -546,7 +565,11 @@ Inherits ServerSocket
 		  Else
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
-		  ResponseDocument.SetHeader("Connection") = "close"
+		  If Socket.BytesAvailable > 0 Then
+		    ResponseDocument.SetHeader("Connection") = "keep-alive"
+		  Else
+		    ResponseDocument.SetHeader("Connection") = "close"
+		  End If
 		  ResponseDocument.SetHeader("Accept-Ranges") = "bytes"
 		  ResponseDocument.SetHeader("Server") = WebServer.DaemonVersion
 		End Sub
@@ -625,6 +648,9 @@ Inherits ServerSocket
 		    Session.AddCacheItem(ResponseDocument)
 		  End If
 		  Socket.Flush
+		  If ResponseDocument.GetHeader("Connection") <> "keep-alive" Then
+		    Socket.Close
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -991,6 +1017,15 @@ Inherits ServerSocket
 		#tag Setter
 			Set
 			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
+			  If value Then
+			    While Me.MinimumSocketsAvailable > Me.IdleThreads.Ubound + 1
+			      Dim worker As New Thread
+			      AddHandler worker.Run, WeakAddressOf Me.ThreadRun
+			      IdleThreads.Insert(0, worker)
+			    Wend
+			  Else
+			    ReDim IdleThreads(-1)
+			  End If
 			  mThreading = value
 			End Set
 		#tag EndSetter
