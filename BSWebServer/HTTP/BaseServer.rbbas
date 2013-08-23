@@ -438,8 +438,8 @@ Inherits ServerSocket
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function GetSession(SessionID As String) As HTTP.Session
+	#tag Method, Flags = &h1
+		Protected Function GetSession(SessionID As String) As HTTP.Session
 		  Me.Log(CurrentMethodName + "(" + SessionID + ")", Log_Trace)
 		  Dim session As HTTP.Session
 		  If UseSessions Then

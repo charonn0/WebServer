@@ -266,7 +266,7 @@ Inherits HTTP.Response
 	#tag EndProperty
 
 
-	#tag Constant, Name = HelloWorldSrc, Type = String, Dynamic = False, Default = \"StatusCode \x3D 200\rPrint(\"<html><head><title>Test Page</title></head><body><p>Hello\x2C world!</p></body></html>\")\rSetHeader(\"Foo\") \x3D \"Bar\"\rSetCookie(\"ScriptCookie\") \x3D \"123456\"\rDim s() As String\rs(1) \x3D \"crash\"\r", Scope = Protected
+	#tag Constant, Name = HelloWorldSrc, Type = String, Dynamic = False, Default = \"StatusCode \x3D 200\rPrint(\"<html><head><title>Test Page</title></head><body><p>Hello\x2C world!</p></body></html>\")\rSetHeader(\"Foo\") \x3D \"Bar\"\rSetCookie(\"ScriptCookie\") \x3D \"123456\"\rDim s() As String\r\'s(1) \x3D \"crash\"\r", Scope = Protected
 	#tag EndConstant
 
 

@@ -37,11 +37,6 @@ Inherits HTTPParse.HTTPMessage
 		    End If
 		  End If
 		  
-		  If Me.Hascookie("SessionID") Then
-		    Me.SessionID = Me.GetCookie("SessionID")
-		  End If
-		  
-		  
 		  Me.Method = HTTP.Method(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
