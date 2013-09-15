@@ -6,18 +6,6 @@ Protected Module WebServer
 		End Sub
 	#tag EndMethod
 
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function CFRelease Lib "Carbon" (cf As Ptr) As Ptr
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function CFUUIDCreate Lib "Carbon" (alloc As Ptr) As Ptr
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function CFUUIDCreateString Lib "Carbon" (alloc As ptr, CFUUIDRef As Ptr) As CFStringRef
-	#tag EndExternalMethod
-
 	#tag Method, Flags = &h21
 		Private Function CleanMangledFunction(item as string) As string
 		  'This method was written by SirG3 <TheSirG3@gmail.com>; http://fireyesoftware.com/developer/stackcleaner/
@@ -371,10 +359,6 @@ Protected Module WebServer
 		End Sub
 	#tag EndMethod
 
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function RpcStringFree Lib "Rpcrt4" Alias "RpcStringFreeA" (Addr As Ptr) As Integer
-	#tag EndExternalMethod
-
 	#tag Method, Flags = &h0
 		Function SocketErrorMessage(ErrorCode As Integer) As String
 		  Dim err As String = "socket error " + Str(ErrorCode)
@@ -400,74 +384,6 @@ Protected Module WebServer
 		  Return err
 		End Function
 	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UUID() As String
-		  //This function ©2004-2011 Adam Shirey
-		  //http://www.dingostick.com/node.php?id=11
-		  
-		  Dim strUUID As String
-		  
-		  #If TargetMacOS
-		    //see http://developer.apple.com/documentation/CoreFOundation/Reference/CFUUIDRef/Reference/reference.html
-		    Dim pUUID As ptr = CFUUIDCreate(Nil)
-		    StructureInfo = CFUUIDCreateString(Nil, pUUID)
-		    CFRelease(pUUID)
-		    
-		  #ElseIf TargetWin32
-		    //see: http://msdn.microsoft.com/en-us/library/aa379205(VS.85).aspx
-		    //and: http://msdn.microsoft.com/en-us/library/aa379352(VS.85).aspx
-		    Static mb As New MemoryBlock(16)
-		    Call UuidCreate(mb) //can compare to RPC_S_UUID_LOCAL_ONLY and RPC_S_UUID_NO_ADDRESS for more info
-		    Static ptrUUID As New MemoryBlock(16)
-		    Dim ppAddr As ptr
-		    Call UuidToString(mb, ppAddr)
-		    Dim mb2 As MemoryBlock = ppAddr
-		    strUUID = mb2.CString(0)
-		    Call RpcStringFree(ptrUUID)
-		    
-		  #ElseIf TargetLinux
-		    // see http://linux.die.net/man/3/uuid_generate
-		    
-		    // these are soft declared because there's perhaps a smaller chance of libuuid being present on a linux system,
-		    // though I have no evidence to support such a claim. it seems pretty standard.
-		    If System.IsFunctionAvailable("uuid_generate", "libuuid") Then
-		      Static mb As New MemoryBlock( 16 )
-		      Static uu As New MemoryBlock( 36 )
-		      
-		      uuid_generate(mb) // generate the uuid in binary form
-		      uuid_unparse_upper(mb, uu) // convert to a 36-byte string
-		      
-		      strUUID = uu.StringValue(0, 36)
-		    Else
-		      Dim error As String = App.ExecutableFile.Name + ": expected libuuid!"
-		      #If TargetHasGUI Then
-		        System.DebugLog(error)
-		      #Else
-		        StdErr.Write(error)
-		      #endif
-		    End If
-		  #EndIf
-		  
-		  Return strUUID
-		End Function
-	#tag EndMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function UuidCreate Lib "Rpcrt4" (Uuid As Ptr) As Integer
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Function UuidToString Lib "Rpcrt4" Alias "UuidToStringA" (Uuid As Ptr, ByRef p As ptr) As Integer
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Sub uuid_generate Lib "libuuid" (out As ptr)
-	#tag EndExternalMethod
-
-	#tag ExternalMethod, Flags = &h1
-		Protected Soft Declare Sub uuid_unparse_upper Lib "libuuid" (mb As Ptr, uu As Ptr)
-	#tag EndExternalMethod
 
 
 	#tag ComputedProperty, Flags = &h1
@@ -1280,7 +1196,7 @@ Protected Module WebServer
 		#tag Getter
 			Get
 			  If mVirtualRoot = "" Then
-			    VirtualRoot = EncodeHex(MD5(UUID))
+			    VirtualRoot = EncodeHex(MD5(Str(Microseconds)))
 			  End If
 			  return mVirtualRoot
 			End Get

@@ -183,7 +183,22 @@ Protected Class Session
 		#tag Getter
 			Get
 			  If mSessionID = "" Then
-			    mSessionID = EncodeHex(MD5(UUID))
+			    #If TargetWin32 Then
+			      Declare Function RpcStringFree Lib "Rpcrt4" Alias "RpcStringFreeA" (Addr As Ptr) As Integer
+			      Declare Function UuidCreate Lib "Rpcrt4" (Uuid As Ptr) As Integer
+			      Declare Function UuidToString Lib "Rpcrt4" Alias "UuidToStringA" (Uuid As Ptr, ByRef p As ptr) As Integer
+			      Static mb As New MemoryBlock(16)
+			      Call UuidCreate(mb) //can compare to RPC_S_UUID_LOCAL_ONLY and RPC_S_UUID_NO_ADDRESS for more info
+			      Static ptrUUID As New MemoryBlock(16)
+			      Dim ppAddr As ptr
+			      Call UuidToString(mb, ppAddr)
+			      Dim mb2 As MemoryBlock = ppAddr
+			      mSessionID = mb2.CString(0)
+			      Call RpcStringFree(ptrUUID)
+			    #else
+			      mSessionID = Format(Microseconds, "00000000000")
+			    #endif
+			    mSessionID = EncodeHex(MD5(mSessionID))
 			    Log("Generated new session id: " + mSessionID, BaseServer.Log_Trace)
 			    Me.NewSession = True
 			  End If
