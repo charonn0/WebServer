@@ -130,102 +130,6 @@ Protected Class URI
 	#tag EndMethod
 
 
-	#tag Note, Name = Examples
-		1. Creating and modifying URIs
-		
-		     Dim url As New URI("https://crashreports.mycompany.net#newreports")
-		     If url.Protocol <> "https" Then
-		       msgbox("Not a secure server!")
-		       Return
-		     End If
-		     url.Username = CustomerUserName
-		     url.Password = CustomerLicenseKey
-		     url.ServerPath = "/reports/" + reportName
-		     url.Arguments.Append("filter=all")
-		     url.Arguments.Append("hostid=123456789")
-		     ShowURL(url)
-		
-		This code might generate a URL like this: 
-		     https://johncustomer:License1234567@crashreports.mycompany.net/reports/report.rpt?filter=all&hostid=123456789#newreports
-		
-		We can then just change one or two things and get the new URL:
-		
-		     url.Fragment = "oldreports"
-		     url.FQDN = "arch.mycompany.net"
-		     url.Port = 8080
-		     ShowURL(url)
-		     //   https://johncustomer:License1234567@arch.mycompany.net:8080/reports/report.rpt?filter=all&hostid=123456789#oldreports
-		
-		
-		2. Comparing and Converting URIs
-		
-		The URI class can convert itself into a string and also can convert a string into itself. URIs are therefore easily
-		passed back and forth between being a string and being an instance of the URI class. Instances of the URI class can
-		also be directly compared to one another. When compared, they will be considered equal if converting both into a string
-		produces identical strings. Set the CaseSensitive property to True to make the comparisons sensitive to letter casing.
-		
-		     Dim URL As New URI("") //Create an empty URI
-		     Dim URL2 As New URI("Http://bobbytables:secret123@www.example.net")
-		     URL = "http://bobbytables:secret123@www.example.net"  //Convert a string into a URI
-		     If URL = URL2 Then  //Compare URIs
-		       //We get here if neither URI is set to CaseSensitive
-		     Else
-		       //We get here if EITHER URI is set to CaseSensitive (even if the other one isn't CaseSensitive)
-		     End If
-	#tag EndNote
-
-	#tag Note, Name = How to use this class
-		URI Class by Andrew Lambert
-		http://www.boredomsoft.org
-		(c)2012, CC-BY-SA
-		
-		You create a new instance of the URI class with any valid URI ("" is also considered valid)
-		
-		    Dim url As New URI("http://www.example.net")
-		
-		Once instantiated, you can test and/or set any of the properties:
-		
-		    If URL.Protocol = "HTTP" Then
-		      URL.Protocol = "HTTPS"
-		    End If
-		
-		The URI class can convert itself to and from strings:
-		
-		    URL = "http://www.example.com"   //Convert a string into a URI
-		    MsgBox(URL)                      //Convert a URI into a string
-		
-		URI instances can be compared directly for equality.
-	#tag EndNote
-
-	#tag Note, Name = What is a URI?
-		This class implements an easy-to-manipulate object for dealing with URIs. URIs are strings like these:
-		
-		       http://docs.realsoftware.com/index.php/UsersGuide:Chapter13:Making_Networking_Easy#Making_Networking_Easy
-		       ftp://jpublic:letmein@example.net:21/home/jpublic/plans.txt
-		       mailto:user@host.net?subject=Hello&body=world
-		       ircs://2001::123:4567:abcd:6697/MyChannel?chanpasswd
-		
-		This class ought to work with most of the common variants of the URI scheme. The scheme expected is either:
-		
-		         [PROTOCOL]<://>[USER<:>PASS<@>][SUB.]DOMAIN.TLD[<:>port][</>SERVERFILE.EXT]<?>[arg1=1<&>[arg2=2]][#Fragment]
-		    -OR-
-		         MAILTO<:>USER<@>[SUB.]DOMAIN.TLD<?>[arg1=1<&>[arg2=2]]
-		
-		DOMAIN.TLD can also be any IP address in proper URI format, e.g. "http://bob:letmein@127.0.0.1:8080/htdocs/index.html#Page1"
-		IPv6 addresses might screw up but should convert back properly.
-		
-		Parts in square brackets ([ ]) are optional, parts in angle brackets (< >) are implied and inserted when the
-		URI converts itself to a string (and stripped out when a string is converted into a URI. )CAPITALIZED parts are 
-		the salient details of the URI, with those not in square brackets being mandatory.
-		
-		mailto does NOT have a double slash (ie. not mailto://) and is treated as a special case.
-		
-		As you can see, URIs contain a lot of useful information in a fairly elastic format. Not all types of
-		URI accept all the possible formats. mailto: is not technically a URI and is only partly implemented
-		here (the important parts.)
-	#tag EndNote
-
-
 	#tag Property, Flags = &h0
 		#tag Note
 			The arguments represent the query string part of the URI.
@@ -259,6 +163,7 @@ Protected Class URI
 			sub.domain.tld
 			domain.tld
 			sub1.sub2.->sub[n].domain.tld
+			sub.domain.co.tld
 		#tag EndNote
 		FQDN As String
 	#tag EndProperty

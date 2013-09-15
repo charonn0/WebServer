@@ -315,26 +315,21 @@ Begin Window ShortURLDemo
       Width           =   34
    End
    Begin Timer LogTimer
-      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   455
       LockedInPosition=   False
       Mode            =   2
-      Period          =   10
+      Period          =   250
       Scope           =   0
-      TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   489
-      Visible         =   True
       Width           =   32
    End
    Begin WebServer.URLShortener Sock
       AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
       CertificatePassword=   ""
-      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -346,13 +341,11 @@ Begin Window ShortURLDemo
       Port            =   0
       Scope           =   0
       SessionTimeout  =   600
-      TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
       Threading       =   True
       Top             =   492
+      UseCompression  =   ""
       UseSessions     =   True
-      Visible         =   True
       Width           =   32
    End
 End
@@ -546,7 +539,7 @@ End
 		      If lines(i).Trim <> "" Then
 		        Select Case Severity
 		        Case HTTP.BaseServer.Log_Request, HTTP.BaseServer.Log_Status
-		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Response Then Return
+		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Response Then Continue While
 		          If i = 0 And severity <> HTTP.BaseServer.Log_Status Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Request", ThreadID)
 		            Listbox1.RowPicture(Listbox1.LastIndex) = greenarrowright
@@ -561,7 +554,7 @@ End
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          
 		        Case HTTP.BaseServer.Log_Response
-		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Request Then Return
+		          If Severity < squelch And squelch <> HTTP.BaseServer.Log_Request Then Continue While
 		          
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "HTTP Reply", ThreadID)
@@ -574,7 +567,7 @@ End
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c00FF0099
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		        Case HTTP.BaseServer.Log_Error
-		          If Severity < squelch Then Return
+		          If Severity < squelch Then Continue While
 		          If i = 0 Then
 		            Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Error!", ThreadID)
 		            Listbox1.RowPicture(Listbox1.LastIndex) = error
@@ -585,19 +578,19 @@ End
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFF000099
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		        Case HTTP.BaseServer.Log_Debug
-		          If Severity < squelch Then Return
+		          If Severity < squelch Then Continue While
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Debug", ThreadID)
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cFFFF0099
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          Listbox1.RowPicture(Listbox1.LastIndex) = debugIcon
 		        Case HTTP.BaseServer.Log_Socket
-		          If Severity < squelch Then Return
+		          If Severity < squelch Then Continue While
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Socket", ThreadID)
 		          Listbox1.RowTag(Listbox1.LastIndex) = &cC0C0C099
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
 		          Listbox1.RowPicture(Listbox1.LastIndex) = socketIcon
 		        Case HTTP.BaseServer.Log_Trace
-		          If Severity < squelch Then Return
+		          If Severity < squelch Then Continue While
 		          Listbox1.AddRow(lines(i), now.ShortDate + " " + Now.LongTime, "Trace", ThreadID)
 		          Listbox1.RowTag(Listbox1.LastIndex) = &c80808099
 		          Listbox1.CellTag(Listbox1.LastIndex, 0) = severity
