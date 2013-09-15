@@ -63,7 +63,7 @@ Begin Window FileServerDemo
       Left            =   545
       LockedInPosition=   False
       Mode            =   2
-      Period          =   10
+      Period          =   250
       Scope           =   0
       TabPanelIndex   =   0
       Top             =   478
@@ -118,6 +118,7 @@ Begin Window FileServerDemo
       TabPanelIndex   =   0
       Threading       =   True
       Top             =   478
+      UseCompression  =   ""
       UseSessions     =   True
       Width           =   32
    End
@@ -944,8 +945,8 @@ End
 		        End Select
 		      End If
 		    Next
-		    Listbox1.ScrollPosition = Listbox1.LastIndex
 		  Wend
+		  Listbox1.ScrollPosition = Listbox1.LastIndex
 		End Sub
 	#tag EndEvent
 #tag EndEvents
