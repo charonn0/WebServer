@@ -261,11 +261,15 @@ Inherits ServerSocket
 		      clientrequest = New HTTP.Request(data, UseSessions)
 		      Me.Log("Request is well formed", Log_Debug)
 		      Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
-		      Dim msglen As Integer = Val(clientrequest.GetHeader("Content-Length"))
-		      If msglen <> 0 Then
-		        data = data + Sender.Read(msglen + 4)
+		      If clientrequest.HasHeader("Content-Length") Then
+		        Dim cl As Integer = Val(clientrequest.GetHeader("Content-Length"))
+		        If cl + 3 <= Sender.Lookahead.LenB Then
+		          Dim msg As String = Sender.Read(cl + 3)
+		          clientrequest.MessageBody = msg
+		        Else ' still data coming
+		          Return
+		        End If
 		      End If
-		      clientrequest.MessageBody = Data
 		      
 		      If UseSessions Then
 		        Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
