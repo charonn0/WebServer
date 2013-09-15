@@ -45,7 +45,7 @@ Protected Class Session
 		  Me.ExtendSession()
 		  Me.CacheTimer = New Timer
 		  Me.CacheTimer.Period = 15000
-		  AddHandler Me.CacheTimer.Action, AddressOf Me.CacheCleaner
+		  AddHandler Me.CacheTimer.Action, WeakAddressOf Me.CacheCleaner
 		  Me.CacheTimer.Mode = Timer.ModeMultiple
 		  LastActive = New Date
 		End Sub

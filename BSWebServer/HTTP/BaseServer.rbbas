@@ -538,7 +538,7 @@ Inherits ServerSocket
 		  Super.Listen
 		  Sessions = New Dictionary
 		  SessionTimer = New Timer
-		  AddHandler SessionTimer.Action, AddressOf Me.TimeOutHandler
+		  AddHandler SessionTimer.Action, WeakAddressOf Me.TimeOutHandler
 		  SessionTimer.Period = 5000
 		  SessionTimer.Mode = Timer.ModeMultiple
 		End Sub
@@ -701,6 +701,7 @@ Inherits ServerSocket
 		  For Each Socket As SSLSocket In Me.Sockets.Keys
 		    If Not Sessions.HasKey(Me.Sockets.Value(Socket)) Or Not Socket.IsConnected Then
 		      Me.Log("Socket destroyed", Log_Socket)
+		      Socket.Close
 		      Me.Sockets.Remove(Socket)
 		    End If
 		  Next

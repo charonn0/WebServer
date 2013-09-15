@@ -22,10 +22,10 @@ Inherits HTTP.Response
 		Sub Constructor(Source As String = HelloWorldSrc)
 		  Me.ScriptRunner = New RbScript
 		  ScriptRunner.Source = Source
-		  AddHandler ScriptRunner.CompilerError, AddressOf Me.CompilerErrorHandler
-		  AddHandler ScriptRunner.Input, AddressOf Me.InputHandler
-		  AddHandler ScriptRunner.Print, AddressOf Me.PrintHandler
-		  AddHandler ScriptRunner.RuntimeError, AddressOf Me.RuntimeErrorHandler
+		  AddHandler ScriptRunner.CompilerError, WeakAddressOf Me.CompilerErrorHandler
+		  AddHandler ScriptRunner.Input, WeakAddressOf Me.InputHandler
+		  AddHandler ScriptRunner.Print, WeakAddressOf Me.PrintHandler
+		  AddHandler ScriptRunner.RuntimeError, WeakAddressOf Me.RuntimeErrorHandler
 		  ScriptRunner.Context = Me
 		End Sub
 	#tag EndMethod
