@@ -219,17 +219,6 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub DataAvailable(Sender As SSLSocket)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Dim msg As String = "Incoming request from: " + Sender.RemoteAddress + "(0x" + Left(Hex(Sender.Handle) + "00000000", 8)
-		  If Sender.Secure Then
-		    If Me.ConnectionType = ConnectionTypes.SSLv3 Then
-		      msg = msg + ") security=SSLv3"
-		    Else
-		      msg = msg + ") security=TLSv1"
-		    End If
-		  Else
-		    msg = msg + ")"
-		  End If
-		  Me.Log(msg, Log_Status)
 		  If Me.Threading Then
 		    ' Grab a thread from the pool and associate it with the requesting socket.
 		    ' The ThreadRun method handles the Thread.Run event of the worker thread,
@@ -252,6 +241,7 @@ Inherits ServerSocket
 		Private Sub DefaultHandler(Sender As SSLSocket)
 		  ' This method receives and processes all requests made to the server,
 		  ' raises the HandleRequest event, and sends the response to the client.
+		  
 		  Dim doc As HTTP.Response
 		  Do Until InStr(Sender.Lookahead, CRLF + CRLF) = 0
 		    Dim data As MemoryBlock = Sender.Read(InStr(Sender.Lookahead, CRLF + CRLF))
@@ -267,7 +257,12 @@ Inherits ServerSocket
 		          Dim msg As String = Sender.Read(cl + 3)
 		          clientrequest.MessageBody = msg
 		        Else ' still data coming
-		          Return
+		          Dim d As String
+		          Do 
+		            d = d + Sender.ReadAll
+		            'Sender.Poll
+		          Loop Until d.LenB >= cl
+		          clientrequest.MessageBody = d
 		        End If
 		      End If
 		      
