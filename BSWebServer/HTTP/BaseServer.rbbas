@@ -170,12 +170,13 @@ Inherits ServerSocket
 		  ' On success this method returns Nil. On error, it returns an error page document.
 		  
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
+		  Dim tcount As Integer
 		  #If GZIPAvailable Then
 		    ' If the GZip plugin is used, we must confirm that the client has requested
 		    ' gzip-encoded responses. Compression only takes place if the client asks for it.
 		    Dim types() As String = Split(ClientRequest.GetHeader("Accept-Encoding"), ",")
 		    doc.Compressible = False
-		    Dim tcount As Integer = UBound(types)
+		    tcount = UBound(types)
 		    For i As Integer = 0 To tcount
 		      If types(i).Trim = "gzip" Then
 		        doc.Compressible = True
@@ -191,7 +192,7 @@ Inherits ServerSocket
 		  ' client.
 		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 And doc.StatusCode < 300 And doc.StatusCode >= 200 Then
 		    Me.Log("Checking Accepts", Log_Trace)
-		    Dim tcount As Integer = UBound(clientrequest.Headers.AcceptableTypes)
+		    tcount = UBound(clientrequest.Headers.AcceptableTypes)
 		    For i As Integer = 0 To tcount
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
 		        Me.Log("Response is a Acceptable", Log_Debug)
@@ -258,7 +259,7 @@ Inherits ServerSocket
 		          clientrequest.MessageBody = msg
 		        Else ' still data coming
 		          Dim d As String
-		          Do 
+		          Do
 		            d = d + Sender.ReadAll
 		            'Sender.Poll
 		          Loop Until d.LenB >= cl

@@ -153,7 +153,7 @@ Begin Window FileServerDemo
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   49
+      Width           =   64
    End
    Begin PushButton PushButton2
       AutoDeactivate  =   True
@@ -706,7 +706,7 @@ Begin Window FileServerDemo
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   74
+      Width           =   83
    End
    Begin CheckBox CheckBox5
       AutoDeactivate  =   True
@@ -738,7 +738,7 @@ Begin Window FileServerDemo
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   74
+      Width           =   164
    End
    Begin PushButton PushButton8
       AutoDeactivate  =   True
@@ -1057,7 +1057,7 @@ End
 	#tag Event
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #pragma Unused column
-		  If row > Me.LastIndex Then Return False
+		  If row > Me.LastIndex Or Me.ListCount < 1 Then Return False
 		  If Me.RowTag(row) <> Nil Then
 		    g.ForeColor = Me.RowTag(row)
 		    g.FillRect(0, 0, g.Width, g.Height)
