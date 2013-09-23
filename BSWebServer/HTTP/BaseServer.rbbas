@@ -1019,14 +1019,16 @@ Inherits ServerSocket
 		#tag Setter
 			Set
 			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
-			  If value Then
-			    While Me.MinimumSocketsAvailable > Me.IdleThreads.Ubound + 1
-			      Dim worker As New Thread
-			      AddHandler worker.Run, WeakAddressOf Me.ThreadRun
-			      IdleThreads.Insert(0, worker)
-			    Wend
-			  Else
-			    ReDim IdleThreads(-1)
+			  If Me.IsListening Then
+			    If value Then
+			      While Me.MinimumSocketsAvailable > Me.IdleThreads.Ubound + 1
+			        Dim worker As New Thread
+			        AddHandler worker.Run, WeakAddressOf Me.ThreadRun
+			        IdleThreads.Insert(0, worker)
+			      Wend
+			    Else
+			      ReDim IdleThreads(-1)
+			    End If
 			  End If
 			  mThreading = value
 			End Set
@@ -1057,10 +1059,8 @@ Inherits ServerSocket
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Me.StopListening()
 			  Me.Log(CurrentMethodName + "=" + Str(value), Log_Trace)
 			  mUseCompression = value
-			  Me.Listen()
 			End Set
 		#tag EndSetter
 		UseCompression As Boolean
