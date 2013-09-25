@@ -515,13 +515,16 @@ Inherits ServerSocket
 		        ResponseDocument.SetHeader("Content-Length") = Str(gz.LenB)
 		      Catch Error
 		        'Just send the uncompressed data
+		        ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		      End Try
 		    #else
 		      ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		      ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		    #endif
 		  Else
 		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
+		    ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		  End If
 		End Sub
 	#tag EndMethod
