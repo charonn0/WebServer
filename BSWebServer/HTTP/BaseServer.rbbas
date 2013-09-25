@@ -243,8 +243,9 @@ Inherits ServerSocket
 		  ' This method receives and processes all requests made to the server,
 		  ' raises the HandleRequest event, and sends the response to the client.
 		  
-		  Dim doc As HTTP.Response
+		  
 		  Do Until InStr(Sender.Lookahead, CRLF + CRLF) = 0
+		    Dim doc As HTTP.Response
 		    Dim data As MemoryBlock = Sender.Read(InStr(Sender.Lookahead, CRLF + CRLF))
 		    Dim clientrequest As HTTP.Request
 		    Dim session As HTTP.Session
@@ -261,7 +262,7 @@ Inherits ServerSocket
 		          Dim d As String
 		          Do
 		            d = d + Sender.ReadAll
-		            'Sender.Poll
+		            App.YieldToNextThread
 		          Loop Until d.LenB >= cl
 		          clientrequest.MessageBody = d
 		        End If
@@ -371,7 +372,7 @@ Inherits ServerSocket
 		    + Err.Message + EndOfLine + "Stack trace:" + EndOfLine + "    " + logstack
 		  #endif
 		  Me.Log("Runtime exception!" + EndOfLine + logstack , Log_Error)
-		  errpage = doc.GetErrorResponse(500, htmlstack)
+		  errpage = errpage.GetErrorResponse(500, htmlstack)
 		  errpage.Compressible = False
 		  Me.SendResponse(Sender, errpage)
 		End Sub
