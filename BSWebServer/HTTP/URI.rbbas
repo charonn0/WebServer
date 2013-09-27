@@ -101,7 +101,7 @@ Protected Class URI
 		  
 		  URL = URL + FQDN
 		  
-		  If Port <> 0 Then //port specified
+		  If Port <> 80 Then //port specified
 		    URL = URL + ":" + Format(Port, "#####")
 		  End If
 		  
