@@ -315,6 +315,7 @@ Begin Window ShortURLDemo
       Width           =   34
    End
    Begin Timer LogTimer
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   455
@@ -322,14 +323,18 @@ Begin Window ShortURLDemo
       Mode            =   2
       Period          =   250
       Scope           =   0
+      TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   489
+      Visible         =   True
       Width           =   32
    End
    Begin WebServer.URLShortener Sock
       AuthenticationRealm=   "Restricted Area"
       AuthenticationRequired=   ""
       CertificatePassword=   ""
+      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -341,11 +346,14 @@ Begin Window ShortURLDemo
       Port            =   0
       Scope           =   0
       SessionTimeout  =   600
+      TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Threading       =   True
       Top             =   492
       UseCompression  =   ""
       UseSessions     =   True
+      Visible         =   True
       Width           =   32
    End
 End
@@ -366,7 +374,7 @@ End
 		  End If
 		  Sock.Port = Val(port.Text)
 		  Dim redirect As HTTP.Response
-		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
+		  redirect = Sock.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
 		  Sock.AddRedirect(redirect)
 		  Sock.Listen
 		  ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")

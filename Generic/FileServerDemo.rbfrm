@@ -58,6 +58,7 @@ Begin Window FileServerDemo
       Width           =   116
    End
    Begin Timer LogTimer
+      Enabled         =   True
       Height          =   32
       Index           =   -2147483648
       Left            =   545
@@ -65,8 +66,11 @@ Begin Window FileServerDemo
       Mode            =   2
       Period          =   250
       Scope           =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   478
+      Visible         =   True
       Width           =   32
    End
    Begin PushButton PushButton5
@@ -105,6 +109,7 @@ Begin Window FileServerDemo
       AuthenticationRequired=   False
       CertificatePassword=   ""
       DirectoryBrowsing=   True
+      Enabled         =   True
       EnforceContentType=   True
       Height          =   32
       Index           =   -2147483648
@@ -115,11 +120,14 @@ Begin Window FileServerDemo
       Port            =   0
       Scope           =   0
       SessionTimeout  =   600
+      TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Threading       =   True
       Top             =   478
       UseCompression  =   ""
       UseSessions     =   True
+      Visible         =   True
       Width           =   32
    End
    Begin ComboBox SecurityLevel
@@ -558,6 +566,7 @@ Begin Window FileServerDemo
       Selectable      =   False
       TabIndex        =   18
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ":"
       TextAlign       =   0
       TextColor       =   "&c00000000"
@@ -797,9 +806,6 @@ End
 		  Sock.DocumentRoot = SharedFile
 		  Sock.UseSessions = UseSessions.Value
 		  sock.Listen
-		  Dim script As New HTTP.ScriptDocument
-		  script.Path = New HTTP.URI("/scripts/helloworld.bs")
-		  Sock.AddRedirect(script)
 		  If Sock.ConnectionType = ConnectionTypes.Insecure Then
 		    ShowURL("http://" + Sock.NetworkInterface.IPAddress + ":" + Str(Sock.Port) + "/")
 		  Else

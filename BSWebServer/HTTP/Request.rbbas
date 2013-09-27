@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Request
-Inherits HTTPParse.HTTPMessage
+Inherits HTTP.HTTPMessage
 	#tag Method, Flags = &h0
 		Function CacheDirective() As String
 		  Return Me.GetHeader("Cache-Control")
@@ -54,8 +54,8 @@ Inherits HTTPParse.HTTPMessage
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Cookies() As HTTPParse.Cookie()
-		  Dim c() As HTTPParse.Cookie
+		Function Cookies() As HTTP.Cookie()
+		  Dim c() As HTTP.Cookie
 		  For i As Integer = 0 To Me.Headers.CookieCount - 1
 		    c.Append(Me.Headers.Cookie(i))
 		  Next
@@ -68,12 +68,12 @@ Inherits HTTPParse.HTTPMessage
 		  If SinceWhen = Nil Then Return False
 		  If HasHeader("If-Modified-Since") Then
 		    Dim d1 As Date
-		    d1 = HTTPDate(GetHeader("If-Modified-Since"))
+		    d1 = DateString(GetHeader("If-Modified-Since"))
 		    Return SinceWhen.TotalSeconds > d1.TotalSeconds
 		    
 		  ElseIf HasHeader("If-Unmodified-Since") Then
 		    Dim d1 As Date
-		    d1 = HTTPDate(GetHeader("If-Unmodified-Since"))
+		    d1 = DateString(GetHeader("If-Unmodified-Since"))
 		    Return SinceWhen.TotalSeconds < d1.TotalSeconds
 		  End If
 		End Function
@@ -87,10 +87,10 @@ Inherits HTTPParse.HTTPMessage
 		    Dim acount As Integer = UBound(Me.Path.Arguments)
 		    For i As Integer = 0 To acount
 		      If i > 0 Then args = args + "&"
-		      args = args + URLEncode(Me.Path.Arguments(i))
+		      args = args + HTTP.Helpers.URLEncode(Me.Path.Arguments(i))
 		    Next
 		  End If
-		  Dim data As String = MethodName + " " + URLEncode(Path.ServerPath) + args + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
+		  Dim data As String = MethodName + " " + HTTP.Helpers.URLEncode(Path.ServerPath) + args + " " + "HTTP/" + Format(ProtocolVersion, "#.0") + CRLF
 		  If Me.MultiPart <> Nil Then
 		    Me.SetHeader("Content-Type") = "multipart/form-data; boundary=" + Me.MultiPart.Boundary
 		    Me.MessageBody = Me.MultiPart.ToString
@@ -115,21 +115,21 @@ Inherits HTTPParse.HTTPMessage
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthRealm"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AuthUsername"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -152,7 +152,7 @@ Inherits HTTPParse.HTTPMessage
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -165,14 +165,14 @@ Inherits HTTPParse.HTTPMessage
 			Name="ProtocolVersion"
 			Group="Behavior"
 			Type="Single"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SessionID"
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-			InheritedFrom="HTTPParse.HTTPMessage"
+			InheritedFrom="HTTP.HTTPMessage"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

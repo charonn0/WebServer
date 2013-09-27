@@ -12,7 +12,7 @@ Inherits HTTP.BaseServer
 		    If item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
 		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
-		      doc = doc.GetErrorResponse(403, ClientRequest.Path.ServerPath)
+		      doc = GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
 		    ElseIf ClientRequest.Path.ServerPath = "/" And Not item.Directory Then
 		      '302 redirect from "/" to "/" + item.name
@@ -22,7 +22,7 @@ Inherits HTTP.BaseServer
 		      Else
 		        location = "https://" + Me.LocalAddress + ":" + Format(Me.Port, "######") + "/" + Item.Name
 		      End If
-		      doc = doc.GetRedirectResponse("/", Location)
+		      doc = GetRedirectResponse("/", Location)
 		      Me.Log("Redirecting / to " + location, Log_Debug)
 		    Else
 		      '200 OK
@@ -30,11 +30,12 @@ Inherits HTTP.BaseServer
 		      If item.Directory Then
 		        Me.Log("Generating new directory index", Log_Trace)
 		        doc = New DirectoryIndex(item, ClientRequest.Path)
-		        HTTPParse.DirectoryIndex(doc).Populate
+		        doc.StatusCode = 200
+		        WebServer.DirectoryIndex(doc).Populate
 		      ElseIf ClientRequest.HasHeader("Range") Then
-		        doc = doc.GetFileResponse(item, ClientRequest.Path, ClientRequest.RangeStart, ClientRequest.RangeEnd)
+		        doc = GetFileResponse(item, ClientRequest.Path, ClientRequest.RangeStart, ClientRequest.RangeEnd)
 		      Else
-		        doc = doc.GetFileResponse(item, ClientRequest.Path)
+		        doc = GetFileResponse(item, ClientRequest.Path)
 		      End If
 		    End If
 		  End Select
@@ -78,7 +79,7 @@ Inherits HTTP.BaseServer
 		    Dim bs As BinaryStream = BinaryStream.Open(tmp, True)
 		    bs.Write(icons.Value(img))'.Save(tmp, Picture.SaveAsPNG)
 		    bs.Close
-		    icon = icon.GetFileResponse(tmp, img)
+		    icon = GetFileResponse(tmp, img)
 		    icon.SetHeader("Content-Length") = Str(icon.MessageBody.LenB)
 		    icon.MIMEType = New ContentType("image/png")
 		    icon.StatusCode = 200
@@ -88,12 +89,12 @@ Inherits HTTP.BaseServer
 		  Next
 		  
 		  Dim redirect As HTTP.Response
-		  redirect = redirect.GetRedirectResponse("/bs", "http://www.boredomsoft.org")
+		  redirect = GetRedirectResponse("/bs", "http://www.boredomsoft.org")
 		  redirect.Compressible = False
 		  Me.AddRedirect(redirect)
 		  
 		  Dim doc As HTTP.Response
-		  doc = doc.GetErrorResponse(200, "")
+		  doc = GetErrorResponse(200, "")
 		  doc.Path = New URI("/robots.txt")
 		  doc.MIMEType = New ContentType("text/html")
 		  doc.MessageBody = "User-Agent: *" + CRLF + "Disallow: /" + CRLF + CRLF
@@ -104,7 +105,7 @@ Inherits HTTP.BaseServer
 		  Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
 		  bs.Write(favicon)
 		  bs.Close
-		  doc = doc.GetFileResponse(tmp, "/favicon.ico")
+		  doc = GetFileResponse(tmp, "/favicon.ico")
 		  doc.MIMEType = New ContentType("image/x-icon")
 		  doc.Compressible = False
 		  AddRedirect(doc)
@@ -124,7 +125,7 @@ Inherits HTTP.BaseServer
 		  If origpath = "" Then origpath = "/"
 		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  
-		  Path = URLDecode(Path)
+		  Path = HTTP.Helpers.URLDecode(Path)
 		  
 		  If Not DocumentRoot.Directory And pathsep + DocumentRoot.Name = path Then
 		    Return DocumentRoot
@@ -319,6 +320,12 @@ Inherits HTTP.BaseServer
 			Group="Position"
 			Type="Integer"
 			InheritedFrom="ServerSocket"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseCompression"
+			Group="Behavior"
+			Type="Boolean"
+			InheritedFrom="HTTP.BaseServer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseSessions"

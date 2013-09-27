@@ -1,69 +1,5 @@
 #tag Class
 Protected Class HTTPMessage
-	#tag Method, Flags = &h1
-		Protected Shared Function ErrorPage(ErrorNumber As Integer, Param As String = "") As String
-		  Dim page As String = BlankErrorPage
-		  page = ReplaceAll(page, "%HTTPERROR%", HTTP.ReplyString(ErrorNumber))
-		  
-		  Select Case ErrorNumber
-		  Case 301, 302
-		    page = ReplaceAll(page, "%DOCUMENT%", "The requested resource has moved. <a href=""" + param + """>Click here</a> if you are not automatically redirected.")
-		    
-		  Case 400
-		    page = ReplaceAll(page, "%DOCUMENT%", "The server  did not understand your request.")
-		    
-		  Case 403, 401
-		    page = ReplaceAll(page, "%DOCUMENT%", "Permission to access '" + Param + "' is denied.")
-		    
-		  Case 404
-		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', was not found on this server. ")
-		    
-		  Case 405
-		    page = ReplaceAll(page, "%DOCUMENT%", "The specified HTTP request method '" + Param + "', is not allowed for this resource. ")
-		    
-		  Case 406
-		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser did not specify an acceptable Content-Type that was compatible with the data requested.")
-		    
-		  Case 410
-		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', is no longer available.")
-		    
-		  Case 416
-		    page = ReplaceAll(page, "%DOCUMENT%", "The resource does not contain the requested range.")
-		    
-		  Case 418
-		    page = ReplaceAll(page, "%DOCUMENT%", "I'm a little teapot, short and stout; here is my handle, here is my spout.")
-		    
-		  Case 451
-		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', is unavailable for legal reasons.")
-		    
-		  Case 500
-		    page = ReplaceAll(page, "%DOCUMENT%", "An error ocurred while processing your request. We apologize for any inconvenience. </p><p>" + Param + "</p>")
-		    
-		  Case 501
-		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser has made a request  (verb: '" + Param + "') of this server which, while perhaps valid, is not implemented by this server.")
-		    
-		  Case 505
-		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser specified an HTTP version (" + Param + ") that is not supported by this server. This server supports HTTP 1.0 and HTTP 1.1.")
-		    
-		  Else
-		    page = ReplaceAll(page, "%DOCUMENT%", "An HTTP error of the type specified above has occurred. No further information is available.")
-		  End Select
-		  
-		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + HTTP.DaemonVersion + "</em><br />")
-		  
-		  If page.LenB < 512 Then
-		    page = page + "<!--"
-		    Do
-		      page = page + " padding to make IE happy. "
-		    Loop Until page.LenB >= 512
-		    page = page + "-->"
-		  End If
-		  
-		  
-		  Return Page
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function GetCookie(Name As String) As String
 		  Dim ccount As Integer = Me.Headers.CookieCount - 1
@@ -195,8 +131,8 @@ Protected Class HTTPMessage
 		    Me.SetCookie(n) = v
 		    
 		  Case "Accept"
-		    Dim types() As HTTPParse.ContentType = HTTPParse.ContentType.ParseTypes(Value)
-		    For Each t As HTTPParse.ContentType In types
+		    Dim types() As HTTP.ContentType = HTTP.ContentType.ParseTypes(Value)
+		    For Each t As HTTP.ContentType In types
 		      Me.Headers.AcceptableTypes.Append(t)
 		    Next
 		    
@@ -241,14 +177,14 @@ Protected Class HTTPMessage
 			Get
 			  If Me.HasHeader("Expires") Then
 			    Dim s As String = Me.GetHeader("Expires")
-			    Return HTTPDate(s)
+			    Return DateString(s)
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  If value <> Nil Then
-			    Me.SetHeader("Expires") = HTTPDate(value)
+			    Me.SetHeader("Expires") = DateString(value)
 			  Else
 			    Me.RemoveHeader("Expires")
 			  End If
@@ -310,13 +246,9 @@ Protected Class HTTPMessage
 			Get
 			  If mMIMEType = Nil Then
 			    Dim s As String = NthField(Me.Path.ServerPath, "/", CountFields(Me.Path.ServerPath, "/"))
-			    Dim f As FolderItem = SpecialFolder.Temporary.Child(s)
-			    mMIMEType = New ContentType(f)
+			    mMIMEType = mMIMEType.GetType(s)
 			  End If
 			  return mMIMEType
-			  
-			  'Exception
-			  'Return New ContentType("application/octet-stream")
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -405,10 +337,6 @@ Protected Class HTTPMessage
 		#tag EndSetter
 		SessionID As String
 	#tag EndComputedProperty
-
-
-	#tag Constant, Name = BlankErrorPage, Type = String, Dynamic = False, Default = \"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r<html xmlns\x3D\"http://www.w3.org/1999/xhtml\">\r<head>\r<meta http-equiv\x3D\"Content-Type\" content\x3D\"text/html; charset\x3Diso-8859-1\" />\r<title>%HTTPERROR%</title>\r<style type\x3D\"text/css\">\r<!--\rbody\x2Ctd\x2Cth {\r\tfont-family: Arial\x2C Helvetica\x2C sans-serif;\r\tfont-size: medium;\r}\ra:link {\r\tcolor: #0000FF;\r\ttext-decoration: none;\r}\ra:visited {\r\ttext-decoration: none;\r\tcolor: #990000;\r}\ra:hover {\r\ttext-decoration: underline;\r\tcolor: #009966;\r}\ra:active {\r\ttext-decoration: none;\r\tcolor: #FF0000;\r}\r-->\r</style></head>\r\r<body>\r<h1>%HTTPERROR%</h1>\r<p>%DOCUMENT%</p>\r<hr />\r<p>%SIGNATURE%</p>\r</body>\r</html>", Scope = Protected
-	#tag EndConstant
 
 
 	#tag ViewBehavior

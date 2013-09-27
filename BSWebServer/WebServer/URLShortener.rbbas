@@ -8,7 +8,7 @@ Inherits HTTP.BaseServer
 		  Select Case ClientRequest.Method
 		  Case RequestMethod.GET, RequestMethod.HEAD
 		    If ClientRequest.Path.ServerPath = "/Create" Then
-		      doc = doc.GetNewResponse
+		      doc = GetNewResponse
 		      doc.StatusCode = 200
 		      doc.Path = New URI(ClientRequest.Path)
 		      doc.MessageBody = ReplaceAll(NEWURLPAGE, "%SIGNATURE%", "<em>Powered By " + WebServer.DaemonVersion + "</em><br />")
@@ -21,7 +21,7 @@ Inherits HTTP.BaseServer
 		    End If
 		    
 		  Case RequestMethod.POST
-		    Dim formdata As Dictionary = DecodeFormData(ClientRequest.MessageBody)
+		    Dim formdata As Dictionary = HTTP.Helpers.DecodeFormData(ClientRequest.MessageBody)
 		    doc = CreateShortURL(formdata.Value("ShortName"), formdata.Value("URL"))
 		    doc.Method = RequestMethod.POST
 		  End Select
@@ -39,7 +39,7 @@ Inherits HTTP.BaseServer
 		    doc = Me.Redirects.Value(Shortpath)
 		    
 		  Else
-		    doc = doc.GetErrorResponse(404, ShortPath)
+		    doc = GetErrorResponse(404, ShortPath)
 		  End If
 		  
 		  Return doc
@@ -49,14 +49,14 @@ Inherits HTTP.BaseServer
 	#tag Method, Flags = &h1000
 		Sub Constructor()
 		  Dim creator As HTTP.Response
-		  creator = creator.GetRedirectResponse("/", "/Create")
+		  creator = GetRedirectResponse("/", "/Create")
 		  Me.AddRedirect(creator)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CreateShortURL(ShortPath As String, Location As String) As Response
-		  Me.Redirects.Value(ShortPath) = HTTP.Response.GetRedirectResponse(ShortPath, Location)
+		  Me.Redirects.Value(ShortPath) = GetRedirectResponse(ShortPath, Location)
 		  Return Me.Redirects.Value(ShortPath)
 		End Function
 	#tag EndMethod

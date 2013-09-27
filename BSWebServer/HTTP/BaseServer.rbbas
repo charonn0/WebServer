@@ -37,7 +37,7 @@ Inherits ServerSocket
 	#tag Event
 		Sub Error(ErrorCode as Integer)
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Dim err As String = SocketErrorMessage(ErrorCode)
+		  Dim err As String = FormatSocketError(ErrorCode)
 		  
 		  If ErrorCode <> 102 Then
 		    Me.Log(err, Log_Error)
@@ -76,7 +76,7 @@ Inherits ServerSocket
 		    Me.Log("Authenticating", Log_Trace)
 		    If Not Authenticate(clientrequest) Then
 		      Me.Log("Authentication failed", Log_Error)
-		      doc = doc.GetErrorResponse(401, clientrequest.Path.ServerPath)
+		      doc = GetErrorResponse(401, clientrequest.Path.ServerPath)
 		      doc.SetHeader("WWW-Authenticate") = "Basic realm=""" + AuthenticationRealm + """"
 		    Else
 		      Me.Log("Authentication Successful", Log_Debug)
@@ -113,10 +113,10 @@ Inherits ServerSocket
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		      If clientrequest.IsModifiedSince(Cache.Expires) Then
 		        If clientrequest.Method = RequestMethod.GET Or clientrequest.Method = RequestMethod.HEAD Then
-		          Cache = Cache.GetErrorResponse(304, "")
+		          Cache = GetErrorResponse(304, "")
 		          Cache.MessageBody = ""
 		        Else
-		          Cache = Cache.GetErrorResponse(412, "") 'Precondition failed
+		          Cache = GetErrorResponse(412, "") 'Precondition failed
 		          Cache.MessageBody = ""
 		        End If
 		      End If
@@ -137,7 +137,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If clientrequest.ProtocolVersion < 1.0 Or clientrequest.ProtocolVersion >= 1.2 Then
-		    doc = doc.GetErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
+		    doc = GetErrorResponse(505, Format(ClientRequest.ProtocolVersion, "#.0"))
 		    Me.Log("Unsupported protocol version", Log_Error)
 		  End If
 		  
@@ -200,7 +200,7 @@ Inherits ServerSocket
 		      End If
 		    Next
 		    Dim accepted As ContentType = doc.MIMEType
-		    doc = doc.GetErrorResponse(406, "") 'Not Acceptable
+		    doc = GetErrorResponse(406, "") 'Not Acceptable
 		    doc.MIMEType = accepted
 		    Me.Log("Response is not Acceptable", Log_Error)
 		  End If
@@ -210,9 +210,9 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub ClientErrorHandler(Sender As SSLSocket)
 		  If Sender.LastErrorCode = 102 Then
-		    Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Socket)
+		    Me.Log(FormatSocketError(Sender.LastErrorCode), Log_Socket)
 		  Else
-		    Me.Log(SocketErrorMessage(Sender.LastErrorCode), Log_Error)
+		    Me.Log(FormatSocketError(Sender.LastErrorCode), Log_Error)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -308,26 +308,26 @@ Inherits ServerSocket
 		        Me.Log("Sending default response for " + clientrequest.MethodName, Log_Debug)
 		        Select Case clientrequest.Method
 		        Case RequestMethod.HEAD, RequestMethod.GET
-		          doc = doc.GetErrorResponse(404, clientrequest.Path.ServerPath)
+		          doc = GetErrorResponse(404, clientrequest.Path.ServerPath)
 		        Case RequestMethod.TRACE
-		          doc = doc.GetErrorResponse(200, "")
+		          doc = GetErrorResponse(200, "")
 		          doc.SetHeader("Content-Length") = Str(Data.Size)
 		          doc.MIMEType = New ContentType("message/http")
 		          doc.MessageBody = Data
 		        Case RequestMethod.OPTIONS
-		          doc = doc.GetErrorResponse(200, "")
+		          doc = GetErrorResponse(200, "")
 		          doc.MessageBody = ""
 		          doc.SetHeader("Content-Length") = "0"
 		          doc.SetHeader("Allow") = "GET, HEAD, POST, TRACE, OPTIONS"
 		        Else
 		          If clientrequest.MethodName <> "" And clientrequest.Method = RequestMethod.InvalidMethod Then
-		            doc = doc.GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
+		            doc = GetErrorResponse(501, clientrequest.MethodName) 'Not implemented
 		            Me.Log("Request is not implemented", Log_Error)
 		          ElseIf clientrequest.MethodName = "" Then
-		            doc = doc.GetErrorResponse(400, "") 'bad request
+		            doc = GetErrorResponse(400, "") 'bad request
 		            Me.Log("Request is malformed", Log_Error)
 		          ElseIf clientrequest.MethodName <> "" Then
-		            doc = doc.GetErrorResponse(405, clientrequest.MethodName)
+		            doc = GetErrorResponse(405, clientrequest.MethodName)
 		            Me.Log("Request is a NOT ALLOWED", Log_Error)
 		          End If
 		        End Select
@@ -340,7 +340,7 @@ Inherits ServerSocket
 		      CheckType(clientrequest, doc)
 		      
 		    Catch err As UnsupportedFormatException
-		      doc = doc.GetErrorResponse(400, "") 'bad request
+		      doc = GetErrorResponse(400, "") 'bad request
 		      Me.Log("Request is NOT well formed", Log_Error)
 		    End Try
 		    
@@ -356,7 +356,7 @@ Inherits ServerSocket
 		  Dim errpage As HTTP.Response
 		  Dim htmlstack, logstack, funcName As String
 		  #If DebugBuild Then
-		    Dim s() As String = Err.CleanStack
+		    Dim s() As String = HTTP.Helpers.CleanStack(Err)
 		    funcName = Introspection.GetType(Err).FullName
 		    If UBound(s) <= -1 Then
 		      htmlstack = "<br />(empty)<br />"
@@ -372,10 +372,75 @@ Inherits ServerSocket
 		    + Err.Message + EndOfLine + "Stack trace:" + EndOfLine + "    " + logstack
 		  #endif
 		  Me.Log("Runtime exception!" + EndOfLine + logstack , Log_Error)
-		  errpage = errpage.GetErrorResponse(500, htmlstack)
+		  errpage = GetErrorResponse(500, htmlstack)
 		  errpage.Compressible = False
 		  Me.SendResponse(Sender, errpage)
+		  Sender.Purge
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function ErrorPage(ErrorNumber As Integer, Param As String = "") As String
+		  Dim page As String = BlankErrorPage
+		  page = ReplaceAll(page, "%HTTPERROR%", HTTP.ReplyString(ErrorNumber))
+		  
+		  Select Case ErrorNumber
+		  Case 301, 302
+		    page = ReplaceAll(page, "%DOCUMENT%", "The requested resource has moved. <a href=""" + param + """>Click here</a> if you are not automatically redirected.")
+		    
+		  Case 400
+		    page = ReplaceAll(page, "%DOCUMENT%", "The server  did not understand your request.")
+		    
+		  Case 403, 401
+		    page = ReplaceAll(page, "%DOCUMENT%", "Permission to access '" + Param + "' is denied.")
+		    
+		  Case 404
+		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', was not found on this server. ")
+		    
+		  Case 405
+		    page = ReplaceAll(page, "%DOCUMENT%", "The specified HTTP request method '" + Param + "', is not allowed for this resource. ")
+		    
+		  Case 406
+		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser did not specify an acceptable Content-Type that was compatible with the data requested.")
+		    
+		  Case 410
+		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', is no longer available.")
+		    
+		  Case 416
+		    page = ReplaceAll(page, "%DOCUMENT%", "The resource does not contain the requested range.")
+		    
+		  Case 418
+		    page = ReplaceAll(page, "%DOCUMENT%", "I'm a little teapot, short and stout; here is my handle, here is my spout.")
+		    
+		  Case 451
+		    page = ReplaceAll(page, "%DOCUMENT%", "The requested file, '" + Param + "', is unavailable for legal reasons.")
+		    
+		  Case 500
+		    page = ReplaceAll(page, "%DOCUMENT%", "An error ocurred while processing your request. We apologize for any inconvenience. </p><p>" + Param + "</p>")
+		    
+		  Case 501
+		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser has made a request  (verb: '" + Param + "') of this server which, while perhaps valid, is not implemented by this server.")
+		    
+		  Case 505
+		    page = ReplaceAll(page, "%DOCUMENT%", "Your browser specified an HTTP version (" + Param + ") that is not supported by this server. This server supports HTTP 1.0 and HTTP 1.1.")
+		    
+		  Else
+		    page = ReplaceAll(page, "%DOCUMENT%", "An HTTP error of the type specified above has occurred. No further information is available.")
+		  End Select
+		  
+		  page = ReplaceAll(page, "%SIGNATURE%", "<em>Powered By " + HTTP.DaemonVersion + "</em><br />")
+		  
+		  If page.LenB < 512 Then
+		    page = page + "<!--"
+		    Do
+		      page = page + " padding to make IE happy. "
+		    Loop Until page.LenB >= 512
+		    page = page + "-->"
+		  End If
+		  
+		  
+		  Return Page
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -389,6 +454,74 @@ Inherits ServerSocket
 		    End If
 		  End If
 		  Me.Log("(miss!) Get cache item: " + Path, Log_Trace)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function GetErrorResponse(ErrorCode As Integer, Param As String) As HTTP.Response
+		  'Use this constructor to create an error Document with the specified HTTP ErrorCode
+		  'Param is an error-dependant datum; e.g. doc = New Document(404, "/doesntexist/file.txt")
+		  Dim rply As HTTP.Response = GetNewResponse("")
+		  rply.StatusCode = ErrorCode
+		  Dim data As String = ErrorPage(ErrorCode, Param)
+		  rply.SetHeader("Content-Length") = Str(data.LenB)
+		  rply.MIMEType = New ContentType("text/html")
+		  rply.StatusCode = ErrorCode
+		  rply.MessageBody = data
+		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
+		  Return rply
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function GetFileResponse(page As FolderItem, Path As String, RangeStart As Integer = 0, RangeEnd As Integer = - 1) As HTTP.Response
+		  'Use this constructor to create a Document from a FolderItem (file or directory)
+		  Dim rply As HTTP.Response = GetNewResponse("")
+		  If Not page.Directory Then
+		    Dim bs As BinaryStream
+		    If rangeend = -1 Then rangeend = page.Length
+		    If rangestart < 0 Or rangeend > page.Length Or rangeStart > page.Length Or rangeEnd < 0 Then
+		      rply = GetErrorResponse(416, "")
+		      rply.SetHeader("Content-Range") = "bytes */" + Str(Page.Length)
+		      Return rply
+		    End If
+		    bs = BinaryStream.Open(page)
+		    bs.Position = RangeStart
+		    rply.MessageBody = bs.Read(rangeEnd - Rangestart)
+		    bs.Close
+		    rply.MIMEType = ContentType.GetType(page.Name)
+		  End If
+		  rply.SetHeader("Content-Length") = Str(rply.MessageBody.LenB)
+		  If rply.MIMEType = Nil Then
+		    rply.MIMEType = New ContentType("text/html")
+		  End If
+		  If RangeStart = 0 And RangeEnd = page.Length Then
+		    rply.StatusCode = 200
+		  Else
+		    rply.StatusCode = 206 'partial content
+		    rply.SetHeader("Content-Range") = "bytes " + Str(RangeStart) + "-" + Str(RangeEnd) + "/" + Str(Page.Length)
+		  End If
+		  rply.Path = New HTTP.URI(Path)
+		  Dim d As New Date
+		  d.TotalSeconds = d.TotalSeconds + 601
+		  rply.Expires = d
+		  Return rply
+		  
+		Exception Err As IOException
+		  If err.Message.Trim = "" Then
+		    err.Message = "The file could not be opened for reading."
+		  End If
+		  #pragma BreakOnExceptions Off
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1001
+		Protected Shared Function GetNewResponse(Raw As String = "") As HTTP.Response
+		  Return New HTTP.Response(Raw)
+		  
+		  
 		End Function
 	#tag EndMethod
 
@@ -420,6 +553,23 @@ Inherits ServerSocket
 		  End If
 		  
 		  Me.Log("(miss!) Get redirect: " + Path, Log_Trace)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function GetRedirectResponse(Path As String, RedirectURL As String) As HTTP.Response
+		  'Use this constructor to create a 302 redirect Document
+		  Dim rply As HTTP.Response = GetNewResponse("")
+		  rply.StatusCode = 302
+		  rply.Path = New HTTP.URI(Path)
+		  rply.SetHeader("Location") = RedirectURL
+		  rply.Expires = New Date(1999, 12, 31, 23, 59, 59)
+		  rply.MessageBody = ErrorPage(302, RedirectURL)
+		  rply.MIMEType = New ContentType("text/html")
+		  If rply.MIMEType = Nil Then
+		    rply.MIMEType = New ContentType("text/html")
+		  End If
+		  Return rply
 		End Function
 	#tag EndMethod
 
@@ -515,16 +665,13 @@ Inherits ServerSocket
 		        ResponseDocument.SetHeader("Content-Length") = Str(gz.LenB)
 		      Catch Error
 		        'Just send the uncompressed data
-		        ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		      End Try
 		    #else
 		      ResponseDocument.SetHeader("Content-Encoding") = "Identity"
 		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		      ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		    #endif
 		  Else
 		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
-		    ResponseDocument.SetHeader("Content-Length") = Str(ResponseDocument.MessageBody.LenB)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -576,7 +723,7 @@ Inherits ServerSocket
 		    ResponseDocument.SetHeader("Connection") = "close"
 		  End If
 		  ResponseDocument.SetHeader("Accept-Ranges") = "bytes"
-		  ResponseDocument.SetHeader("Server") = WebServer.DaemonVersion
+		  ResponseDocument.SetHeader("Server") = HTTP.DaemonVersion
 		End Sub
 	#tag EndMethod
 
@@ -714,6 +861,16 @@ Inherits ServerSocket
 		  Next
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function VirtualResponse(VirtualURL As String) As HTTP.Response
+		  'Use this constructor to create a 302 redirect Document
+		  Dim rply As HTTP.Response = GetNewResponse("")
+		  rply.StatusCode = 200
+		  rply.Path = New URI(VirtualURL)
+		  Return rply
+		End Function
 	#tag EndMethod
 
 
@@ -1085,6 +1242,9 @@ Inherits ServerSocket
 		UseSessions As Boolean
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = BlankErrorPage, Type = String, Dynamic = False, Default = \"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r<html xmlns\x3D\"http://www.w3.org/1999/xhtml\">\r<head>\r<meta http-equiv\x3D\"Content-Type\" content\x3D\"text/html; charset\x3Diso-8859-1\" />\r<title>%HTTPERROR%</title>\r<style type\x3D\"text/css\">\r<!--\rbody\x2Ctd\x2Cth {\r\tfont-family: Arial\x2C Helvetica\x2C sans-serif;\r\tfont-size: medium;\r}\ra:link {\r\tcolor: #0000FF;\r\ttext-decoration: none;\r}\ra:visited {\r\ttext-decoration: none;\r\tcolor: #990000;\r}\ra:hover {\r\ttext-decoration: underline;\r\tcolor: #009966;\r}\ra:active {\r\ttext-decoration: none;\r\tcolor: #FF0000;\r}\r-->\r</style></head>\r\r<body>\r<h1>%HTTPERROR%</h1>\r<p>%DOCUMENT%</p>\r<hr />\r<p>%SIGNATURE%</p>\r</body>\r</html>", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = Log_Debug, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
 	#tag EndConstant

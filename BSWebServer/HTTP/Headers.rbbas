@@ -1,5 +1,5 @@
 #tag Class
-Class Headers
+Protected Class Headers
 Inherits InternetHeaders
 	#tag Method, Flags = &h1000
 		Sub Constructor(Data As String)

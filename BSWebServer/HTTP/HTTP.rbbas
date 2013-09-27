@@ -220,98 +220,197 @@ Protected Module HTTP
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CRLF() As String
+		  Return EndOfLine.Windows
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function HeaderComment(HeaderName As String, HeaderValue As String) As String
-		  Select Case HeaderName
-		  Case "Date"
-		    Dim d As Date = HTTPDate(HeaderValue)
-		    Dim e As New Date
-		    d.GMTOffset = e.GMTOffset
-		    Return d.ShortDate + " " + d.ShortTime + "(Local time)"
-		    
-		  Case "Content-Length"
-		    Return FormatBytes(Val(HeaderValue))
-		    
-		  Case "Location"
-		    Return "Redirect address"
-		    
-		  Case "Authorization", "WWW-Authenticate"
-		    Return "HTTP Authentication"
-		    
-		  Case "Connection"
-		    If HeaderValue = "close" Then
-		      Return "Connection will close"
-		    ElseIf HeaderValue = "keep-alive" Then
-		      Return "Connection will be maintained"
-		    End If
-		    
-		  Case "Content-Encoding", "Accept-Encoding", "Transfer-Encoding"
-		    Return "Message body encoding"
-		    
-		  Case "Host"
-		    Return "Domain the request is directed at"
-		    
-		  Case "Range"
-		    Return "Partial download requested"
-		    
-		  Case "Accept-Ranges"
-		    Return "Partial download supported"
-		    
-		  Case "Referer"
-		    Return "Referring URL"
-		    
-		  Case "User-Agent"
-		    Return "Client-side program name"
-		    
-		  Case "Server"
-		    Return "Server-side program name"
-		    
-		  Case "Via"
-		    Return "Intermediary Web Proxy"
-		    
-		  Case "Warning"
-		    Return "General warning about message body"
-		    
-		  Case "DNT"
-		    Return "Do Not Track (i.e. cookies)"
-		    
-		  Case "X-Forwarded-For"
-		    Return "Requestor's IP as seen by a proxy"
-		    
-		  Case "Allow"
-		    Return "Server supported HTTP methods"
-		    
-		  Case "Content-Location"
-		    Return "Alternate URL for this resource"
-		    
-		  Case "ETag"
-		    Return "Opaque document version marker"
-		    
-		  Case "Expires"
-		    Dim d As Date = HTTPDate(HeaderValue)
-		    Dim e As New Date
-		    d.GMTOffset = e.GMTOffset
-		    Return d.ShortDate + " " + d.ShortTime + "(Local time)"
-		    
-		  Case "Last-Modified"
-		    Dim d As Date = HTTPDate(HeaderValue)
-		    Dim e As New Date
-		    d.GMTOffset = e.GMTOffset
-		    Return d.ShortDate + " " + d.ShortTime + "(Local time)"
-		    
-		  Case "Link"
-		    Return "URL to a related document (e.g. RSS feed)"
-		    
-		  Case "P3P"
-		    Return "P3P policy, often invalid"
-		    
-		  Case "Refresh"
-		    Return "Redirect URL with optional delay"
-		    
+		Protected Function DateString(d As Date) As String
+		  Dim dt As String
+		  d.GMTOffset = 0
+		  Select Case d.DayOfWeek
+		  Case 1
+		    dt = dt + "Sun, "
+		  Case 2
+		    dt = dt + "Mon, "
+		  Case 3
+		    dt = dt + "Tue, "
+		  Case 4
+		    dt = dt + "Wed, "
+		  Case 5
+		    dt = dt + "Thu, "
+		  Case 6
+		    dt = dt + "Fri, "
+		  Case 7
+		    dt = dt + "Sat, "
 		  End Select
 		  
-		Exception
-		  Return ""
+		  dt = dt  + Format(d.Day, "00") + " "
+		  
+		  Select Case d.Month
+		  Case 1
+		    dt = dt + "Jan "
+		  Case 2
+		    dt = dt + "Feb "
+		  Case 3
+		    dt = dt + "Mar "
+		  Case 4
+		    dt = dt + "Apr "
+		  Case 5
+		    dt = dt + "May "
+		  Case 6
+		    dt = dt + "Jun "
+		  Case 7
+		    dt = dt + "Jul "
+		  Case 8
+		    dt = dt + "Aug "
+		  Case 9
+		    dt = dt + "Sep "
+		  Case 10
+		    dt = dt + "Oct "
+		  Case 11
+		    dt = dt + "Nov "
+		  Case 12
+		    dt = dt + "Dec "
+		  End Select
+		  
+		  dt = dt  + Format(d.Year, "0000") + " " + Format(d.Hour, "00") + ":" + Format(d.Minute, "00") + ":" + Format(d.Second, "00") + " GMT"
+		  Return dt
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DateString(Data As String) As Date
+		  
+		  'Sat, 29 Oct 1994 19:43:31 GMT
+		  Data = ReplaceAll(Data, "-", " ")
+		  Dim d As Date
+		  Dim members() As String = Split(Data, " ")
+		  If UBound(members) = 5 Then
+		    Dim dom, mon, year, h, m, s, tz As Integer
+		    
+		    dom = Val(members(1))
+		    
+		    Select Case members(2)
+		    Case "Jan"
+		      mon = 1
+		    Case "Feb"
+		      mon = 2
+		    Case "Mar"
+		      mon = 3
+		    Case "Apr"
+		      mon = 4
+		    Case "May"
+		      mon = 5
+		    Case "Jun"
+		      mon = 6
+		    Case "Jul"
+		      mon = 7
+		    Case "Aug"
+		      mon = 8
+		    Case "Sep"
+		      mon = 9
+		    Case "Oct"
+		      mon = 10
+		    Case "Nov"
+		      mon = 11
+		    Case "Dec"
+		      mon = 12
+		    End Select
+		    
+		    year = Val(members(3))
+		    
+		    Dim time As String = members(4)
+		    h = Val(NthField(time, ":", 1))
+		    m = Val(NthField(time, ":", 2))
+		    s = Val(NthField(time, ":", 3))
+		    tz = Val(members(5))
+		    
+		    
+		    
+		    d = New Date(year, mon, dom, h, m, s, tz)
+		  End If
+		  Return d
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FormatBytes(bytes As UInt64, precision As Integer = 2) As String
+		  'Converts raw byte counts into SI formatted strings. 1KB = 1024 bytes.
+		  'Optionally pass an integer representing the number of decimal places to return. The default is two decimal places. You may specify
+		  'between 0 and 16 decimal places. Specifying more than 16 will append extra zeros to make up the length. Passing 0
+		  'shows no decimal places and no decimal point.
+		  
+		  Const kilo = 1024
+		  Static mega As UInt64 = kilo * kilo
+		  Static giga As UInt64 = kilo * mega
+		  Static tera As UInt64 = kilo * giga
+		  Static peta As UInt64 = kilo * tera
+		  Static exab As UInt64 = kilo * peta
+		  
+		  Dim suffix, precisionZeros As String
+		  Dim strBytes As Double
+		  
+		  
+		  If bytes < kilo Then
+		    strbytes = bytes
+		    suffix = "bytes"
+		  ElseIf bytes >= kilo And bytes < mega Then
+		    strbytes = bytes / kilo
+		    suffix = "KB"
+		  ElseIf bytes >= mega And bytes < giga Then
+		    strbytes = bytes / mega
+		    suffix = "MB"
+		  ElseIf bytes >= giga And bytes < tera Then
+		    strbytes = bytes / giga
+		    suffix = "GB"
+		  ElseIf bytes >= tera And bytes < peta Then
+		    strbytes = bytes / tera
+		    suffix = "TB"
+		  ElseIf bytes >= tera And bytes < exab Then
+		    strbytes = bytes / peta
+		    suffix = "PB"
+		  ElseIf bytes >= exab Then
+		    strbytes = bytes / exab
+		    suffix = "EB"
+		  End If
+		  
+		  
+		  While precisionZeros.Len < precision
+		    precisionZeros = precisionZeros + "0"
+		  Wend
+		  If precisionZeros.Trim <> "" Then precisionZeros = "." + precisionZeros
+		  
+		  Return Format(strBytes, "#,###0" + precisionZeros) + suffix
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FormatSocketError(ErrorCode As Integer) As String
+		  Dim err As String = "socket error " + Str(ErrorCode)
+		  Select Case ErrorCode
+		  Case 102
+		    err = err + ": Disconnected."
+		  Case 100
+		    err = err + ": Could not create a socket!"
+		  Case 103
+		    err = err + ": Connection timed out."
+		  Case 105
+		    err = err + ": That port number is already in use."
+		  Case 106
+		    err = err + ": Socket is not ready for that command."
+		  Case 107
+		    err = err + ": Could not bind to port."
+		  Case 108
+		    err = err + ": Out of memory."
+		  Else
+		    err = err + ": System error code."
+		  End Select
+		  
+		  Return err
 		End Function
 	#tag EndMethod
 
@@ -352,6 +451,22 @@ Protected Module HTTP
 		End Function
 	#tag EndMethod
 
+
+	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"BoredomServe/1.0 (Mac OS X)"
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"BoredomServe/1.0 (Win32)"
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"BoredomServe/1.0 (GNU/Linux)"
+	#tag EndConstant
+
+	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
+	#tag EndConstant
+
+
+	#tag Enum, Name = ConnectionTypes, Flags = &h0
+		SSLv3
+		  TLSv1
+		Insecure
+	#tag EndEnum
 
 	#tag Enum, Name = RequestMethod, Flags = &h0
 		GET

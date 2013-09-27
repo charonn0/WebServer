@@ -1,36 +1,238 @@
-#tag Module
-Protected Module WebServer
+#tag Class
+Protected Class ContentType
 	#tag Method, Flags = &h0
-		Function GZipPage(MessageBody As String) As String
-		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
-		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.
-		  #If GZipAvailable And TargetHasGUI Then'
-		    Dim size As Single = MessageBody.LenB
-		    If size > 2^26 Then Return MessageBody 'if bigger than 64MB, don't try compressing it.
-		    MessageBody = GZip.Compress(MessageBody)
-		    If GZip.Error <> 0 Then
-		      Raise New RuntimeException
+		Function Acceptance(OtherType As ContentType) As Single
+		  'Returns a Single that is <=1. This is the comparative "weight" of the match between the
+		  'two types. A weight of 1 has the highest Acceptance
+		  If Not OtherType.Accepts(Me) Then Return 0.0
+		  Return (OtherType.Weight + Me.Weight) / 2
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Accepts(OtherType As ContentType) As Boolean
+		  If OtherType.SuperType <> Me.SuperType And OtherType.SuperType <> "*" And Me.SuperType <> "*" Then Return False
+		  If OtherType.SubType <> Me.SubType And OtherType.SubType <> "*" And Me.SubType <> "*" Then Return False
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Sub AddType(FileExtension As String, MIMEName As String)
+		  MIMETypes.Value(FileExtension) = MIMEName
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Raw As String)
+		  'Accepts a single raw ContentType string (e.g. "text/html; CharSet=UTF8")
+		  'For strings that might contain multiple entries, use ContentType.ParseTypes
+		  
+		  If InStr(Raw, ";") > 0 Then
+		    Dim fields() As String = Split(raw, ";")
+		    Dim fcount As Integer = Ubound(fields)
+		    For i As Integer = 0 To fcount
+		      Dim entry As String = fields(i)
+		      If InStr(entry, "/") > 0 Then
+		        If NthField(entry, "/", 1).Trim <> "" Then
+		          SuperType = NthField(entry, "/", 1).Trim
+		        Else
+		          SuperType = "*"
+		        End If
+		        
+		        If NthField(entry, "/", 2).Trim <> "" Then
+		          SubType = NthField(entry, "/", 2).Trim
+		        Else
+		          SubType = "*"
+		        End If
+		      Else
+		        Select Case NthField(entry, "=", 1).Trim
+		        Case "q"
+		          Weight = CDbl(NthField(entry, "=", 2))
+		        Case "charset"
+		          Dim nm As String = NthField(entry, "=", 2)
+		          For e As Integer = 0 To Encodings.Count' - 1
+		            If Encodings.Item(e).internetName = nm Then
+		              Me.CharSet = Encodings.Item(e)
+		              Exit For e
+		            End If
+		          Next
+		          
+		        End Select
+		      End If
+		      
+		    Next
+		    
+		  Else
+		    If NthField(Raw, "/", 1).Trim <> "" Then
+		      SuperType = NthField(Raw, "/", 1).Trim
+		    Else
+		      SuperType = "*"
 		    End If
-		    Dim mb As New MemoryBlock(MessageBody.LenB + 8)
-		    mb.Byte(0) = &h1F 'magic
-		    mb.Byte(1) = &h8B 'magic
-		    mb.Byte(2) = &h08 'use deflate
-		    mb.StringValue(8, MessageBody.LenB) = MessageBody
-		    Return mb
-		  #Else
-		    'HTTP.GZIPAvailable must be set to True and the GZip plugin must be installed.
-		    #pragma Warning "GZip is disabled."
-		    Return MessageBody
-		  #EndIf
+		    
+		    If NthField(Raw, "/", 2).Trim <> "" Then
+		      SubType = NthField(Raw, "/", 2).Trim
+		    Else
+		      SubType = "*"
+		    End If
+		    
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function GetIcon(ext As String) As String
+		  ext = Lowercase(ext)
+		  
+		  Select Case ext
+		  Case "exe", "com", "scr", "pif", "dll", "deb", "rpm"
+		    Return "/" + WebServer.VirtualRoot + "/img/bin.png"
+		    
+		  Case "js", "cs", "c", "h", "vbs", "vbe", "bat", "cmd", "sh", "ini", "reg"
+		    Return "/" + WebServer.VirtualRoot + "/img/script.png"
+		    
+		  Case "rbp", "rbbas", "rbvcp", "rbfrm", "rbres"
+		    Return "/" + WebServer.VirtualRoot + "/img/xojo.png"
+		    
+		  Case "folder"
+		    Return "/" + WebServer.VirtualRoot + "/img/dir.png"
+		    
+		  Case "txt", "md"
+		    Return "/" + WebServer.VirtualRoot + "/img/txt.png"
+		    
+		  Case "htm", "html"
+		    Return "/" + WebServer.VirtualRoot + "/img/html.png"
+		    
+		  Case "css"
+		    Return "/" + WebServer.VirtualRoot + "/img/css.png"
+		    
+		  Case "xml", "xsl"
+		    Return "/" + WebServer.VirtualRoot + "/img/xml.png"
+		    
+		  Case "jpg", "jpeg", "png", "bmp", "gif", "tif"
+		    Return "/" + WebServer.VirtualRoot + "/img/image.png"
+		    
+		  Case "mov", "mp4", "m4v", "avi", "mpg", "mpeg", "wmv", "mkv"
+		    Return "/" + WebServer.VirtualRoot + "/img/mov.png"
+		    
+		  Case "ttf", "otf", "pfb", "pfm"
+		    Return "/" + WebServer.VirtualRoot + "/img/font.png"
+		    
+		  Case "zip", "tar", "rar", "7zip", "bzip", "gzip", "7z", "tgz", "gz", "z"
+		    Return "/" + WebServer.VirtualRoot + "/img/zip.png"
+		    
+		  Case "wav"
+		    Return "/" + WebServer.VirtualRoot + "/img/wav.png"
+		    
+		  Case "mp3", "m4a", "m4b", "m4p", "ogg", "flac"
+		    Return "/" + WebServer.VirtualRoot + "/img/mus.png"
+		    
+		  Case "pdf", "ps"
+		    Return "/" + WebServer.VirtualRoot + "/img/pdf.png"
+		    
+		  Case "xls", "xlsx"
+		    Return "/" + WebServer.VirtualRoot + "/img/xls.png"
+		    
+		  Case "doc", "docx"
+		    Return "/" + WebServer.VirtualRoot + "/img/doc.png"
+		    
+		  Else ' This returns the default icon
+		    Return "/" + WebServer.VirtualRoot + "/img/unknown.png"
+		    
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function GetType(FileName As String) As ContentType
+		  Dim ext As String = NthField(FileName, ".", CountFields(FileName, "."))
+		  If MIMETypes.HasKey(ext) Then
+		    Return New ContentType(MIMETypes.Value(ext).StringValue)
+		  End If
+		  Return New ContentType("application/octet-stream")
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function ParseTypes(Raw As String) As HTTP.ContentType()
+		  'parses a multi-field content-type string into and array of ContentType objects
+		  'e.g. "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+		  Dim fields() As String
+		  If InStr(Raw, ",") > 0 Then 'multiple types
+		    fields = Split(raw, ",")
+		  Else
+		    fields.Append(raw)
+		  End If
+		  Dim types() As HTTP.ContentType
+		  Dim fcount As Integer = Ubound(fields)
+		  For i As Integer = 0 To fcount
+		    Dim t As New ContentType("")
+		    Dim entry As String = fields(i)
+		    Dim type, wght As String
+		    If InStr(entry, ";") > 0 Then 'weight
+		      type = NthField(entry, ";", 1)
+		      wght = NthField(entry, ";", 2)
+		    Else
+		      type = entry.Trim
+		      wght = ""
+		    End If
+		    
+		    If NthField(type, "/", 1).Trim <> "" Then
+		      t.SuperType = NthField(type, "/", 1).Trim
+		    Else
+		      t.SuperType = "*"
+		    End If
+		    
+		    If NthField(type, "/", 2).Trim <> "" Then
+		      t.SubType = NthField(type, "/", 2).Trim
+		    Else
+		      t.SubType = "*"
+		    End If
+		    If NthField(wght, "=", 1).Trim = "q" Then
+		      wght = NthField(wght, "=", 2).Trim
+		      t.Weight = CDbl(wght)
+		    End If
+		    types.Append(t)
+		  Next
+		  Return types
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Sub RemoveType(FileExtension As String)
+		  If MIMETypes.HasKey(FileExtension) Then
+		    MIMETypes.Remove(FileExtension)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToString() As String
+		  'serializes the object
+		  Dim data As String = SuperType + "/" + SubType
+		  If Me.Weight < 1 Then
+		    data = data + "; q=" + Format(Me.Weight, ".##")
+		  End If
+		  If Me.CharSet <> Nil Then
+		    data = data + "; CharSet=" + Me.CharSet.internetName
+		  End If
+		  Return Data
 		End Function
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h0
+		CharSet As TextEncoding
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  If mMIMETypes = Nil Then
-			    mMIMETypes = New Dictionary( _
+			  Static mMIMEType As Dictionary
+			  If mMIMEType = Nil Then
+			    mMIMEType = New Dictionary( _
 			    "ez":"application/andrew-inset", _
 			    "aw":"application/applixware", _
 			    "atom":"application/atom+xml", _
@@ -813,58 +1015,23 @@ Protected Module WebServer
 			    "movie":"video/x-sgi-movie", _
 			    "ice":"x-conference/x-cooltalk")
 			  End If
-			  return mMIMETypes
+			  return mMIMEType
 			End Get
 		#tag EndGetter
-		#tag Setter
-			Set
-			  mMIMETypes = value
-			End Set
-		#tag EndSetter
-		Protected MIMETypes As Dictionary
+		Protected Shared MIMETypes As Dictionary
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h21
-		Private mMIMETypes As Dictionary
+	#tag Property, Flags = &h0
+		SubType As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mVirtualRoot As String
+	#tag Property, Flags = &h0
+		SuperType As String
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mVirtualRoot = "" Then
-			    VirtualRoot = EncodeHex(MD5(Str(Microseconds)))
-			  End If
-			  return mVirtualRoot
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mVirtualRoot = value
-			End Set
-		#tag EndSetter
-		VirtualRoot As String
-	#tag EndComputedProperty
-
-
-	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"BoredomServe/1.0 (Mac OS X)"
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"BoredomServe/1.0 (Win32)"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"BoredomServe/1.0 (GNU/Linux)"
-	#tag EndConstant
-
-	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
-
-
-	#tag Enum, Name = ConnectionTypes, Flags = &h0
-		SSLv3
-		  TLSv1
-		Insecure
-	#tag EndEnum
+	#tag Property, Flags = &h0
+		Weight As Single = 1.0
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -892,11 +1059,23 @@ Protected Module WebServer
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="SubType"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			Type="String"
 			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuperType"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -907,11 +1086,11 @@ Protected Module WebServer
 			InheritedFrom="Object"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="VirtualRoot"
+			Name="Weight"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			InitialValue="1.0"
+			Type="Single"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Module
-#tag EndModule
+End Class
+#tag EndClass

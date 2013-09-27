@@ -1,11 +1,14 @@
 #tag Class
-Class DirectoryIndex
+Protected Class DirectoryIndex
 Inherits HTTP.Response
 	#tag Method, Flags = &h0
 		Sub Constructor(Target As FolderItem, ServerPath As String)
 		  Me.Target = Target
 		  Me.RequestPath = New URI(ServerPath)
-		  Super.Constructor(200, New ContentType("text/html"), HTTP.RequestMethod.GET, "")
+		  Super.Constructor("HTTP/1.0 200 OK" + CRLF)
+		  Me.MIMEType = ContentType.GetType("index.html")
+		  '200, New ContentType("text/html"), HTTP.RequestMethod.GET, "")
+		  Me.Method = HTTP.RequestMethod.GET
 		  Dim d As New Date
 		  d.TotalSeconds = d.TotalSeconds + 60
 		  Me.Expires = d
@@ -29,7 +32,7 @@ Inherits HTTP.Response
 		    If item.Directory Then
 		      dirtypes.Append("0000AAAA")
 		    Else
-		      Dim type As New ContentType(item)
+		      Dim type As ContentType = ContentType.GetType(item.Name)
 		      dirtypes.Append(type.ToString)
 		    End If
 		    
@@ -126,16 +129,16 @@ Inherits HTTP.Response
 		      c = "#A7A7A7"
 		    End If
 		    line = ReplaceAll(line, "%ROWCOLOR%", c)
-		    Dim type As New ContentType(item)
+		    Dim type As ContentType = ContentType.GetType(item.Name)
 		    line = ReplaceAll(line, "%FILEPATH%", href)
 		    line = ReplaceAll(line, "%FILENAME%", name)
 		    if item.Directory Then
-		      icon = GetMIMEIcon("folder")
+		      icon = ContentType.GetIcon("folder")
 		      line = ReplaceAll(line, "%FILESIZE%", " - ")
 		      line = ReplaceAll(line, "%FILETYPE%", "Directory")
 		    Else
-		      icon = GetMIMEIcon(NthField(item.name, ".", CountFields(item.name, ".")))
-		      line = ReplaceAll(line, "%FILESIZE%", FormatBytes(item.Length))
+		      icon = ContentType.GetIcon(NthField(item.name, ".", CountFields(item.name, ".")))
+		      line = ReplaceAll(line, "%FILESIZE%", HTTP.FormatBytes(item.Length))
 		      line = ReplaceAll(line, "%FILETYPE%", type.ToString)
 		    End if
 		    line = ReplaceAll(line, "%FILEICON%", icon)

@@ -116,7 +116,7 @@ Protected Class URI
 		    Dim acount As Integer = UBound(Arguments)
 		    For i As Integer = 0 To acount
 		      If i > 0 Then args = args + "&"
-		      args = args + URLEncode(Arguments(i))
+		      args = args + HTTP.Helpers.URLEncode(Arguments(i))
 		    Next
 		    URL = URL + args
 		  End If
@@ -212,7 +212,7 @@ Protected Class URI
 			This class does not know about default ports and will explicitly specify any port assigned, even the default
 			port for the specified protocol. To indicate the default port, then, just set the port to 0 or don't set it at all.
 		#tag EndNote
-		Port As Integer
+		Port As Integer = 80
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -291,6 +291,7 @@ Protected Class URI
 		#tag ViewProperty
 			Name="Port"
 			Group="Behavior"
+			InitialValue="80"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

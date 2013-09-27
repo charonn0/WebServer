@@ -1,5 +1,5 @@
 #tag Class
-Class Cookie
+Protected Class Cookie
 Inherits Pair
 	#tag Method, Flags = &h1000
 		Sub Constructor(Raw As String)
@@ -28,7 +28,7 @@ Inherits Pair
 		      Case "Path"
 		        Me.Path = v
 		      Case "Expires"
-		        Me.Expires = HTTPDate(v)
+		        Me.Expires = DateString(v)
 		      Case "Port"
 		        Me.Port = Val(v)
 		      Case "Secure"
@@ -71,7 +71,7 @@ Inherits Pair
 		  If Me.Expires <> Nil Then
 		    Dim now As New Date
 		    If Me.Expires.TotalSeconds > now.TotalSeconds Then
-		      data = data + "; expires=" + HTTPDate(Me.Expires)
+		      data = data + "; expires=" + DateString(Me.Expires)
 		    End If
 		  End If
 		  
