@@ -11,7 +11,7 @@ Inherits HTTP.BaseServer
 		    If item = Nil Then Return Nil '404 Not found
 		    If item.Directory And Not Me.DirectoryBrowsing Then
 		      '403 Forbidden!
-		      Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
+		      'Me.Log("Page is directory and DirectoryBrowsing=False", Log_Error)
 		      doc = GetErrorResponse(403, ClientRequest.Path.ServerPath)
 		      
 		    ElseIf ClientRequest.Path.ServerPath = "/" And Not item.Directory Then
@@ -123,7 +123,7 @@ Inherits HTTP.BaseServer
 		    pathsep = "/"
 		  #endif
 		  If origpath = "" Then origpath = "/"
-		  Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
+		  'Me.Log(CurrentMethodName + "(" + Path + ")", BaseServer.Log_Trace)
 		  
 		  Path = HTTP.Helpers.URLDecode(Path)
 		  

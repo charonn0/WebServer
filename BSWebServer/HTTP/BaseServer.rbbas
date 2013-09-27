@@ -56,8 +56,7 @@ Inherits ServerSocket
 		  ' Page object and does *not* pass the request on to the HandleRequest event.
 		  ' See also: RemoveRedirect
 		  
-		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Add redirect for " + page.Path.ServerPath, Log_Debug)
+		  Me.Log(CurrentMethodName + ": " + page.Path.ServerPath, Log_Trace)
 		  Redirects.Value(page.Path.ServerPath) = Page
 		End Sub
 	#tag EndMethod
@@ -73,13 +72,13 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + ClientRequest.SessionID + ")", Log_Trace)
 		  Dim doc As HTTP.Response
 		  If AuthenticationRequired Then
-		    Me.Log("Authenticating", Log_Trace)
+		    'Me.Log("Authenticating", Log_Trace)
 		    If Not Authenticate(clientrequest) Then
 		      Me.Log("Authentication failed", Log_Error)
 		      doc = GetErrorResponse(401, clientrequest.Path.ServerPath)
 		      doc.SetHeader("WWW-Authenticate") = "Basic realm=""" + AuthenticationRealm + """"
 		    Else
-		      Me.Log("Authentication Successful", Log_Debug)
+		      Me.Log("Authentication succeeded", Log_Debug)
 		    End If
 		  End If
 		  Return doc
@@ -108,7 +107,7 @@ Inherits ServerSocket
 		    End If
 		    If cache <> Nil Then
 		      cache.Compressible = False
-		      Me.Log("Page from cache", Log_Debug)
+		      'Me.Log("Page from cache", Log_Debug)
 		      Cache.Expires = New Date
 		      Cache.Expires.TotalSeconds = Cache.Expires.TotalSeconds + 60
 		      If clientrequest.IsModifiedSince(Cache.Expires) Then
@@ -159,7 +158,7 @@ Inherits ServerSocket
 		  Wend
 		  Dim redir As HTTP.Response = GetRedirect(Session, clientrequest.Path.ServerPath)
 		  RedirectsLock.Release
-		  If redir <> Nil Then Me.Log("Using redirect.", Log_Trace)
+		  'If redir <> Nil Then Me.Log("Using redirect.", Log_Trace)
 		  Return redir
 		End Function
 	#tag EndMethod
@@ -191,11 +190,11 @@ Inherits ServerSocket
 		  ' response is not acceptable, an error (HTTP 406 Nat Acceptable) is returned to
 		  ' client.
 		  If EnforceContentType And ClientRequest.ProtocolVersion > 1.0 And doc.StatusCode < 300 And doc.StatusCode >= 200 Then
-		    Me.Log("Checking Accepts", Log_Trace)
+		    'Me.Log("Checking Accepts", Log_Trace)
 		    tcount = UBound(clientrequest.Headers.AcceptableTypes)
 		    For i As Integer = 0 To tcount
 		      If clientrequest.Headers.AcceptableTypes(i).Accepts(doc.MIMEType) Then
-		        Me.Log("Response is a Acceptable", Log_Debug)
+		        'Me.Log("Response is a Acceptable", Log_Debug)
 		        Return
 		      End If
 		    Next
@@ -251,7 +250,7 @@ Inherits ServerSocket
 		    Dim session As HTTP.Session
 		    Try
 		      clientrequest = New HTTP.Request(data, UseSessions)
-		      Me.Log("Request is well formed", Log_Debug)
+		      'Me.Log("Request is well formed", Log_Debug)
 		      Me.Log(DecodeURLComponent(clientrequest.ToString), Log_Request)
 		      If clientrequest.HasHeader("Content-Length") Then
 		        Dim cl As Integer = Val(clientrequest.GetHeader("Content-Length"))
@@ -300,7 +299,7 @@ Inherits ServerSocket
 		        doc = CheckRedirect(clientrequest, session)
 		        If doc <> Nil Then Exit Do ' Redirected, done.
 		        
-		        Me.Log("Running HandleRequest event", Log_Debug)
+		        'Me.Log("Running HandleRequest event", Log_Debug)
 		        doc = HandleRequest(clientrequest) ' Ask the subclass to handle it
 		        If doc <> Nil Then Exit Do ' Subclass handled it, done.
 		        
@@ -328,7 +327,7 @@ Inherits ServerSocket
 		            Me.Log("Request is malformed", Log_Error)
 		          ElseIf clientrequest.MethodName <> "" Then
 		            doc = GetErrorResponse(405, clientrequest.MethodName)
-		            Me.Log("Request is a NOT ALLOWED", Log_Error)
+		            Me.Log("Request is a not allowed", Log_Error)
 		          End If
 		        End Select
 		        Exit Do 'Done constructing the error message
@@ -341,7 +340,7 @@ Inherits ServerSocket
 		      
 		    Catch err As UnsupportedFormatException
 		      doc = GetErrorResponse(400, "") 'bad request
-		      Me.Log("Request is NOT well formed", Log_Error)
+		      Me.Log("Request is malformed", Log_Error)
 		    End Try
 		    
 		    ' Finally, send the response to the client
@@ -453,7 +452,7 @@ Inherits ServerSocket
 		      Return Sender.GetCacheItem(Path)
 		    End If
 		  End If
-		  Me.Log("(miss!) Get cache item: " + Path, Log_Trace)
+		  'Me.Log("(miss!) Get cache item: " + Path, Log_Trace)
 		End Function
 	#tag EndMethod
 
@@ -527,32 +526,33 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetRedirect(Sender As HTTP.Session, Path As String) As HTTP.Response
+		  Me.Log(CurrentMethodName + "(" + Path + ")", Log_Trace)
+		  
 		  If Sender <> Nil Then
 		    'If Right(Path, 1) = "/" And Path <> "/" Then Path = Left(Path, Path.Len - 1)
 		    Dim logID As String = "NO_SESSION"
 		    If UseSessions Then logID = Sender.SessionID
-		    Me.Log(CurrentMethodName + "(" + Path + ") for session " + logID, Log_Trace)
-		    If UseSessions THen
-		      If Sender.GetRedirect(Path) <> Nil Then
-		        Me.Log("(session hit!) Get redirect: " + Path, Log_Debug)
-		        Return Sender.GetRedirect(Path)
+		    If UseSessions Then
+		      Dim redir As HTTP.Response = Sender.GetRedirect(Path)
+		      If redir <> Nil Then
+		        Me.Log("Session redirect found: " + Path, Log_Trace)
+		        Return redir
 		      End If
 		    End If
 		  End If
 		  
-		  Me.Log(CurrentMethodName + "(" + Path + ")", Log_Trace)
 		  
 		  If Me.Redirects.HasKey(Path) Then
-		    Me.Log("(server hit!) Get redirect: " + Path, Log_Debug)
+		    Me.Log("Server redirect found: " + Path, Log_Trace)
 		    Return Me.Redirects.Value(Path)
 		  End If
 		  
 		  If Me.GlobalRedirects.HasKey(Path) Then
-		    Me.Log("(GLOBAL hit!) Get redirect: " + Path, Log_Debug)
+		    Me.Log("Global redirect found: " + Path, Log_Trace)
 		    Return Me.GlobalRedirects.Value(Path)
 		  End If
 		  
-		  Me.Log("(miss!) Get redirect: " + Path, Log_Trace)
+		  'Me.Log("(miss!) Get redirect: " + Path, Log_Trace)
 		End Function
 	#tag EndMethod
 
@@ -575,7 +575,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Function GetSession(Socket As SSLSocket) As HTTP.Session
-		  Me.Log(CurrentMethodName + "(0x" + Left(Hex(Socket.Handle) + "00000000", 8) + ")", Log_Trace)
+		  Me.Log(CurrentMethodName + "(Socket: 0x" + Left(Hex(Socket.Handle) + "00000000", 8) + ")", Log_Trace)
 		  Dim Session As HTTP.Session
 		  If UseSessions Then
 		    If Me.Sockets.HasKey(Socket) Then
@@ -645,7 +645,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h0
 		Sub Listen()
 		  Me.Log(CurrentMethodName, Log_Trace)
-		  Me.Log("Server now listening...", Log_Socket)
+		  Me.Log("Server now listening...", Log_Debug)
 		  Sessions = New Dictionary
 		  Sockets = New Dictionary
 		  Super.Listen
@@ -725,7 +725,7 @@ Inherits ServerSocket
 		  Me.Log(CurrentMethodName + "(" + HTTPpath + ")", Log_Trace)
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  If Redirects.HasKey(HTTPpath) Then
-		    Me.Log("Removed redirect: " + HTTPPath, Log_Debug)
+		    Me.Log("Removed server redirect: " + HTTPPath, Log_Debug)
 		    Redirects.Remove(HTTPpath)
 		  End If
 		End Sub
@@ -734,7 +734,7 @@ Inherits ServerSocket
 	#tag Method, Flags = &h21
 		Private Sub SendCompleteHandler(Sender As SSLSocket, UserAborted As Boolean)
 		  #pragma Unused UserAborted
-		  Me.Log("Send complete", Log_Socket)
+		  'Me.Log("Send complete", Log_Socket)
 		  Sender.Close
 		  Me.Log("Socket closed", Log_Trace)
 		End Sub
@@ -764,7 +764,7 @@ Inherits ServerSocket
 		    HTTP.Helpers.GZipPage(ResponseDocument)
 		  End If
 		  
-		  Me.Log("Sending data", Log_Socket)
+		  Me.Log("Sending response", Log_Socket)
 		  Socket.Write(ResponseDocument.ToString)
 		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
 		  If UseSessions And ResponseDocument.Method = RequestMethod.GET And ResponseDocument.StatusCode = 200 Then
@@ -788,7 +788,7 @@ Inherits ServerSocket
 		Sub StopListening()
 		  Me.Log(CurrentMethodName, Log_Trace)
 		  Super.StopListening
-		  Me.Log("Server stopped listening.", Log_Socket)
+		  Me.Log("Server stopped listening.", Log_Debug)
 		  
 		  Me.Sessions = New Dictionary
 		  Me.Sockets = New Dictionary
@@ -799,7 +799,7 @@ Inherits ServerSocket
 
 	#tag Method, Flags = &h21
 		Private Sub ThreadRun(Sender As Thread)
-		  If Me.Threading Then Me.Log("Your server today is 0x" + Left(Hex(Sender.ThreadID) + "00000000", 8), Log_Trace)
+		  'If Me.Threading Then Me.Log("Your server today is 0x" + Left(Hex(Sender.ThreadID) + "00000000", 8), Log_Trace)
 		  DefaultHandler(GetSocket(Sender))
 		End Sub
 	#tag EndMethod
@@ -818,7 +818,7 @@ Inherits ServerSocket
 		  
 		  For Each Socket As SSLSocket In Me.Sockets.Keys
 		    If Not Sessions.HasKey(Me.Sockets.Value(Socket)) Or Not Socket.IsConnected Then
-		      Me.Log("Socket destroyed", Log_Socket)
+		      Me.Log("Socket destroyed", Log_Trace)
 		      Socket.Close
 		      Me.Sockets.Remove(Socket)
 		    End If
