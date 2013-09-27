@@ -642,40 +642,6 @@ Inherits ServerSocket
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub GZipResponse(ByRef ResponseDocument As HTTP.Response)
-		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
-		    #If GZIPAvailable And TargetHasGUI Then
-		      If Not Me.UseCompression Then
-		        If Not ResponseDocument.HasHeader("Content-Encoding") Then ResponseDocument.SetHeader("Content-Encoding") = "Identity"
-		        ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		        Return
-		      End If
-		      
-		      Me.Log(CurrentMethodName + "(" + ResponseDocument.SessionID + ")", Log_Trace)
-		      Dim gz As MemoryBlock = ResponseDocument.MessageBody
-		      If gz.Byte(0) = &h1F And gz.Byte(1) = &h8B Then Return
-		      Try
-		        Dim size As Integer = ResponseDocument.MessageBody.LenB
-		        gz = GZipPage(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
-		        ResponseDocument.MessageBody = gz
-		        ResponseDocument.SetHeader("Content-Encoding") ="gzip"
-		        size = gz.LenB * 100 / size
-		        Me.Log("GZipped page to " + Format(size, "##0.0##\%") + " of original", Log_Debug)
-		        ResponseDocument.SetHeader("Content-Length") = Str(gz.LenB)
-		      Catch Error
-		        'Just send the uncompressed data
-		      End Try
-		    #else
-		      ResponseDocument.SetHeader("Content-Encoding") = "Identity"
-		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
-		    #endif
-		  Else
-		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Listen()
 		  Me.Log(CurrentMethodName, Log_Trace)
@@ -791,7 +757,12 @@ Inherits ServerSocket
 		  
 		  PrepareResponse(ResponseDocument, Socket)
 		  PrepareSession(ResponseDocument, session)
-		  GZipResponse(ResponseDocument)
+		  If Not UseCompression Then
+		    If Not ResponseDocument.HasHeader("Content-Encoding") Then ResponseDocument.SetHeader("Content-Encoding") = "Identity"
+		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		  Else
+		    HTTP.Helpers.GZipPage(ResponseDocument)
+		  End If
 		  
 		  Me.Log("Sending data", Log_Socket)
 		  Socket.Write(ResponseDocument.ToString)

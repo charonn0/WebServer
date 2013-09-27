@@ -148,6 +148,86 @@ Protected Module Helpers
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GUnzip(Data As String) As String
+		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
+		  #If GZipAvailable And TargetHasGUI Then'
+		    Dim output As String = GZip.Uncompress(data, data.LenB * 5)
+		    If GZip.Error <> 0 Then
+		      Raise New RuntimeException
+		    End If
+		    Return output
+		  #Else
+		    Return data
+		  #EndIf
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub GUnzipPage(ByRef ResponseDocument As HTTP.Response)
+		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
+		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.
+		  #If GZipAvailable And TargetHasGUI Then'
+		    ResponseDocument.MessageBody = GUnzip(ResponseDocument.MessageBody)
+		    If GZip.Error <> 0 Then
+		      Raise New RuntimeException
+		    End If
+		  #Else
+		    #pragma Unused ResponseDocument
+		    Return
+		  #EndIf
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GZip(MessageBody As String) As String
+		  'This function requires the GZip plugin available at http://sourceforge.net/projects/realbasicgzip/
+		  'Returns the passed MessageBody after being compressed. If GZIPAvailable = false, returns the original MessageBody unchanged.
+		  #If GZipAvailable And TargetHasGUI Then'
+		    Dim size As Single = MessageBody.LenB
+		    If size > 2^26 Then Return MessageBody 'if bigger than 64MB, don't try compressing it.
+		    MessageBody = GZip.Compress(MessageBody)
+		    If GZip.Error <> 0 Then
+		      Raise New RuntimeException
+		    End If
+		    Dim mb As New MemoryBlock(MessageBody.LenB + 8)
+		    mb.Byte(0) = &h1F 'magic
+		    mb.Byte(1) = &h8B 'magic
+		    mb.Byte(2) = &h08 'use deflate
+		    mb.StringValue(8, MessageBody.LenB) = MessageBody
+		    Return mb
+		  #Else
+		    'HTTP.GZIPAvailable must be set to True and the GZip plugin must be installed.
+		    #pragma Warning "GZip is disabled."
+		    Return MessageBody
+		  #EndIf
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub GZipPage(ByRef ResponseDocument As HTTP.Response)
+		  If ResponseDocument.MessageBody.LenB > 0 And ResponseDocument.Compressible Then
+		    #If GZIPAvailable And TargetHasGUI Then
+		      Dim gz As MemoryBlock = ResponseDocument.MessageBody
+		      If gz.Byte(0) = &h1F And gz.Byte(1) = &h8B Then Return
+		      Try
+		        gz = HTTP.Helpers.GZip(Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "Compressed with GZip " + GZip.Version))
+		        ResponseDocument.MessageBody = gz
+		        ResponseDocument.SetHeader("Content-Encoding") ="gzip"
+		        ResponseDocument.SetHeader("Content-Length") = Str(gz.LenB)
+		      Catch Error
+		        'Just send the uncompressed data
+		      End Try
+		    #else
+		      ResponseDocument.SetHeader("Content-Encoding") = "Identity"
+		      ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%COMPRESSION%", "No compression.")
+		    #endif
+		  Else
+		    ResponseDocument.SetHeader("Content-Encoding") = "Identity"
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function HeaderComment(HeaderName As String, HeaderValue As String) As String
 		  Select Case HeaderName
 		  Case "Date"

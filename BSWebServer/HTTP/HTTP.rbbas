@@ -452,16 +452,6 @@ Protected Module HTTP
 	#tag EndMethod
 
 
-	#tag Constant, Name = DaemonVersion, Type = String, Dynamic = False, Default = \"BoredomServe/1.0", Scope = Public
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"BoredomServe/1.0 (Mac OS X)"
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"BoredomServe/1.0 (Win32)"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"BoredomServe/1.0 (GNU/Linux)"
-	#tag EndConstant
-
-	#tag Constant, Name = GZIPAvailable, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
-	#tag EndConstant
-
-
 	#tag Enum, Name = ConnectionTypes, Flags = &h0
 		SSLv3
 		  TLSv1
