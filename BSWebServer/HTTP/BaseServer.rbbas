@@ -267,6 +267,16 @@ Inherits ServerSocket
 		        End If
 		      End If
 		      
+		      If clientrequest.HasHeader("Content-Type") Then
+		        Dim type As String = clientrequest.GetHeader("Content-Type")
+		        If InStr(type, "multipart/form-data") > 0 Then
+		          ' If the request is a Multipart HTTP form, then MessageBody is contains the
+		          ' raw HTTP form data and MultiPart contains the form as a Dictionary
+		          Dim boundary As String = NthField(type, "boundary=", 2).Trim
+		          clientrequest.MultiPart = MultipartForm.FromData(clientrequest.MessageBody, boundary)
+		        End If
+		      End If
+		      
 		      If UseSessions Then
 		        Dim ID As String = clientrequest.GetCookie("SessionID") ' grab the Session ID if it's there
 		        If ID = "" Then

@@ -29,14 +29,6 @@ Inherits HTTP.HTTPMessage
 		  Me.Headers = New Headers(h)
 		  Me.MessageBody = Replace(data, h, "")
 		  
-		  If Me.HasHeader("Content-Type") Then
-		    Dim type As String = Me.GetHeader("Content-Type")
-		    If InStr(type, "multipart/form-data") > 0 Then
-		      Dim boundary As String = NthField(type, "boundary=", 2).Trim
-		      Me.MultiPart = MultipartForm.FromData(Me.MessageBody, boundary)
-		    End If
-		  End If
-		  
 		  Me.Method = HTTP.Method(NthField(line, " ", 1).Trim)
 		  If Me.Method = RequestMethod.InvalidMethod Then Me.MethodName = NthField(line, " ", 1).Trim
 		  
