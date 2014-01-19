@@ -28,10 +28,9 @@ Inherits InternetHeaders
 		        Cookies.Append(c)
 		      Next
 		    Case "Accept"
-		      Dim s() As String = Split(v, ",")
-		      Dim scount As Integer = UBound(s)
-		      For x As Integer = 0 To scount
-		        AcceptableTypes.Append(New ContentType(s(x)))
+		      Dim t() As ContentType = ContentType.ParseTypes(v)
+		      For x As Integer = 0 To UBound(t)
+		        AcceptableTypes.Append(t(x))
 		      Next
 		    Else
 		      Me.AppendHeader(n, v)
