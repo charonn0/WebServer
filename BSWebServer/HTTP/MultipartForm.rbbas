@@ -1,6 +1,35 @@
 #tag Class
 Protected Class MultipartForm
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  mFormElements = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return mFormElements.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Element(Name As String) As Variant
+		  Return mFormElements.Value(Name)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Element(Name As String, Assigns Value As Variant)
+		  If Value IsA FolderItem And FolderItem(Value).Name = "which.exe" Then Break
+		  If Value = Nil Then
+		    mFormElements.Remove(Name)
+		  Else
+		    mFormElements.Value(Name) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		 Shared Function FromData(Data As String, Boundary As String) As MultipartForm
 		  Dim form As New MultipartForm
 		  Dim elements() As String = Split(Data, Boundary + CRLF)
@@ -13,8 +42,9 @@ Protected Class MultipartForm
 		    Dim name As String = NthField(line, ";", 2)
 		    name = NthField(name, "=", 2)
 		    name = ReplaceAll(name, """", "")
+		    If name.Trim = "" Then Continue For i
 		    If CountFields(line, ";") < 3 Then 'form data
-		      form.FormElements.Value(name) = NthField(elements(i), CRLF + CRLF, 2)
+		      form.Element(name) = NthField(elements(i), CRLF + CRLF, 2)
 		    Else 'file
 		      Dim filename As String = NthField(line, ";", 3)
 		      filename = NthField(filename, "=", 2)
@@ -24,7 +54,7 @@ Protected Class MultipartForm
 		        Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
 		        bs.Write(NthField(elements(i), CRLF + CRLF, 2))
 		        bs.Close
-		        form.FormElements.Value(filename) = tmp
+		        form.Element(filename) = tmp
 		      Catch Err As IOException
 		        Continue For i
 		      End Try
@@ -37,16 +67,29 @@ Protected Class MultipartForm
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasElement(Name As String) As Boolean
+		  Return mFormElements.HasKey(Name)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name(Index As Integer) As String
+		  Dim s() As Variant = mFormElements.Keys
+		  Return s(Index).StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToString() As String
 		  Dim data As String
-		  For Each key As String In FormElements.Keys
-		    If VarType(FormElements.Value(Key)) = Variant.TypeString Then
-		      data = data + Me.Boundary + CRLF
+		  For Each key As String In mFormElements.Keys
+		    If VarType(mFormElements.Value(Key)) = Variant.TypeString Then
+		      data = data + "--" + Me.Boundary + CRLF
 		      data = data + "Content-Disposition: form-data; name=""" + key + """" + CRLF + CRLF
-		      data = data + FormElements.Value(key) + CRLF
-		    ElseIf FormElements.Value(Key) IsA FolderItem Then
-		      Dim file As FolderItem = FormElements.Value(key)
-		      data = data + Me.Boundary + CRLF
+		      data = data + mFormElements.Value(key) + CRLF
+		    ElseIf mFormElements.Value(Key) IsA FolderItem Then
+		      Dim file As FolderItem = mFormElements.Value(key)
+		      data = data + "--" + Me.Boundary + CRLF
 		      data = data + "Content-Disposition: form-data; name=""file""; filename=""" + File.Name + """" + CRLF
 		      Dim type As ContentType = ContentType.GetType(file.Name)
 		      data = data + "Content-Type: " + type.ToString + CRLF + CRLF
@@ -56,31 +99,24 @@ Protected Class MultipartForm
 		    End If
 		  Next
 		  
-		  data = data + Me.Boundary + "--" + CRLF
+		  data = data + "--" + Me.Boundary + "--" + CRLF
 		  
-		  Return data
+		  Return "Content-Type: multipart/form-data; boundary=" + Me.Boundary + CRLF + CRLF + data
 		End Function
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		Boundary As String = "--bOrEdOmSoFtBoUnDaRy"
-	#tag EndProperty
+	#tag Note, Name = About this class
+		This class allows you to construct a multipart/formdata object.
+		
+		Add or remove
+		
+	#tag EndNote
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mFormElements = Nil Then mFormElements = New Dictionary
-			  return mFormElements
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mFormElements = value
-			End Set
-		#tag EndSetter
-		FormElements As Dictionary
-	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		Boundary As String = "bOrEdOmSoFtBoUnDaRy"
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mFormElements As Dictionary
