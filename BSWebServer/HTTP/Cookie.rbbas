@@ -34,7 +34,7 @@ Inherits Pair
 		      Case "Secure"
 		        Me.Secure = True
 		      Case "httpOnly"
-		        Me.Secure = False
+		        Me.httpOnly = True
 		      Else
 		        ExtraParams.Value(k) = v
 		        
@@ -121,6 +121,10 @@ Inherits Pair
 		#tag EndSetter
 		ExtraParams As Dictionary
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		httpOnly As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mExtraParams As Dictionary
