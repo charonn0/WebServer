@@ -24,6 +24,14 @@ Protected Class ContentType
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(TargetFile As FolderItem)
+		  Dim t As String
+		  If TargetFile <> Nil Then t = MIMETypes.Lookup(NthField(TargetFile.Name, ".", CountFields(TargetFile.Name, ".")), "application/octet-stream")
+		  Me.Constructor(t)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Raw As String)
 		  'Accepts a single raw ContentType string (e.g. "text/html; CharSet=UTF8")
 		  'For strings that might contain multiple entries, use ContentType.ParseTypes

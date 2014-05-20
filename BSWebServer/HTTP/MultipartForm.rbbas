@@ -32,12 +32,11 @@ Protected Class MultipartForm
 	#tag Method, Flags = &h0
 		 Shared Function FromData(Data As String, Boundary As String) As MultipartForm
 		  Dim form As New MultipartForm
-		  Dim elements() As String = Split(Data, Boundary + CRLF)
+		  Dim elements() As String = Split(Data, "--" + Boundary + CRLF)
 		  form.Boundary = Boundary
 		  
 		  Dim ecount As Integer = UBound(elements)
 		  For i As Integer = 1 To ecount
-		    elements(i) = Replace(elements(i), Boundary + "--", "")
 		    Dim line As String = NthField(elements(i), CRLF, 1)
 		    Dim name As String = NthField(line, ";", 2)
 		    name = NthField(name, "=", 2)
@@ -52,7 +51,10 @@ Protected Class MultipartForm
 		      Dim tmp As FolderItem = SpecialFolder.Temporary.Child(filename)
 		      Try
 		        Dim bs As BinaryStream = BinaryStream.Create(tmp, True)
-		        bs.Write(NthField(elements(i), CRLF + CRLF, 2))
+		        Dim filedata As MemoryBlock = elements(i)
+		        Dim t As Integer = InStr(filedata, CRLF + CRLF) + 3
+		        filedata = filedata.StringValue(t, filedata.Size - t - 2)
+		        bs.Write(filedata)
 		        bs.Close
 		        form.Element(filename) = tmp
 		      Catch Err As IOException
@@ -91,7 +93,7 @@ Protected Class MultipartForm
 		      Dim file As FolderItem = mFormElements.Value(key)
 		      data = data + "--" + Me.Boundary + CRLF
 		      data = data + "Content-Disposition: form-data; name=""file""; filename=""" + File.Name + """" + CRLF
-		      Dim type As ContentType = ContentType.GetType(file.Name)
+		      Dim type As New ContentType(file)
 		      data = data + "Content-Type: " + type.ToString + CRLF + CRLF
 		      Dim bs As BinaryStream = BinaryStream.Open(File)
 		      data = data + bs.Read(bs.Length) + CRLF
@@ -110,7 +112,6 @@ Protected Class MultipartForm
 		This class allows you to construct a multipart/formdata object.
 		
 		Add or remove
-		
 	#tag EndNote
 
 
