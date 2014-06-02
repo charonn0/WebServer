@@ -689,11 +689,7 @@ Inherits ServerSocket
 		    ResponseDocument.SetHeader("Allow") = "GET, HEAD, POST, TRACE"
 		  End If
 		  If Socket.SSLConnected Then
-		    Dim i As Integer = ResponseDocument.MessageBody.LenB
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "&#x1f512;")'</acronym>")
-		    If ResponseDocument.MessageBody.LenB <> i And ResponseDocument.MessageBody.LenB > 0 Then 
-		      ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
-		    End If
 		  Else
 		    ResponseDocument.MessageBody = Replace(ResponseDocument.MessageBody, "%SECURITY%", "")
 		  End If
@@ -779,6 +775,11 @@ Inherits ServerSocket
 		  End If
 		  
 		  Me.Log("Sending response", Log_Socket)
+		  
+		  If ResponseDocument.HasHeader("Content-Length") And Val(ResponseDocument.GetHeader("Content-Length")) <> ResponseDocument.MessageBody.LenB Then
+		    ResponseDocument.Headers.SetHeader("Content-Length", Str(ResponseDocument.MessageBody.LenB))
+		  End If
+		  
 		  Dim s As String = ResponseDocument.ToString
 		  Socket.Write(s)
 		  Me.Log(ReplyString(ResponseDocument.StatusCode) + CRLF + ResponseDocument.Headers.Source(True), Log_Response)
